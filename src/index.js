@@ -1,9 +1,8 @@
 import * as R from 'ramda'
 import { Subject } from 'rxjs'
 
-const ReactiveClass = Cls => {
-  const obj = new Cls()
-  class NewCls extends Subject {
+const ReactiveModel = obj => {
+  class Model extends Subject {
     constructor () {
       super()
       R.pipe(
@@ -13,12 +12,25 @@ const ReactiveClass = Cls => {
         })
       )(obj)
     }
-  };
+    toJSON () {
+      return R.pipe(
+        R.keys,
+        R.map(key => [key, this[`_${key}`]]),
+        R.fromPairs
+      )(obj)
+    }
+    toString () {
+      return `ReactiveModel ${JSON.stringify(this, null, 2)}`
+    }
+    inspect () {
+      return this.toString()
+    }
+  }
 
   R.pipe(
     R.keys,
     R.forEach(key => {
-      Object.defineProperty(NewCls.prototype, key, {
+      Object.defineProperty(Model.prototype, key, {
         get: function () {
           return this[`_${key}`]
         },
@@ -31,7 +43,7 @@ const ReactiveClass = Cls => {
     })
   )(obj)
 
-  return NewCls
+  return Model
 }
 
-export default ReactiveClass
+export default ReactiveModel
