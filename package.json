@@ -1,15 +1,32 @@
 {
+  "name": "reactive-model",
+  "version": "0.1.0",
+  "description": "Generate reactive model classes with ease.",
+  "repository": "git@github.com:tylerlong/reactive-model.git",
+  "author": "Tyler Long <tyler4long@gmail.com>",
+  "license": "MIT",
+  "main": "dist/main.js",
+  "module": "src/index.js",
+  "scripts": {
+    "test": "standard && jest",
+    "release": "webpack --progress --colors"
+  },
   "dependencies": {
     "ramda": "^0.25.0",
     "rxjs": "^6.2.2"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "eslint-plugin-html": "^4.0.5",
     "jest": "^23.5.0",
     "standard": "^11.0.1",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^3.1.0",
     "yarn-upgrade-all": "^0.3.0"
-  }
+  },
+  "files": [
+    "dist/*",
+    "src/*",
+    "yarn.lock"
+  ]
 }
