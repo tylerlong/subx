@@ -13,12 +13,18 @@ describe('index', () => {
     const a = new A()
     expect(a.b).toBe('hello')
     expect(a.c).toBe('world')
-    // let count = 0
-    // a.subscribe(val => {
-    //   count += 1
-    // })
-    // a.b = 'hello'
-    // a.c = 'world'
-    // expect(count).toBe(2)
+    let count = 0
+    let mutations = []
+    a.subscribe(val => {
+      count += 1
+      mutations.push(val)
+    })
+    a.b = 'bbb'
+    a.c = 'ccc'
+    expect(count).toBe(2)
+    expect(mutations).toEqual([
+      { prop: 'b', val: 'bbb', oldVal: 'hello' },
+      { prop: 'c', val: 'ccc', oldVal: 'world' }
+    ])
   })
 })
