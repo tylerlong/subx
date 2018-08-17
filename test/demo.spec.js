@@ -1,9 +1,9 @@
 /* eslint-env jest */
-import ReactiveModel from '../src/index'
+import SubX from '../src/index'
 
 describe('demo', () => {
   test('demo', () => {
-    const MyModel = ReactiveModel({ counter: 0 })
+    const MyModel = SubX({ counter: 0 })
     const myObj = new MyModel()
 
     myObj.subscribe(mutation => {

@@ -3,7 +3,7 @@ export default {
   devtool: 'source-map',
   entry: './src/index.js',
   output: {
-    library: 'ReactiveModel',
+    library: 'SubX',
     libraryTarget: 'umd',
     globalObject: 'this' // fix window undefined issue in node
   },

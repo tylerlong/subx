@@ -1,9 +1,9 @@
 /* eslint-env jest */
-import ReactiveModel from '../src/index'
+import SubX from '../src/index'
 
 describe('index', () => {
   test('demo', () => {
-    const Model = ReactiveModel({
+    const Model = SubX({
       a: 'hello',
       b: 'world'
     })

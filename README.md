@@ -1,13 +1,11 @@
-# reactive-model
+# SubX
 
-Generate reactive model classes with ease.
+Reactive Subject
 
 
-## What is a reactive model?
+## What is a reactive subject?
 
-First of all, what is a model? The "model" here is the same concept as the "M" in MVC pattern.
-
-A reactive model is a JavaScript class which could be used to generate reactive objects.
+A reactive subject is a JavaScript class which could be used to generate reactive objects.
 
 A reactive object is a special JavaScript object which allows you to subscribe to its mutations.
 
@@ -15,16 +13,16 @@ A reactive object is a special JavaScript object which allows you to subscribe t
 ## Installation
 
 ```
-yarn add reactive-model
+yarn add subx
 ```
 
 
 ## Sample
 
 ```js
-import ReactiveModel from 'reactive-model'
+import Subx from 'subx'
 
-const MyModel = ReactiveModel({ counter: 0 })
+const MyModel = Subx({ counter: 0 })
 const myObj = new MyModel()
 
 myObj.subscribe(mutation => {

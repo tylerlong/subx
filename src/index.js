@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 import { Subject } from 'rxjs'
 
-const ReactiveModel = obj => {
+const SubX = obj => {
   class Model extends Subject {
     constructor () {
       super()
@@ -20,7 +20,7 @@ const ReactiveModel = obj => {
       )(obj)
     }
     toString () {
-      return `ReactiveModel ${JSON.stringify(this, null, 2)}`
+      return `SubX ${JSON.stringify(this, null, 2)}`
     }
     inspect () {
       return this.toString()
@@ -46,4 +46,4 @@ const ReactiveModel = obj => {
   return Model
 }
 
-export default ReactiveModel
+export default SubX

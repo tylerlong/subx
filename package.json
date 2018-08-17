@@ -1,8 +1,8 @@
 {
-  "name": "reactive-model",
+  "name": "subx",
   "version": "0.1.0",
-  "description": "Generate reactive model classes with ease.",
-  "repository": "git@github.com:tylerlong/reactive-model.git",
+  "description": "Reactive Subject",
+  "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
   "license": "MIT",
   "main": "dist/main.js",
