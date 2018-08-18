@@ -4,16 +4,19 @@ import { Subject, never, merge } from 'rxjs'
 const SubX = obj => {
   class Model {
     constructor () {
+      // init properties and subjects
       this.$ = never()
       R.pipe(
-        R.toPairs,
-        R.forEach(([key, val]) => {
-          this[`_${key}`] = val
+        R.keys,
+        R.forEach(key => {
+          this[`_${key}`] = obj[key]
           this[`${key}$`] = new Subject()
           this.$ = merge(this.$, this[`${key}$`])
         })
       )(obj)
     }
+
+    // for serialization and display
     toJSON () {
       return R.pipe(
         R.keys,
@@ -29,6 +32,7 @@ const SubX = obj => {
     }
   }
 
+  // Produce data for subjects
   R.pipe(
     R.keys,
     R.forEach(key => {
@@ -44,6 +48,14 @@ const SubX = obj => {
       })
     })
   )(obj)
+
+  // computed properties
+  Model.computed = obj => {
+    // R.pipe(
+
+    // )
+    return Model
+  }
 
   return Model
 }
