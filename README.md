@@ -3,9 +3,9 @@
 Reactive Subject
 
 
-## What is a reactive subject?
+## What is a Reactive Subject?
 
-A reactive subject is a JavaScript class which could be used to generate reactive objects.
+A Reactive Subject is a JavaScript class which could be used to initialize reactive objects.
 
 A reactive object is a special JavaScript object which allows you to subscribe to its mutations.
 
@@ -37,9 +37,9 @@ person.lastName = 'Wang'
 person.firstName = 'Wu'
 ```
 
-In the sample code above, person is an object with two properties: `firstName` and `lastName`.
+In the sample code above, `person` is an object with two properties: `firstName` and `lastName`.
 
-We can subscribe to their mutations by `person.firstName$.subscribe` and `person.lastName$.subscribe`.
+We can subscribe to its mutations by `person.firstName$.subscribe` and `person.lastName$.subscribe`.
 
 ### Console output
 
@@ -49,6 +49,7 @@ Last name changed { prop: 'lastName', val: 'Li', oldVal: 'Zhang' }
 Last name changed { prop: 'lastName', val: 'Wang', oldVal: 'Li' }
 First name changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 ```
+
 
 ## Subscribe to all properties in one go
 
@@ -68,7 +69,6 @@ person.firstName = 'Wu'
 ```
 
 Instead of `person.firstName$.subscribe` and `person.lastName$.subscribe`, we do `person.$.subscribe`.
-
 
 ### Console output
 
