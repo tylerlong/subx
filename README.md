@@ -50,7 +50,7 @@ Last name changed { prop: 'lastName', val: 'Wang', oldVal: 'Li' }
 First name changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 ```
 
-## Subscribe to all properties changes in one go
+## Subscribe to all properties in one go
 
 ```js
 const Person = SubX({
