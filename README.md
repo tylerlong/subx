@@ -78,3 +78,8 @@ Prop changed { prop: 'lastName', val: 'Li', oldVal: 'Zhang' }
 Prop changed { prop: 'lastName', val: 'Wang', oldVal: 'Li' }
 Prop changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 ```
+
+
+## Computed properties
+
+Coming soon
