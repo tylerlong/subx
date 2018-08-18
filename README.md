@@ -1,6 +1,8 @@
 # SubX
 
-Reactive Subject
+Subject X, Reactive Subject
+
+Pronunciation: [Subject X]
 
 
 ## What is a Reactive Subject?
