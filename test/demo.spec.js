@@ -2,17 +2,36 @@
 import SubX from '../src/index'
 
 describe('demo', () => {
-  test('demo', () => {
-    const MyModel = SubX({ counter: 0 })
-    const myObj = new MyModel()
-
-    myObj.$.subscribe(mutation => {
-      console.log(mutation)
+  test('props changed events', () => {
+    const Person = SubX({
+      firstName: 'San',
+      lastName: 'Zhang'
     })
+    const person = new Person()
+    person.firstName$.subscribe(mutation => {
+      console.log('First name changed', mutation)
+    })
+    person.lastName$.subscribe(mutation => {
+      console.log('Last name changed', mutation)
+    })
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
+  })
 
-    myObj.counter += 1
-    myObj.counter = 5
-    myObj.counter -= 2
-    myObj.counter = 8
+  test('Subscribe to all the props changed events', () => {
+    const Person = SubX({
+      firstName: 'San',
+      lastName: 'Zhang'
+    })
+    const person = new Person()
+    person.$.subscribe(mutation => {
+      console.log('Prop changed', mutation)
+    })
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
   })
 })

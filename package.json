@@ -1,6 +1,6 @@
 {
   "name": "subx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Reactive Subject",
   "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
