@@ -7,7 +7,10 @@ describe('computed properties', () => {
       firstName: 'San',
       lastName: 'Zhang'
     }).computed({ // todo: auto bind this so that user can use arrow function
-      fullName: function () { return `${this.firstName} ${this.lastName}` }
+      fullName: function () {
+        console.log('fullName computed property')
+        return `${this.firstName} ${this.lastName}`
+      }
     })
     const person = new Person()
     expect(person.fullName()).toBe('San Zhang')

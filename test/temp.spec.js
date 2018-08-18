@@ -79,7 +79,10 @@ describe('computed properties', () => {
     })
     const person = new Person()
 
-    person.fullName$(['firstName', 'lastName'], debounceTime(1000)).subscribe(val => {
+    person.fullName$(
+      ['firstName$', 'lastName$'],
+      debounceTime(1000)
+    ).subscribe(val => {
     // person.fullName$(['firstName', 'lastName']).subscribe(val => {
       console.log('Full name changed', val)
     })

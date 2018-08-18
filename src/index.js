@@ -58,7 +58,7 @@ const SubX = obj => {
         Model.prototype[key] = obj[key]
         Model.prototype[`${key}$`] = function (upstream = [], ...operators) {
           const self = this
-          return merge(...R.map(k => this[`${k}$`], upstream)).pipe(...operators, map(() => self[key]()))
+          return merge(...R.map(k => this[`${k}`], upstream)).pipe(...operators, map(() => self[key]()))
         }
       })
     )(obj)
