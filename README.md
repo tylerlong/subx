@@ -85,3 +85,9 @@ Prop changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 ## Computed properties
 
 Coming soon
+
+
+
+## Notes
+
+- https://stackoverflow.com/questions/37089977/how-to-get-current-value-of-rxjs-subject-or-observable

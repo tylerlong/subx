@@ -6,7 +6,7 @@ describe('computed properties', () => {
     const Person = SubX({
       firstName: 'San',
       lastName: 'Zhang'
-    }).computed({
+    }).computed({ // todo: auto bind this so that user can use arrow function
       fullName: function () { return `${this.firstName} ${this.lastName}` }
     })
     const person = new Person()
