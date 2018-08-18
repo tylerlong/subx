@@ -38,4 +38,21 @@ describe('index', () => {
     model.a = 'world'
     expect(mutations).toEqual([{ prop: 'a', val: 'world', oldVal: 'hello' }])
   })
+
+  test('different ways to trigger event', () => {
+    const Model = SubX({
+      a: '111'
+    })
+    const model = new Model()
+    const mutations = []
+    model.a$.subscribe(val => {
+      mutations.push(val)
+    })
+    model.a = '222'
+    model['a'] = '333'
+    expect(mutations).toEqual([
+      { prop: 'a', val: '222', oldVal: '111' },
+      { prop: 'a', val: '333', oldVal: '222' }
+    ])
+  })
 })
