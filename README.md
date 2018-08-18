@@ -25,7 +25,7 @@ import Subx from 'subx'
 const MyModel = Subx({ counter: 0 })
 const myObj = new MyModel()
 
-myObj.subscribe(mutation => {
+myObj.$.subscribe(mutation => {
   console.log(mutation)
 })
 

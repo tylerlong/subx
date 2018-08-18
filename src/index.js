@@ -1,16 +1,17 @@
 import * as R from 'ramda'
-import { Subject } from 'rxjs'
+import { Subject, merge } from 'rxjs'
 
 const SubX = obj => {
-  class Model extends Subject {
+  class Model {
     constructor () {
-      super()
       R.pipe(
         R.toPairs,
         R.forEach(([key, val]) => {
           this[`_${key}`] = val
+          this[`${key}$`] = new Subject()
         })
       )(obj)
+      this.$ = merge(...R.pipe(R.keys, R.map(key => this[`${key}$`]))(obj))
     }
     toJSON () {
       return R.pipe(
@@ -37,7 +38,7 @@ const SubX = obj => {
         set: function (val) {
           const oldVal = this[`_${key}`]
           this[`_${key}`] = val
-          this.next({ prop: key, val, oldVal })
+          this[`${key}$`].next({ prop: key, val, oldVal })
         }
       })
     })

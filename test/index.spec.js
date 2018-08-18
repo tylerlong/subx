@@ -2,7 +2,7 @@
 import SubX from '../src/index'
 
 describe('index', () => {
-  test('demo', () => {
+  test('props', () => {
     const Model = SubX({
       a: 'hello',
       b: 'world'
@@ -13,7 +13,7 @@ describe('index', () => {
 
     let count = 0
     let mutations = []
-    model.subscribe(val => {
+    model.$.subscribe(val => {
       count += 1
       mutations.push(val)
     })
@@ -24,5 +24,18 @@ describe('index', () => {
       { prop: 'a', val: '111', oldVal: 'hello' },
       { prop: 'b', val: '222', oldVal: 'world' }
     ])
+  })
+
+  test('streams', () => {
+    const Model = SubX({
+      a: 'hello'
+    })
+    const model = new Model()
+    const mutations = []
+    model.a$.subscribe(val => {
+      mutations.push(val)
+    })
+    model.a = 'world'
+    expect(mutations).toEqual([{ prop: 'a', val: 'world', oldVal: 'hello' }])
   })
 })
