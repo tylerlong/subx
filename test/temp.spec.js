@@ -36,7 +36,38 @@ describe('computed properties', () => {
   //   await delay(2000)
   // })
 
-  test('demo 2', async () => {
+  // test('demo 2', async () => {
+  //   const Person = SubX({
+  //     firstName: 'San',
+  //     lastName: 'Zhang'
+  //   }).computed({
+  //     fullName: function () {
+  //       console.log('expensive computation')
+  //       return `${this.firstName} ${this.lastName}`
+  //     }
+  //   })
+
+  //   const person = new Person()
+  //   const fullName$ = person.firstName$.pipe(
+  //     combineLatest(person.lastName$),
+  //     debounceTime(1000),
+  //     map(() => person.fullName())
+  //   )
+
+  //   fullName$.subscribe(val => {
+  //     console.log('Full name changed', val)
+  //   })
+
+  //   person.firstName = 'Si'
+  //   person.lastName = 'Li'
+
+  //   person.lastName = 'Wang'
+  //   person.firstName = 'Wu'
+
+  //   await delay(2000)
+  // })
+
+  test('demo 3', async () => {
     const Person = SubX({
       firstName: 'San',
       lastName: 'Zhang'
@@ -46,15 +77,9 @@ describe('computed properties', () => {
         return `${this.firstName} ${this.lastName}`
       }
     })
-
     const person = new Person()
-    const fullName$ = person.firstName$.pipe(
-      combineLatest(person.lastName$),
-      debounceTime(1000),
-      map(() => person.fullName())
-    )
 
-    fullName$.subscribe(val => {
+    person.fullName$(['firstName', 'lastName'], [debounceTime(1000)]).subscribe(val => {
       console.log('Full name changed', val)
     })
 

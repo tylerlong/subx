@@ -1,5 +1,6 @@
 import * as R from 'ramda'
 import { Subject, never, merge } from 'rxjs'
+import { map } from 'rxjs/operators'
 
 const SubX = obj => {
   class Model {
@@ -55,6 +56,10 @@ const SubX = obj => {
       R.keys,
       R.forEach(key => {
         Model.prototype[key] = obj[key]
+        Model.prototype[`${key}$`] = function (upstream = [], operators = []) {
+          const self = this
+          return merge(...R.map(k => this[`${k}$`], upstream)).pipe(...operators, map(() => self[key]()))
+        }
       })
     )(obj)
     return Model
