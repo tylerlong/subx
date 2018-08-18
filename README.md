@@ -84,8 +84,83 @@ Prop changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 
 ## Computed properties
 
-Coming soon
+```js
+const Person = SubX({
+    firstName: 'San',
+    lastName: 'Zhang'
+}).computed({ // todo: auto bind this so that user can use arrow function
+    fullName: function () {
+        console.log('fullName computed property')
+        return `${this.firstName} ${this.lastName}`
+    }
+})
+const person = new Person()
+expect(person.fullName()).toBe('San Zhang')
 
+person.firstName = 'Si'
+person.lastName = 'Li'
+expect(person.fullName()).toBe('Si Li')
+
+person.lastName = 'Wang'
+person.firstName = 'Wu'
+expect(person.fullName()).toBe('Wu Wang')
+```
+
+### Console output
+
+```
+fullName computed property
+fullName computed property
+fullName computed property
+```
+
+
+## Expensive computed property
+
+Sometimes it is expensive to compute a property. We would like to avoid doing the computation too often.
+
+Let's assume that `person.fullName()` is an expensive computation. And we definitely don't want to execute it again and again in a short peroid of time.
+
+Intead, we only need the last `fullName` value when `firstName` and `lastName` stop changing for a while.
+
+```js
+const Person = SubX({
+    firstName: 'San',
+    lastName: 'Zhang'
+}).computed({
+    fullName: function () {
+    console.log('expensive computation')
+    return `${this.firstName} ${this.lastName}`
+    }
+})
+const person = new Person()
+
+person.fullName$(
+    ['firstName$', 'lastName$'],
+    debounceTime(1000)
+).subscribe(val => {
+    console.log('Full name changed', val)
+})
+
+person.firstName = 'Si'
+person.lastName = 'Li'
+
+person.lastName = 'Wang'
+person.firstName = 'Wu'
+```
+
+`person.fullName$` is a function and it accepts multiple arguments. The first argument is an array of upstream events. Upsteam events are events which will trigger this event. In this case we think `fullName$` is triggered by `firstName$` and `lastName$`.
+
+Remaining arguments are RxJS operators which allows you to munipilate the data stream. We use `debounceTime(1000)` so that the expensive operation will not execute until `firstName` & `lastName` have stopped changing for 1 second.
+
+### Console output
+
+```
+expensive computation
+Full name changed Wu Wang
+```
+
+You can see that `expensive computation` was only printed once although we changed `firstName` & `lastName` four times.
 
 
 ## Notes
