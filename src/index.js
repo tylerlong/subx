@@ -51,9 +51,12 @@ const SubX = obj => {
 
   // computed properties
   Model.computed = obj => {
-    // R.pipe(
-
-    // )
+    R.pipe(
+      R.keys,
+      R.forEach(key => {
+        Model.prototype[key] = obj[key]
+      })
+    )(obj)
     return Model
   }
 
