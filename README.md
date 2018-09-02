@@ -18,6 +18,10 @@ A reactive object is a special JavaScript object which allows you to subscribe t
 yarn add subx
 ```
 
+```js
+import SubX from 'subx'
+```
+
 
 ## Sample
 
@@ -41,7 +45,11 @@ person.firstName = 'Wu'
 
 In the sample code above, `person` is an object with two properties: `firstName` and `lastName`.
 
-We can subscribe to its mutations by `person.firstName$.subscribe` and `person.lastName$.subscribe`.
+We can subscribe to their mutations by `person.firstName$.subscribe` and `person.lastName$.subscribe`.
+
+We call variables end with `$` streams. So `person.firstName$` is a stream of first names, `person.lastName$` is a stream of last names.
+
+We use `stream$.subscribe()` method to listen to the data events in the the stream.
 
 ### Console output
 
@@ -53,7 +61,7 @@ First name changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 ```
 
 
-## Subscribe to all properties in one go
+## Subscribe to all property streams in one go
 
 ```js
 const Person = SubX({
@@ -124,22 +132,30 @@ Let's assume that `person.fullName()` is an expensive computation. And we defini
 Intead, we only need the last `fullName` value when `firstName` and `lastName` stop changing for a while.
 
 ```js
+import { merge, debounceTime } from 'rxjs/operators'
+import delay from 'timeout-as-promise'
+
+let count = 0
+let fullName
 const Person = SubX({
     firstName: 'San',
     lastName: 'Zhang'
 }).computed({
     fullName: function () {
-    console.log('expensive computation')
-    return `${this.firstName} ${this.lastName}`
+        count += 1
+        console.log('expensive computation')
+        return `${this.firstName} ${this.lastName}`
     }
 })
 const person = new Person()
 
 person.fullName$(
-    ['firstName$', 'lastName$'],
-    debounceTime(1000)
+    person.firstName$.pipe(
+        merge(person.lastName$),
+        debounceTime(1000)
+    )
 ).subscribe(val => {
-    console.log('Full name changed', val)
+    fullName = val
 })
 
 person.firstName = 'Si'
@@ -147,11 +163,23 @@ person.lastName = 'Li'
 
 person.lastName = 'Wang'
 person.firstName = 'Wu'
+
+await delay(1500)
+
+expect(count).toBe(1) // no more than 1 time of expensive computation
+expect(fullName).toBe('Wu Wang')
 ```
 
-`person.fullName$` is a function and it accepts multiple arguments. The first argument is an array of upstream events. Upsteam events are events which will trigger this event. In this case we think `fullName$` is triggered by `firstName$` and `lastName$`.
+`person.fullName$` is a function and it accepts a stream as argument.
+In this case we think `fullName` is determined by `firstName` and `lastName` so we pass
 
-Remaining arguments are RxJS operators which allows you to munipilate the data stream. We use `debounceTime(1000)` so that the expensive operation will not execute until `firstName` & `lastName` have stopped changing for 1 second.
+```js
+person.firstName$.pipe(
+    merge(person.lastName$),
+    ...
+```
+
+We use `debounceTime(1000)` so that the expensive operation will not execute until `firstName` & `lastName` have stopped changing for 1 second.
 
 ### Console output
 
@@ -160,9 +188,4 @@ expensive computation
 Full name changed Wu Wang
 ```
 
-You can see that `expensive computation` was only printed once although we changed `firstName` & `lastName` four times.
-
-
-## Notes
-
-- https://stackoverflow.com/questions/37089977/how-to-get-current-value-of-rxjs-subject-or-observable
+You can see that `expensive computation` was only printed once although we changed `firstName` & `lastName` four times in total.
