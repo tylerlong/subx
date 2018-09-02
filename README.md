@@ -154,7 +154,7 @@ const Person = SubX({
     firstName: 'San',
     lastName: 'Zhang'
 }).computed({
-    fullName: function () {
+    fullName () {
         count += 1
         console.log('expensive computation')
         return `${this.firstName} ${this.lastName}`
@@ -207,3 +207,5 @@ You can see that `expensive computation` was only printed once although we chang
 ## Todo
 
 - Computed properties should allow arguments
+- Track change to array property
+- Trach change to nested subject (property itself is a subject)

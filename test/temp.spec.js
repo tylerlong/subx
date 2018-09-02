@@ -9,7 +9,7 @@ describe('computed properties', () => {
       firstName: 'San',
       lastName: 'Zhang'
     }).computed({
-      fullName: function () {
+      fullName () {
         console.log('expensive computation')
         return `${this.firstName} ${this.lastName}`
       }
