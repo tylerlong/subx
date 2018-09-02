@@ -4,13 +4,76 @@ import { merge, debounceTime } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
 
 describe('computed properties', () => {
-  test('demo 1', () => {
+  test('self + arrow function', () => {
     const Person = SubX({
       firstName: 'San',
       lastName: 'Zhang'
-    }).computed({ // todo: auto bind this so that user can use arrow function
-      fullName: function () {
+    }).computed(self => ({
+      fullName: () => `${self.firstName} ${self.lastName}`
+    }))
+    const person = new Person()
+    expect(person.fullName()).toBe('San Zhang')
+
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    expect(person.fullName()).toBe('Si Li')
+
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
+    expect(person.fullName()).toBe('Wu Wang')
+  })
+
+  test('this + normal function', () => {
+    const Person = SubX({
+      firstName: 'San',
+      lastName: 'Zhang'
+    }).computed({
+      fullName () {
         return `${this.firstName} ${this.lastName}`
+      }
+    })
+    const person = new Person()
+    expect(person.fullName()).toBe('San Zhang')
+
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    expect(person.fullName()).toBe('Si Li')
+
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
+    expect(person.fullName()).toBe('Wu Wang')
+  })
+
+  test('mixed 1', () => {
+    const Person = SubX({
+      firstName: 'San',
+      lastName: 'Zhang'
+    }).computed(self => ({
+      fullName () {
+        return `${self.firstName} ${self.lastName}`
+      }
+    }))
+    const person = new Person()
+    expect(person.fullName()).toBe('San Zhang')
+
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    expect(person.fullName()).toBe('Si Li')
+
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
+    expect(person.fullName()).toBe('Wu Wang')
+  })
+
+  test('mixed 2', () => {
+    const Person = SubX({
+      firstName: 'San',
+      lastName: 'Zhang'
+    }).computed(function (self) {
+      return {
+        fullName: () => {
+          return `${self.firstName} ${self.lastName}`
+        }
       }
     })
     const person = new Person()
@@ -32,7 +95,7 @@ describe('computed properties', () => {
       firstName: 'San',
       lastName: 'Zhang'
     }).computed({
-      fullName: function () {
+      fullName () {
         count += 1
         console.log('expensive computation')
         return `${this.firstName} ${this.lastName}`

@@ -96,8 +96,8 @@ Prop changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 const Person = SubX({
     firstName: 'San',
     lastName: 'Zhang'
-}).computed({ // todo: auto bind this so that user can use arrow function
-    fullName: function () {
+}).computed({
+    fullName () { // Check sample code below if you want to use arrow function instead
         console.log('fullName computed property')
         return `${this.firstName} ${this.lastName}`
     }
@@ -120,6 +120,19 @@ expect(person.fullName()).toBe('Wu Wang')
 fullName computed property
 fullName computed property
 fullName computed property
+```
+
+### Use arrow function for computed properties
+
+If you want to use arrow function instead, use `self` instead of `this`:
+
+```js
+const Person = SubX({
+    firstName: 'San',
+    lastName: 'Zhang'
+}).computed(self => ({
+    fullName: () => `${self.firstName} ${self.lastName}`
+}))
 ```
 
 
@@ -189,3 +202,8 @@ Full name changed Wu Wang
 ```
 
 You can see that `expensive computation` was only printed once although we changed `firstName` & `lastName` four times in total.
+
+
+## Todo
+
+- Computed properties should allow arguments

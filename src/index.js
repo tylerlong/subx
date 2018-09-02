@@ -51,17 +51,34 @@ const SubX = obj => {
   )(obj)
 
   // computed properties
-  Model.computed = obj => {
-    R.pipe(
-      R.keys,
-      R.forEach(key => {
-        Model.prototype[key] = obj[key]
-        Model.prototype[`${key}$`] = function (stream) {
-          const self = this
-          return stream.pipe(map(() => self[key]()))
-        }
-      })
-    )(obj)
+  Model.computed = arg => {
+    if (typeof arg === 'function') {
+      const func = arg
+      R.pipe(
+        R.keys,
+        R.forEach(key => {
+          Model.prototype[key] = function () {
+            return func(this)[key]()
+          }
+          Model.prototype[`${key}$`] = function (stream) {
+            const self = this
+            return stream.pipe(map(() => self[key]()))
+          }
+        })
+      )(func())
+    } else { // type of arg === 'object'
+      const obj = arg
+      R.pipe(
+        R.keys,
+        R.forEach(key => {
+          Model.prototype[key] = obj[key]
+          Model.prototype[`${key}$`] = function (stream) {
+            const self = this
+            return stream.pipe(map(() => self[key]()))
+          }
+        })
+      )(obj)
+    }
     return Model
   }
 
