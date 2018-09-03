@@ -20,7 +20,7 @@ describe('rxjs', () => {
     subject.next('hello')
     subject.next('world')
 
-    await delay(200)
+    await delay(150)
     expect(count).toBe(2) // debountTime won't reduce the times of `map`
   })
 })

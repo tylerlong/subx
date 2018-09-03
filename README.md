@@ -162,11 +162,9 @@ const Person = SubX({
 })
 const person = new Person()
 
-person.fullName$(
-    person.firstName$.pipe(
-        merge(person.lastName$),
-        debounceTime(1000)
-    )
+merge(person.firstName$, person.lastName$).pipe(
+    debounceTime(100),
+    map(val => person.fullName())
 ).subscribe(val => {
     fullName = val
 })
@@ -177,22 +175,19 @@ person.lastName = 'Li'
 person.lastName = 'Wang'
 person.firstName = 'Wu'
 
-await delay(1500)
+await delay(150)
 
 expect(count).toBe(1) // no more than 1 time of expensive computation
 expect(fullName).toBe('Wu Wang')
 ```
 
-`person.fullName$` is a function and it accepts a stream as argument.
-In this case we think `fullName` is determined by `firstName` and `lastName` so we pass
+In this case we think `fullName` is determined by `firstName` and `lastName` so we use
 
 ```js
-person.firstName$.pipe(
-    merge(person.lastName$),
-    ...
+merge(person.firstName$, person.lastName$)
 ```
 
-We use `debounceTime(1000)` so that the expensive operation will not execute until `firstName` & `lastName` have stopped changing for 1 second.
+We use `debounceTime(100)` so that the expensive operation will not execute until `firstName` & `lastName` have stopped changing for 100 milliseconds.
 
 ### Console output
 

@@ -1,6 +1,5 @@
 import * as R from 'ramda'
 import { Subject, never, merge } from 'rxjs'
-import { map } from 'rxjs/operators'
 
 const SubX = obj => {
   class Model {
@@ -60,10 +59,6 @@ const SubX = obj => {
           Model.prototype[key] = function (...args) {
             return func(this)[key](...args)
           }
-          Model.prototype[`${key}$`] = function (stream) {
-            const self = this
-            return stream.pipe(map(() => self[key]()))
-          }
         })
       )(func())
     } else { // type of arg === 'object'
@@ -72,10 +67,6 @@ const SubX = obj => {
         R.keys,
         R.forEach(key => {
           Model.prototype[key] = obj[key]
-          Model.prototype[`${key}$`] = function (stream) {
-            const self = this
-            return stream.pipe(map(() => self[key]()))
-          }
         })
       )(obj)
     }

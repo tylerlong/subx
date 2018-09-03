@@ -1,6 +1,7 @@
 /* eslint-env jest */
 import SubX from '../src/index'
-import { merge, debounceTime } from 'rxjs/operators'
+import { debounceTime, map } from 'rxjs/operators'
+import { merge } from 'rxjs'
 import delay from 'timeout-as-promise'
 
 describe('computed properties', () => {
@@ -103,11 +104,9 @@ describe('computed properties', () => {
     })
     const person = new Person()
 
-    person.fullName$(
-      person.firstName$.pipe(
-        merge(person.lastName$),
-        debounceTime(1000)
-      )
+    merge(person.firstName$, person.lastName$).pipe(
+      debounceTime(100),
+      map(val => person.fullName())
     ).subscribe(val => {
       fullName = val
     })
@@ -118,7 +117,7 @@ describe('computed properties', () => {
     person.lastName = 'Wang'
     person.firstName = 'Wu'
 
-    await delay(1500)
+    await delay(150)
 
     expect(count).toBe(1) // no more than 1 time of expensive computation
     expect(fullName).toBe('Wu Wang')
