@@ -209,3 +209,4 @@ You can see that `expensive computation` was only printed once although we chang
 - Computed properties should allow arguments
 - Track change to array property
 - Trach change to nested subject (property itself is a subject)
+- Getter as computed property
