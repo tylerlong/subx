@@ -123,4 +123,54 @@ describe('computed properties', () => {
     expect(count).toBe(1) // no more than 1 time of expensive computation
     expect(fullName).toBe('Wu Wang')
   })
+
+  test('computed property with arguments', () => {
+    const Person = SubX({
+      firstName: 'San',
+      lastName: 'Zhang'
+    }).computed(self => ({
+      fullName: () => `${self.firstName} ${self.lastName}`,
+      greeting: (phrase) => `${phrase} ${self.fullName()}`
+    }))
+    const person = new Person()
+    expect(person.fullName()).toBe('San Zhang')
+    expect(person.greeting('Hi')).toBe('Hi San Zhang')
+
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    expect(person.fullName()).toBe('Si Li')
+    expect(person.greeting('Hello')).toBe('Hello Si Li')
+
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
+    expect(person.fullName()).toBe('Wu Wang')
+    expect(person.greeting('Good morning')).toBe('Good morning Wu Wang')
+  })
+
+  test('computed property with arguments 2', () => {
+    const Person = SubX({
+      firstName: 'San',
+      lastName: 'Zhang'
+    }).computed({
+      fullName () {
+        return `${this.firstName} ${this.lastName}`
+      },
+      greeting (phrase) {
+        return `${phrase} ${this.fullName()}`
+      }
+    })
+    const person = new Person()
+    expect(person.fullName()).toBe('San Zhang')
+    expect(person.greeting('Hi')).toBe('Hi San Zhang')
+
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    expect(person.fullName()).toBe('Si Li')
+    expect(person.greeting('Hello')).toBe('Hello Si Li')
+
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
+    expect(person.fullName()).toBe('Wu Wang')
+    expect(person.greeting('Good morning')).toBe('Good morning Wu Wang')
+  })
 })

@@ -57,8 +57,8 @@ const SubX = obj => {
       R.pipe(
         R.keys,
         R.forEach(key => {
-          Model.prototype[key] = function () {
-            return func(this)[key]()
+          Model.prototype[key] = function (...args) {
+            return func(this)[key](...args)
           }
           Model.prototype[`${key}$`] = function (stream) {
             const self = this
