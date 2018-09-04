@@ -202,6 +202,4 @@ You can see that `expensive computation` was only printed once although we chang
 ## Todo
 
 - Track changes to array property
-- Trach changes to nested subject (property itself is a subject)
-- Getter as computed property?
-    - Nope
+- Track changes to nested subject (property itself is a subject)

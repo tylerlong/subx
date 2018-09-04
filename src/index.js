@@ -3,13 +3,13 @@ import { Subject, never, merge } from 'rxjs'
 
 const SubX = obj => {
   class Model {
-    constructor () {
+    constructor (defaultObj = {}) {
       // init properties and subjects
       this.$ = never()
       R.pipe(
         R.keys,
         R.forEach(key => {
-          this[`_${key}`] = obj[key]
+          this[`_${key}`] = defaultObj[key] || obj[key]
           this[`${key}$`] = new Subject()
           this.$ = merge(this.$, this[`${key}$`])
         })
