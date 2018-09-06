@@ -27,10 +27,13 @@ import SubX from 'subx'
 
 ```js
 const Person = SubX({
+    firstName: '',
+    lastName: ''
+})
+const person = new Person({
     firstName: 'San',
     lastName: 'Zhang'
 })
-const person = new Person()
 person.firstName$.subscribe(mutation => {
     console.log('First name changed', mutation)
 })
