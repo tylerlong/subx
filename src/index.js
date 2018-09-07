@@ -9,7 +9,13 @@ const SubX = obj => {
       R.pipe(
         R.keys,
         R.forEach(key => {
-          this[`_${key}`] = defaultObj[key] || obj[key]
+          this[`_${key}`] = defaultObj[key]
+          if (this[`_${key}`] === undefined) {
+            this[`_${key}`] = obj[key]
+            if (typeof this[`_${key}`] === 'function') {
+              this[`_${key}`] = this[`_${key}`]()
+            }
+          }
           this[`${key}$`] = new Subject()
           this.$ = merge(this.$, this[`${key}$`])
         })
