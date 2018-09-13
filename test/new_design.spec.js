@@ -5,7 +5,11 @@ import * as R from 'ramda'
 const handler = {
   set: (target, property, value, receiver) => {
     // const oldVal = target[property]
-    target[property] = value
+    if (typeof value !== 'object' || value.__isInstanceOfSubX) {
+      target[property] = value
+    } else {
+      target[property] = new SubX(value, handler)
+    }
     if ('$' in target) {
       target.$.next({
         // target,
@@ -17,6 +21,9 @@ const handler = {
     return true
   },
   get: (target, property, receiver) => {
+    if (property === '__isInstanceOfSubX') {
+      return true
+    }
     if (property === 'toJSON') {
       return () => R.dissoc('$', target)
     }
@@ -53,29 +60,29 @@ describe('new design', () => {
     p.firstName = 'Wu'
     p.lastName = 'Wang'
 
-    // console.log(JSON.stringify(p, (k, v) => k === '$' ? undefined : v, 2))
-    // console.log(JSON.stringify(p, null, 2))
-    console.log(p.toJSON())
+    console.log(JSON.stringify(p, null, 2))
   })
 
-  // test('array', () => {
-  //   const a = subx([])
-  //   a.$.subscribe(mutation => {
-  //     console.log(mutation)
-  //   })
-  //   a.push(1)
-  //   a.push(2)
-  //   console.log(typeof a)
-  //   a[1] = 3
-  //   a.unshift()
-  // })
+  test('array', () => {
+    const a = new SubX([])
+    a.$.subscribe(mutation => {
+      console.log(mutation)
+    })
+    a.push(1)
+    a.push(2)
+    a[1] = 3
+    a.unshift()
+  })
 
-  // test('nested', () => {
-  //   const n = subx({})
-  //   n.a = {}
-  //   n.a.$.subscribe(mutation => {
-  //     console.log(mutation)
-  //   })
-  //   n.a.b = 'hello'
-  // })
+  test('nested', () => {
+    const n = new SubX({})
+    n.$.subscribe(mutation => {
+      console.log(mutation)
+    })
+    n.a = {}
+    n.a.$.subscribe(mutation => {
+      console.log(mutation)
+    })
+    n.a.b = 'hello'
+  })
 })
