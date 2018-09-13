@@ -205,4 +205,6 @@ You can see that `expensive computation` was only printed once although we chang
 ## Todo
 
 - Track changes to array property
+    - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
+    - https://stackoverflow.com/questions/5100376/how-to-watch-for-array-changes
 - Track changes to nested subject (property itself is a subject)
