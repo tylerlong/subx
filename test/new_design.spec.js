@@ -34,10 +34,6 @@ const handler = {
   }
 }
 
-// const subx = (obj = {}) => {
-//   return new Proxy(obj, handler)
-// }
-
 class SubX extends Proxy {
   constructor (target) {
     super(target, handler)
