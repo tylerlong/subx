@@ -5,10 +5,10 @@ import * as R from 'ramda'
 const handler = {
   set: (target, property, value, receiver) => {
     // const oldVal = target[property]
-    if (typeof value !== 'object' || value.__isInstanceOfSubX) {
-      target[property] = value
-    } else {
+    if (typeof value === 'object' && !value.__isInstanceOfSubX) {
       target[property] = new SubX(value, handler)
+    } else {
+      target[property] = value
     }
     if ('$' in target) {
       target.$.next({
@@ -38,8 +38,8 @@ class SubX extends Proxy {
   constructor (target) {
     R.pipe(
       R.toPairs,
-      R.reject(([, val]) => typeof val !== 'object' || val.__isInstanceOfSubX),
-      R.forEach(([key, val]) => { target[key] = new SubX(val) })
+      R.filter(([, val]) => typeof val === 'object' && !val.__isInstanceOfSubX),
+      R.forEach(([property, val]) => { target[property] = new SubX(val) })
     )(target)
     super(target, handler)
   }
