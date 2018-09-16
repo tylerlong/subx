@@ -6,7 +6,7 @@ const handler = {
   set: (target, property, value, receiver) => {
     // const oldVal = target[property]
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
-      target[property] = new SubX(value, handler)
+      target[property] = new SubX(value)
     } else {
       target[property] = value
     }
