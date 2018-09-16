@@ -36,11 +36,11 @@ const handler = {
 
 class SubX extends Proxy {
   constructor (target) {
-    R.forEach(([key, val]) => {
-      if (typeof val === 'object' && !val.__isInstanceOfSubX) {
-        target[key] = new SubX(val)
-      }
-    }, R.toPairs(target))
+    R.pipe(
+      R.toPairs,
+      R.reject(([, val]) => typeof val !== 'object' || val.__isInstanceOfSubX),
+      R.forEach(([key, val]) => { target[key] = new SubX(val) })
+    )(target)
     super(target, handler)
   }
 }
