@@ -36,6 +36,11 @@ const handler = {
 
 class SubX extends Proxy {
   constructor (target) {
+    R.forEach(([key, val]) => {
+      if (typeof val === 'object' && !val.__isInstanceOfSubX) {
+        target[key] = new SubX(val)
+      }
+    }, R.toPairs(target))
     super(target, handler)
   }
 }
@@ -71,11 +76,10 @@ describe('new design', () => {
   })
 
   test('nested', () => {
-    const n = new SubX({})
+    const n = new SubX({ a: { } })
     n.$.subscribe(mutation => {
       console.log(mutation)
     })
-    n.a = {}
     n.a.$.subscribe(mutation => {
       console.log(mutation)
     })
