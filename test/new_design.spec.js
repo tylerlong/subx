@@ -1,6 +1,7 @@
 /* eslint-env jest */
-import { Subject } from 'rxjs'
+import { Subject, combineLatest } from 'rxjs'
 import * as R from 'ramda'
+import { filter, map, startWith } from 'rxjs/operators'
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -116,6 +117,19 @@ describe('new design', () => {
     p.$.subscribe(action => {
       console.log(action)
       console.log(p.fullName())
+    })
+    p.firstName = 'Tyler'
+    p.lastName = 'Lau'
+  })
+
+  test('rxjs operators', () => {
+    const p = SubX.create({ firstName: '', lastName: '' })
+    p.firstName = 'Chuntao'
+    p.lastName = 'Liu'
+    const firstName$ = p.$.pipe(filter(action => action.prop === 'firstName'), map(action => action.val), startWith(p.firstName))
+    const lastName$ = p.$.pipe(filter(action => action.prop === 'lastName'), map(action => action.val), startWith(p.lastName))
+    combineLatest(firstName$, lastName$).subscribe(([firstName, lastName]) => {
+      console.log(`${firstName} ${lastName}`)
     })
     p.firstName = 'Tyler'
     p.lastName = 'Lau'
