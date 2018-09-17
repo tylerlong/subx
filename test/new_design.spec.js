@@ -108,4 +108,26 @@ describe('new design', () => {
     expect(d.$ instanceof Subject).toBe(true)
     expect(d.$$ instanceof Subject).toBe(true)
   })
+
+  test('delete property', () => {
+    const p = SubX.create({ firstName: 'San', test: {} })
+    delete p.firstName
+    expect(p.firstName).toBeUndefined()
+    let count1 = 0
+    p.$$.subscribe(action => {
+      count1 += 1
+      console.log(action)
+    })
+    const test = p.test
+    delete p.test
+    let count2 = 0
+    test.$$.subscribe(action => {
+      count2 += 1
+      console.log(action)
+    })
+    test.a = {}
+    test.a.b = {}
+    expect(count1).toBe(0)
+    expect(count2).toBe(2)
+  })
 })
