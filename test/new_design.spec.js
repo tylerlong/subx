@@ -4,7 +4,6 @@ import * as R from 'ramda'
 
 const createHandler = (parent, path = []) => ({
   set: (target, property, value, receiver) => {
-    // const oldVal = target[property]
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
       target[property] = new SubX(value, parent, [property])
     } else {
@@ -12,10 +11,8 @@ const createHandler = (parent, path = []) => ({
     }
     if ('$' in target) {
       target.$.next({
-        // target,
         prop: property,
         val: value
-        // oldVal
       })
     }
     if ('$$' in target) {
