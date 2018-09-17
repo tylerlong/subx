@@ -18,6 +18,12 @@ const createHandler = (parent, path = []) => ({
         // oldVal
       })
     }
+    if ('$$' in target) {
+      target.$.next({
+        path: [property],
+        val: value
+      })
+    }
     if (parent && '$$' in parent) {
       parent.$$.next({
         path: [...path, property],
@@ -108,5 +114,6 @@ describe('new design', () => {
     })
     n.a.b = 'hello'
     n.a.b = 'world'
+    n.c = 'test'
   })
 })
