@@ -114,7 +114,7 @@ describe('new design', () => {
     delete p.firstName
     expect(p.firstName).toBeUndefined()
     let count1 = 0
-    p.$$.subscribe(action => {
+    p.$$.pipe(filter(action => action.type === 'SET')).subscribe(action => {
       count1 += 1
       console.log(action)
     })
