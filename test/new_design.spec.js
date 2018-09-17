@@ -2,11 +2,11 @@
 import { Subject } from 'rxjs'
 import * as R from 'ramda'
 
-const createHandler = parent => ({
+const createHandler = (parent, path = []) => ({
   set: (target, property, value, receiver) => {
     // const oldVal = target[property]
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
-      target[property] = new SubX(value, parent)
+      target[property] = new SubX(value, parent, [property])
     } else {
       target[property] = value
     }
@@ -20,7 +20,7 @@ const createHandler = parent => ({
     }
     if (parent && '$$' in parent) {
       parent.$$.next({
-        prop: property,
+        path: [...path, property],
         val: value
       })
     }
@@ -44,12 +44,12 @@ const createHandler = parent => ({
 })
 
 class SubX extends Proxy {
-  constructor (target, parent) {
-    super(target, createHandler(parent))
+  constructor (target, parent, path = []) {
+    super(target, createHandler(parent, path))
     R.pipe(
       R.toPairs,
       R.filter(([, val]) => typeof val === 'object' && !val.__isInstanceOfSubX),
-      R.forEach(([property, val]) => { target[property] = new SubX(val, this) })
+      R.forEach(([property, val]) => { target[property] = new SubX(val, this, [property]) })
     )(target)
   }
 }
@@ -107,5 +107,6 @@ describe('new design', () => {
       console.log(mutation)
     })
     n.a.b = 'hello'
+    n.a.b = 'world'
   })
 })
