@@ -51,7 +51,9 @@ const handler = {
     if (val && val.__isSubX__) {
       val.__subscription__.unsubscribe()
     }
-    return delete target[prop]
+    delete target[prop]
+    target.$.next({ type: 'DELETE', prop, val })
+    return true
   }
 }
 
