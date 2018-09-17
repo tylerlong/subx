@@ -16,13 +16,14 @@ const handler = {
     return true
   },
   get: (target, prop, receiver) => {
-    if (prop === 'toJSON') {
-      return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
+    switch (prop) {
+      case 'toJSON':
+        return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
+      case 'inspect':
+        return () => JSON.stringify(receiver, null, 2)
+      default:
+        return target[prop]
     }
-    if (prop === 'inspect') {
-      return () => JSON.stringify(receiver, null, 2)
-    }
-    return target[prop]
   }
 }
 
