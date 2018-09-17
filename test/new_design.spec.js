@@ -10,7 +10,9 @@ const handler = {
     }
     const oldVal = target[prop]
     if (typeof val === 'object') {
-      target[prop] = SubX.create(val, target, prop) // for recursive
+      const proxy = SubX.create(val) // for recursive
+      proxy.$$.subscribe(action => receiver.$$.next(R.assoc('path', [prop, ...action.path], action)))
+      target[prop] = proxy
     } else {
       target[prop] = val
     }
@@ -32,7 +34,7 @@ const handler = {
 }
 
 const SubX = {
-  create: (value, parent, prop) => {
+  create: (value) => {
     const emptyValue = R.empty(value)
     emptyValue.$ = new Subject()
     emptyValue.$$ = new Subject()
@@ -42,12 +44,34 @@ const SubX = {
       R.forEach(([prop, val]) => { proxy[prop] = val })
     )(value)
     proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
-    if (parent) {
-      proxy.$$.subscribe(action => parent.$$.next(R.assoc('path', [prop, ...action.path], action)))
-    }
     return proxy
   }
 }
+
+// const SubjectX = modelObj => {
+//   class MyClass {
+//     constructor (obj) {
+//       const emptyValue = R.empty(modelObj)
+//       emptyValue.$ = new Subject()
+//       emptyValue.$$ = new Subject()
+//       const proxy = new Proxy(emptyValue, handler)
+//       R.pipe(
+//         R.toPairs,
+//         R.forEach(([prop, val]) => { proxy[prop] = val })
+//       )(modelObj)
+//       R.pipe(
+//         R.toPairs,
+//         R.forEach(([prop, val]) => { proxy[prop] = val })
+//       )(obj)
+//       proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
+//       if (parent) {
+//         proxy.$$.subscribe(action => parent.$$.next(R.assoc('path', [prop, ...action.path], action)))
+//       }
+//       return proxy
+//     }
+//   }
+//   return MyClass
+// }
 
 describe('new design', () => {
   test('prototype', () => {
