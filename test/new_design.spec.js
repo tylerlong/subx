@@ -7,12 +7,13 @@ const handler = {
     if (prop === '$' || prop === '$$') {
       return false // disallow overriding $ or $$
     }
-    target.$.next({ type: 'SET', prop, val, oldVal: target[prop] })
+    const oldVal = target[prop]
     if (typeof val === 'object') {
       target[prop] = SubX.create(val, target, prop) // for recursive
     } else {
       target[prop] = val
     }
+    target.$.next({ type: 'SET', prop, val, oldVal })
     return true
   },
   get: (target, prop, receiver) => {
@@ -112,5 +113,11 @@ describe('new design', () => {
     p.firstName = 'Chuntao'
     p.lastName = 'Liu'
     console.log(p.fullName())
+    p.$.subscribe(action => {
+      console.log(action)
+      console.log(p.fullName())
+    })
+    p.firstName = 'Tyler'
+    p.lastName = 'Lau'
   })
 })
