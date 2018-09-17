@@ -18,6 +18,12 @@ const createHandler = parent => ({
         // oldVal
       })
     }
+    if (parent && '$$' in parent) {
+      parent.$$.next({
+        prop: property,
+        val: value
+      })
+    }
     return true
   },
   get: (target, property, receiver) => {
@@ -25,10 +31,13 @@ const createHandler = parent => ({
       return true
     }
     if (property === 'toJSON') {
-      return () => R.dissoc('$', target)
+      return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
     }
     if (property === '$' && !('$' in target)) {
       target.$ = new Subject()
+    }
+    if (property === '$$' && !('$$' in target)) {
+      target.$$ = new Subject()
     }
     return target[property]
   }
@@ -58,6 +67,9 @@ describe('new design', () => {
     p.$.subscribe(mutation => {
       console.log('2:', mutation)
     })
+    p.$$.subscribe(mutation => {
+      console.log('3:', mutation)
+    })
     p.firstName = 'Wu'
     p.lastName = 'Wang'
 
@@ -81,6 +93,17 @@ describe('new design', () => {
       console.log(mutation)
     })
     n.a.$.subscribe(mutation => {
+      console.log(mutation)
+    })
+    n.a.b = 'hello'
+  })
+
+  test('$$', () => {
+    const n = new SubX({ a: { } })
+    n.$.subscribe(mutation => {
+      console.log(mutation)
+    })
+    n.$$.subscribe(mutation => {
       console.log(mutation)
     })
     n.a.b = 'hello'
