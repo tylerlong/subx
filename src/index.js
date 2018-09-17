@@ -6,15 +6,19 @@ const handler = {
     if (prop === '$' || prop === '$$') {
       return false // disallow overriding $ or $$
     }
+    if (prop.startsWith('__')) {
+      target[prop] = val
+      return true
+    }
     const oldVal = target[prop]
     if (typeof val === 'object') {
       let proxy
-      if (val.__isSubX) {
+      if (val.__isSubX__) {
         proxy = val
       } else {
         proxy = SubX.create(val) // for recursive
       }
-      proxy.$$.subscribe(action => receiver.$$.next(R.assoc('path', [prop, ...action.path], action)))
+      proxy.__subscription__ = proxy.$$.subscribe(action => receiver.$$.next(R.assoc('path', [prop, ...action.path], action)))
       target[prop] = proxy
     } else {
       target[prop] = val
@@ -24,10 +28,10 @@ const handler = {
   },
   get: (target, prop, receiver) => {
     switch (prop) {
-      case '__isSubX':
+      case '__isSubX__':
         return true
       case 'toJSON':
-        return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
+        return () => R.pipe(R.dissoc('$'), R.dissoc('$$'), R.dissoc('__subscription__'))(target)
       case 'toString':
         return () => `SubX ${JSON.stringify(receiver, null, 2)}`
       case 'inspect':
@@ -35,6 +39,16 @@ const handler = {
       default:
         return target[prop]
     }
+  },
+  deleteProperty (target, prop) {
+    if (prop === '$' || prop === '$$') {
+      return false // disallow deletion of $ or $$
+    }
+    const val = target[prop]
+    if (val && val.__isSubX__) {
+      val.__subscription__.unsubscribe()
+    }
+    return delete target[prop]
   }
 }
 
