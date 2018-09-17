@@ -39,4 +39,18 @@ describe('demo', () => {
     person.lastName = 'Wang'
     person.firstName = 'Wu'
   })
+
+  test('simplest demo', () => {
+    const person = SubX.create({
+      firstName: 'San',
+      lastName: 'Zhang'
+    })
+    person.$.subscribe(action => {
+      console.log('Property changed', action)
+    })
+    person.firstName = 'Si'
+    person.lastName = 'Li'
+    person.lastName = 'Wang'
+    person.firstName = 'Wu'
+  })
 })

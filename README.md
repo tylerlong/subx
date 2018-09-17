@@ -5,11 +5,15 @@ Subject X, Reactive Subject
 Pronunciation: [Subject X]
 
 
-## What is a Reactive Subject?
+## What is Reactive Subject?
 
-A Reactive Subject is a JavaScript class which could be used to initialize reactive objects.
+Subject is the same concept as the subject in [observer pattern](https://en.wikipedia.org/wiki/Observer_pattern).
 
-A reactive object is a special JavaScript object which allows you to subscribe to its mutations.
+A reactive subject is a special JavaScript object which allows you to subscribe to its **actions/mutations**. If you are a React + Redux developer, you might find the word "action" very familiar. But in case you are a Vue.js + Vuex developer, you might prefer the word "mutation".
+
+The wonderful thing of SubX is: you don't need to manually create actions/mutations, this library generates them for you automatically!
+
+In this projects, we call actions/mutations **events**.
 
 
 ## Installation
@@ -26,19 +30,12 @@ import SubX from 'subx'
 ## Sample
 
 ```js
-const Person = SubX({
-    firstName: '',
-    lastName: ''
-})
-const person = new Person({
+const person = SubX.create({
     firstName: 'San',
     lastName: 'Zhang'
 })
-person.firstName$.subscribe(mutation => {
-    console.log('First name changed', mutation)
-})
-person.lastName$.subscribe(mutation => {
-    console.log('Last name changed', mutation)
+person.$.subscribe(action => {
+    console.log('Property changed', action)
 })
 person.firstName = 'Si'
 person.lastName = 'Li'
@@ -46,50 +43,53 @@ person.lastName = 'Wang'
 person.firstName = 'Wu'
 ```
 
-In the sample code above, `person` is an object with two properties: `firstName` and `lastName`.
+In the sample code above, `person` is an reactive subject.
 
-We can subscribe to their mutations by `person.firstName$.subscribe` and `person.lastName$.subscribe`.
+`person.$` is a stream of actions/mutations.
 
-We call variables end with `$` streams. So `person.firstName$` is a stream of first names, `person.lastName$` is a stream of last names.
-
-We use `stream$.subscribe()` method to listen to the data events in the the stream.
+We can subscribe to them by `person.$.subscribe(...)`.
 
 ### Console output
 
 ```
-First name changed { prop: 'firstName', val: 'Si', oldVal: 'San' }
-Last name changed { prop: 'lastName', val: 'Li', oldVal: 'Zhang' }
-Last name changed { prop: 'lastName', val: 'Wang', oldVal: 'Li' }
-First name changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
+Property changed { type: 'SET', prop: 'firstName', val: 'Si', oldVal: 'San' }
+Property changed { type: 'SET', prop: 'lastName', val: 'Li', oldVal: 'Zhang' }
+Property changed { type: 'SET', prop: 'lastName', val: 'Wang', oldVal: 'Li' }
+Property changed { type: 'SET', prop: 'firstName', val: 'Wu', oldVal: 'Si' }
 ```
 
 
-## Subscribe to all property streams in one go
+## Filter events
+
+SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs), so you can filter it just like filtering any RxJS event streams(Observables).
 
 ```js
-const Person = SubX({
+import { filter, map } from 'rxjs/operators'
+
+const person = SubX.create({
     firstName: 'San',
     lastName: 'Zhang'
 })
-const person = new Person()
-person.$.subscribe(mutation => {
-    console.log('Prop changed', mutation)
+const firstName$ = person.$.pipe(
+    filter(event => event.prop === 'firstName')
+    map(event => event.val)
+)
+firstName$.subscribe(val => {
+    console.log('First name changed to', val)
 })
 person.firstName = 'Si'
-person.lastName = 'Li'
-person.lastName = 'Wang'
 person.firstName = 'Wu'
 ```
 
-Instead of `person.firstName$.subscribe` and `person.lastName$.subscribe`, we do `person.$.subscribe`.
+We call variables end with `$` streams. So `firstName$` is a stream of first names.
+
+
 
 ### Console output
 
 ```
-Prop changed { prop: 'firstName', val: 'Si', oldVal: 'San' }
-Prop changed { prop: 'lastName', val: 'Li', oldVal: 'Zhang' }
-Prop changed { prop: 'lastName', val: 'Wang', oldVal: 'Li' }
-Prop changed { prop: 'firstName', val: 'Wu', oldVal: 'Si' }
+First name changed to Si
+First name changed to Wu
 ```
 
 
