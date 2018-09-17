@@ -25,6 +25,7 @@ describe('test', () => {
   test('proxy for array', () => {
     const handler = {
       deleteProperty: function (target, property) {
+        delete target[property]
         console.log('Deleted %s', property)
         return true
       },

@@ -6,7 +6,7 @@ const handler = {
     if (prop === '$' || prop === '$$') {
       return false // disallow overriding $ or $$
     }
-    if (prop.startsWith('__')) {
+    if (prop.startsWith('__') && prop.endsWith('__')) {
       target[prop] = val
       return true
     }
