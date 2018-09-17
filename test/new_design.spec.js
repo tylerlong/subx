@@ -155,4 +155,26 @@ describe('new design', () => {
     p.a.b.c = {}
     expect(count).toBe(4)
   })
+
+  test('delete event', () => {
+    const Person = new SubX({ firstName: '', lastName: '' })
+    const p = new Person({ firstName: 'Chuntao', lastName: 'Liu' })
+    const actions = []
+    p.$$.subscribe(action => {
+      actions.push(action)
+      console.log(action)
+    })
+    delete p.firstName
+    delete p.lastName
+    expect(actions.length).toBe(2)
+    expect(actions).toEqual([{
+      type: 'DELETE',
+      path: ['firstName'],
+      val: 'Chuntao'
+    }, {
+      type: 'DELETE',
+      path: ['lastName'],
+      val: 'Liu'
+    }])
+  })
 })
