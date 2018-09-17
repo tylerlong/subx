@@ -43,6 +43,7 @@ class SubX {
         const proxy = new Proxy(emptyValue, handler)
         R.pipe(
           R.concat,
+          R.reject(([prop, val]) => prop === '$' || prop === '$$'),
           R.forEach(([prop, val]) => { proxy[prop] = val })
         )(R.toPairs(modelObj), R.toPairs(obj))
         proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
@@ -146,5 +147,18 @@ describe('new design', () => {
     const Person = new SubX({ firstName: 'San', lastName: 'Zhang', fullName: function () { return `${this.firstName} ${this.lastName}` } })
     const p = new Person({ firstName: 'Chuntao' })
     console.log(p.fullName())
+  })
+
+  test('instanceof', () => {
+    const Person = new SubX({ name: 'Tyler Liu' })
+    const p = new Person()
+    console.log(p.name)
+    expect(p instanceof Person).toBe(false)
+  })
+
+  test('$ or $$ as prop', () => {
+    const d = SubX.create({ $: '$', $$: '$$' })
+    expect(d.$ instanceof Subject).toBe(true)
+    expect(d.$$ instanceof Subject).toBe(true)
   })
 })
