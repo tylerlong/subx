@@ -3,7 +3,7 @@ import SubX from '../src/index'
 
 describe('constructor', () => {
   test('no parameters', () => {
-    const Todo = SubX({
+    const Todo = new SubX({
       text: '',
       done: false
     })
@@ -13,7 +13,7 @@ describe('constructor', () => {
   })
 
   test('default properties', () => {
-    const Todo = SubX({
+    const Todo = new SubX({
       text: '',
       done: false
     })
