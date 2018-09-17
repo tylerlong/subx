@@ -9,12 +9,6 @@ const handler = {
       val: value,
       type: 'SET'
     })
-    target.$$.next({
-      path: [property],
-      val: value,
-      type: 'SET'
-    })
-
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
       target[property] = new SubX(value, target, property)
     } else {
@@ -37,10 +31,9 @@ class SubX extends Proxy {
   constructor (target, parent, property) {
     target.$ = new Subject()
     target.$$ = new Subject()
+    target.$.subscribe(mutation => target.$$.next(R.pipe(R.assoc('path', [mutation.prop]), R.dissoc('prop'))(mutation)))
     if (parent) {
-      target.$$.subscribe(mutation => {
-        parent.$$.next(R.assoc('path', [property, ...mutation.path], mutation))
-      })
+      target.$$.subscribe(mutation => parent.$$.next(R.assoc('path', [property, ...mutation.path], mutation)))
     }
     super(target, handler)
     R.pipe(
