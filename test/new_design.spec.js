@@ -3,44 +3,45 @@ import { Subject } from 'rxjs'
 import * as R from 'ramda'
 
 const handler = {
-  set: (target, property, value, receiver) => {
-    target.$.next({
-      prop: property,
-      val: value,
-      type: 'SET'
-    })
-    if (typeof value === 'object' && !value.__isInstanceOfSubX) {
-      target[property] = SubX.create(value, target, property)
+  set: (target, prop, val, receiver) => {
+    if (prop === '$' || prop === '$$') {
+      return false // disallow overriding $ or $$
+    }
+    target.$.next({ type: 'SET', prop, val })
+    if (typeof val === 'object') {
+      target[prop] = SubX.create(val, target, prop) // for recursive
     } else {
-      target[property] = value
+      target[prop] = val
     }
     return true
   },
-  get: (target, property, receiver) => {
-    if (property === '__isInstanceOfSubX') {
-      return true
-    }
-    if (property === 'toJSON') {
+  get: (target, prop, receiver) => {
+    if (prop === 'toJSON') {
       return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
     }
-    return target[property]
+    if (prop === 'inspect') {
+      return () => JSON.stringify(receiver, null, 2)
+    }
+    return target[prop]
   }
 }
 
 const SubX = {
-  create: (target, parent, property) => {
-    target.$ = new Subject()
-    target.$$ = new Subject()
-    target.$.subscribe(mutation => target.$$.next(R.pipe(R.assoc('path', [mutation.prop]), R.dissoc('prop'))(mutation)))
+  create: (value, parent, prop) => {
+    value.$ = new Subject()
+    value.$$ = new Subject()
+    value.$.subscribe(mutation => value.$$.next(R.pipe(R.assoc('path', [mutation.prop]), R.dissoc('prop'))(mutation)))
     if (parent) {
-      target.$$.subscribe(mutation => parent.$$.next(R.assoc('path', [property, ...mutation.path], mutation)))
+      value.$$.subscribe(mutation => parent.$$.next(R.assoc('path', [prop, ...mutation.path], mutation)))
     }
     R.pipe(
+      R.dissoc('$'),
+      R.dissoc('$$'),
       R.toPairs,
-      R.filter(([property, val]) => property !== '$' && property !== '$$' && typeof val === 'object' && !val.__isInstanceOfSubX),
-      R.forEach(([property, val]) => { target[property] = SubX.create(val, target, property) })
-    )(target)
-    return new Proxy(target, handler)
+      R.filter(([property, val]) => typeof val === 'object'),
+      R.forEach(([property, val]) => { value[property] = SubX.create(val, value, property) })
+    )(value)
+    return new Proxy(value, handler)
   }
 }
 
@@ -100,5 +101,6 @@ describe('new design', () => {
     })
     n.a.b.c.d = {}
     n.a.b.c.d.e = {}
+    console.log(n)
   })
 })
