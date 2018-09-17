@@ -33,45 +33,32 @@ const handler = {
   }
 }
 
-const SubX = {
-  create: (value) => {
-    const emptyValue = R.empty(value)
-    emptyValue.$ = new Subject()
-    emptyValue.$$ = new Subject()
-    const proxy = new Proxy(emptyValue, handler)
-    R.pipe(
-      R.toPairs,
-      R.forEach(([prop, val]) => { proxy[prop] = val })
-    )(value)
-    proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
-    return proxy
+class SubX {
+  constructor (modelObj = {}) {
+    class Model {
+      constructor (obj = {}) {
+        const emptyValue = R.empty(obj)
+        emptyValue.$ = new Subject()
+        emptyValue.$$ = new Subject()
+        const proxy = new Proxy(emptyValue, handler)
+        R.pipe(
+          R.toPairs,
+          R.forEach(([prop, val]) => { proxy[prop] = val })
+        )(modelObj)
+        R.pipe(
+          R.toPairs,
+          R.forEach(([prop, val]) => { proxy[prop] = val })
+        )(obj)
+        proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
+        return proxy
+      }
+    }
+    return Model
   }
 }
 
-// const SubjectX = modelObj => {
-//   class MyClass {
-//     constructor (obj) {
-//       const emptyValue = R.empty(modelObj)
-//       emptyValue.$ = new Subject()
-//       emptyValue.$$ = new Subject()
-//       const proxy = new Proxy(emptyValue, handler)
-//       R.pipe(
-//         R.toPairs,
-//         R.forEach(([prop, val]) => { proxy[prop] = val })
-//       )(modelObj)
-//       R.pipe(
-//         R.toPairs,
-//         R.forEach(([prop, val]) => { proxy[prop] = val })
-//       )(obj)
-//       proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
-//       if (parent) {
-//         proxy.$$.subscribe(action => parent.$$.next(R.assoc('path', [prop, ...action.path], action)))
-//       }
-//       return proxy
-//     }
-//   }
-//   return MyClass
-// }
+const DefaultModel = new SubX({})
+SubX.create = (obj = {}) => new DefaultModel(obj)
 
 describe('new design', () => {
   test('prototype', () => {
@@ -157,5 +144,11 @@ describe('new design', () => {
     })
     p.firstName = 'Tyler'
     p.lastName = 'Lau'
+  })
+
+  test('class', () => {
+    const Person = new SubX({ firstName: 'San', lastName: 'Zhang', fullName: function () { return `${this.firstName} ${this.lastName}` } })
+    const p = new Person({ firstName: 'Chuntao' })
+    console.log(p.fullName())
   })
 })
