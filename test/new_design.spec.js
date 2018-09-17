@@ -14,7 +14,7 @@ const createHandler = () => ({
     })
 
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
-      target[property] = new SubX(value, target, [property])
+      target[property] = new SubX(value, target, property)
     } else {
       target[property] = value
     }
@@ -32,19 +32,19 @@ const createHandler = () => ({
 })
 
 class SubX extends Proxy {
-  constructor (target, parent, path = []) {
+  constructor (target, parent, property) {
     target.$ = new Subject()
     target.$$ = new Subject()
     if (parent) {
       target.$$.subscribe(mutation => {
-        parent.$$.next(R.assoc('path', [...path, ...mutation.path], mutation))
+        parent.$$.next(R.assoc('path', [property, ...mutation.path], mutation))
       })
     }
     super(target, createHandler())
     R.pipe(
       R.toPairs,
       R.filter(([property, val]) => property !== '$' && property !== '$$' && typeof val === 'object' && !val.__isInstanceOfSubX),
-      R.forEach(([property, val]) => { target[property] = new SubX(val, this, [property]) })
+      R.forEach(([property, val]) => { target[property] = new SubX(val, this, property) })
     )(target)
   }
 }
