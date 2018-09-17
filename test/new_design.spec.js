@@ -30,16 +30,16 @@ const SubX = {
   create: (value, parent, prop) => {
     value.$ = new Subject()
     value.$$ = new Subject()
-    value.$.subscribe(mutation => value.$$.next(R.pipe(R.assoc('path', [mutation.prop]), R.dissoc('prop'))(mutation)))
+    value.$.subscribe(action => value.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
     if (parent) {
-      value.$$.subscribe(mutation => parent.$$.next(R.assoc('path', [prop, ...mutation.path], mutation)))
+      value.$$.subscribe(action => parent.$$.next(R.assoc('path', [prop, ...action.path], action)))
     }
     R.pipe(
       R.dissoc('$'),
       R.dissoc('$$'),
       R.toPairs,
-      R.filter(([property, val]) => typeof val === 'object'),
-      R.forEach(([property, val]) => { value[property] = SubX.create(val, value, property) })
+      R.filter(([, val]) => typeof val === 'object'),
+      R.forEach(([prop, val]) => { value[prop] = SubX.create(val, value, prop) })
     )(value)
     return new Proxy(value, handler)
   }
@@ -49,17 +49,17 @@ describe('new design', () => {
   test('prototype', () => {
     const p = SubX.create({ hello: 'world' })
 
-    p.$.subscribe(mutation => {
-      console.log('1:', mutation)
+    p.$.subscribe(action => {
+      console.log('1:', action)
     })
     p.firstName = 'Si'
     p.lastName = 'Li'
 
-    p.$.subscribe(mutation => {
-      console.log('2:', mutation)
+    p.$.subscribe(action => {
+      console.log('2:', action)
     })
-    p.$$.subscribe(mutation => {
-      console.log('3:', mutation)
+    p.$$.subscribe(action => {
+      console.log('3:', action)
     })
     p.firstName = 'Wu'
     p.lastName = 'Wang'
@@ -69,8 +69,8 @@ describe('new design', () => {
 
   test('array', () => {
     const a = SubX.create([])
-    a.$.subscribe(mutation => {
-      console.log(mutation)
+    a.$.subscribe(action => {
+      console.log(action)
     })
     a.push(1)
     a.push(2)
@@ -80,24 +80,24 @@ describe('new design', () => {
 
   test('nested', () => {
     const n = SubX.create({ a: { } })
-    n.$.subscribe(mutation => {
-      console.log(mutation)
+    n.$.subscribe(action => {
+      console.log(action)
     })
-    n.a.$.subscribe(mutation => {
-      console.log(mutation)
+    n.a.$.subscribe(action => {
+      console.log(action)
     })
     n.a.b = 'hello'
   })
 
   test('$$', () => {
     const n = SubX.create({ a: { } })
-    n.$$.subscribe(mutation => {
-      console.log(mutation)
+    n.$$.subscribe(action => {
+      console.log(action)
     })
     n.a.b = {}
     n.a.b.c = {}
-    n.a.b.c.$$.subscribe(mutation => {
-      console.log(mutation)
+    n.a.b.c.$$.subscribe(action => {
+      console.log(action)
     })
     n.a.b.c.d = {}
     n.a.b.c.d.e = {}
