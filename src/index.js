@@ -1,85 +1,65 @@
+import { Subject } from 'rxjs'
 import * as R from 'ramda'
-import { Subject, never, merge } from 'rxjs'
 
-const SubX = obj => {
-  class Model {
-    constructor (defaultObj = {}) {
-      // init properties and subjects
-      this.$ = never()
-      R.pipe(
-        R.keys,
-        R.forEach(key => {
-          this[`_${key}`] = defaultObj[key]
-          if (this[`_${key}`] === undefined) {
-            this[`_${key}`] = obj[key]
-            if (typeof this[`_${key}`] === 'function') {
-              this[`_${key}`] = this[`_${key}`]()
-            }
-          }
-          this[`${key}$`] = new Subject()
-          this.$ = merge(this.$, this[`${key}$`])
-        })
-      )(obj)
+const handler = {
+  set: (target, prop, val, receiver) => {
+    if (prop === '$' || prop === '$$') {
+      return false // disallow overriding $ or $$
     }
-
-    // for serialization and display
-    toJSON () {
-      return R.pipe(
-        R.keys,
-        R.map(key => [key, this[`_${key}`]]),
-        R.fromPairs
-      )(obj)
+    const oldVal = target[prop]
+    if (typeof val === 'object') {
+      let proxy
+      if (val.__isSubX) {
+        proxy = val
+      } else {
+        proxy = SubX.create(val) // for recursive
+      }
+      proxy.$$.subscribe(action => receiver.$$.next(R.assoc('path', [prop, ...action.path], action)))
+      target[prop] = proxy
+    } else {
+      target[prop] = val
     }
-    toString () {
-      return `SubX ${JSON.stringify(this, null, 2)}`
-    }
-    inspect () {
-      return this.toString()
+    target.$.next({ type: 'SET', prop, val, oldVal })
+    return true
+  },
+  get: (target, prop, receiver) => {
+    switch (prop) {
+      case '__isSubX':
+        return true
+      case 'toJSON':
+        return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
+      case 'toString':
+        return () => `SubX ${JSON.stringify(receiver, null, 2)}`
+      case 'inspect':
+        return () => receiver.toString()
+      default:
+        return target[prop]
     }
   }
+}
 
-  // Produce data for subjects
-  R.pipe(
-    R.keys,
-    R.forEach(key => {
-      Object.defineProperty(Model.prototype, key, {
-        get: function () {
-          return this[`_${key}`]
-        },
-        set: function (val) {
-          const oldVal = this[`_${key}`]
-          this[`_${key}`] = val
-          this[`${key}$`].next({ prop: key, val, oldVal })
-        }
-      })
-    })
-  )(obj)
-
-  // computed properties
-  Model.computed = arg => {
-    if (typeof arg === 'function') {
-      const func = arg
-      R.pipe(
-        R.keys,
-        R.forEach(key => {
-          Model.prototype[key] = function (...args) {
-            return func(this)[key](...args)
-          }
-        })
-      )(func())
-    } else { // type of arg === 'object'
-      const obj = arg
-      R.pipe(
-        R.keys,
-        R.forEach(key => {
-          Model.prototype[key] = obj[key]
-        })
-      )(obj)
+class SubX {
+  constructor (modelObj = {}) {
+    class Model {
+      constructor (obj = {}) {
+        const emptyValue = R.empty(obj)
+        emptyValue.$ = new Subject()
+        emptyValue.$$ = new Subject()
+        const proxy = new Proxy(emptyValue, handler)
+        R.pipe(
+          R.concat,
+          R.reject(([prop, val]) => prop === '$' || prop === '$$'),
+          R.forEach(([prop, val]) => { proxy[prop] = val })
+        )(R.toPairs(modelObj), R.toPairs(obj))
+        proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
+        return proxy
+      }
     }
     return Model
   }
-
-  return Model
 }
+
+const DefaultModel = new SubX({})
+SubX.create = (obj = {}) => new DefaultModel(obj)
 
 export default SubX
