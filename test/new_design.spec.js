@@ -10,7 +10,7 @@ const handler = {
       type: 'SET'
     })
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
-      target[property] = new SubX(value, target, property)
+      target[property] = createSubX(value, target, property)
     } else {
       target[property] = value
     }
@@ -27,26 +27,24 @@ const handler = {
   }
 }
 
-class SubX extends Proxy {
-  constructor (target, parent, property) {
-    target.$ = new Subject()
-    target.$$ = new Subject()
-    target.$.subscribe(mutation => target.$$.next(R.pipe(R.assoc('path', [mutation.prop]), R.dissoc('prop'))(mutation)))
-    if (parent) {
-      target.$$.subscribe(mutation => parent.$$.next(R.assoc('path', [property, ...mutation.path], mutation)))
-    }
-    super(target, handler)
-    R.pipe(
-      R.toPairs,
-      R.filter(([property, val]) => property !== '$' && property !== '$$' && typeof val === 'object' && !val.__isInstanceOfSubX),
-      R.forEach(([property, val]) => { target[property] = new SubX(val, this, property) })
-    )(target)
+const createSubX = (target, parent, property) => {
+  target.$ = new Subject()
+  target.$$ = new Subject()
+  target.$.subscribe(mutation => target.$$.next(R.pipe(R.assoc('path', [mutation.prop]), R.dissoc('prop'))(mutation)))
+  if (parent) {
+    target.$$.subscribe(mutation => parent.$$.next(R.assoc('path', [property, ...mutation.path], mutation)))
   }
+  R.pipe(
+    R.toPairs,
+    R.filter(([property, val]) => property !== '$' && property !== '$$' && typeof val === 'object' && !val.__isInstanceOfSubX),
+    R.forEach(([property, val]) => { target[property] = createSubX(val, target, property) })
+  )(target)
+  return new Proxy(target, handler)
 }
 
 describe('new design', () => {
   test('prototype', () => {
-    const p = new SubX({ hello: 'world' })
+    const p = createSubX({ hello: 'world' })
 
     p.$.subscribe(mutation => {
       console.log('1:', mutation)
@@ -67,7 +65,7 @@ describe('new design', () => {
   })
 
   test('array', () => {
-    const a = new SubX([])
+    const a = createSubX([])
     a.$.subscribe(mutation => {
       console.log(mutation)
     })
@@ -78,7 +76,7 @@ describe('new design', () => {
   })
 
   test('nested', () => {
-    const n = new SubX({ a: { } })
+    const n = createSubX({ a: { } })
     n.$.subscribe(mutation => {
       console.log(mutation)
     })
@@ -89,7 +87,7 @@ describe('new design', () => {
   })
 
   test('$$', () => {
-    const n = new SubX({ a: { } })
+    const n = createSubX({ a: { } })
     n.$$.subscribe(mutation => {
       console.log(mutation)
     })
