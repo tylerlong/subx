@@ -7,7 +7,7 @@ const handler = {
     if (prop === '$' || prop === '$$') {
       return false // disallow overriding $ or $$
     }
-    target.$.next({ type: 'SET', prop, val })
+    target.$.next({ type: 'SET', prop, val, oldVal: target[prop] })
     if (typeof val === 'object') {
       target[prop] = SubX.create(val, target, prop) // for recursive
     } else {
