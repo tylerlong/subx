@@ -10,7 +10,12 @@ const handler = {
     }
     const oldVal = target[prop]
     if (typeof val === 'object') {
-      const proxy = SubX.create(val) // for recursive
+      let proxy
+      if (val.__isSubX) {
+        proxy = val
+      } else {
+        proxy = SubX.create(val) // for recursive
+      }
       proxy.$$.subscribe(action => receiver.$$.next(R.assoc('path', [prop, ...action.path], action)))
       target[prop] = proxy
     } else {
@@ -21,6 +26,8 @@ const handler = {
   },
   get: (target, prop, receiver) => {
     switch (prop) {
+      case '__isSubX':
+        return true
       case 'toJSON':
         return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
       case 'toString':
