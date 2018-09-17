@@ -4,28 +4,19 @@ import * as R from 'ramda'
 
 const createHandler = (parent, path = []) => ({
   set: (target, property, value, receiver) => {
+    target.$.next({
+      prop: property,
+      val: value
+    })
+    target.$$.next({
+      path: [property],
+      val: value
+    })
+
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
-      target[property] = new SubX(value, parent, [property])
+      target[property] = new SubX(value, parent, [...path, property])
     } else {
       target[property] = value
-    }
-    if ('$' in target) {
-      target.$.next({
-        prop: property,
-        val: value
-      })
-    }
-    if ('$$' in target) {
-      target.$.next({
-        path: [property],
-        val: value
-      })
-    }
-    if (parent && '$$' in parent) {
-      parent.$$.next({
-        path: [...path, property],
-        val: value
-      })
     }
     return true
   },
@@ -36,22 +27,23 @@ const createHandler = (parent, path = []) => ({
     if (property === 'toJSON') {
       return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
     }
-    if (property === '$' && !('$' in target)) {
-      target.$ = new Subject()
-    }
-    if (property === '$$' && !('$$' in target)) {
-      target.$$ = new Subject()
-    }
     return target[property]
   }
 })
 
 class SubX extends Proxy {
   constructor (target, parent, path = []) {
+    target.$ = new Subject()
+    target.$$ = new Subject()
+    if (parent) {
+      target.$$.subscribe(mutation => {
+        parent.$$.next(R.assoc('path', [...path, ...mutation.path], mutation))
+      })
+    }
     super(target, createHandler(parent, path))
     R.pipe(
       R.toPairs,
-      R.filter(([, val]) => typeof val === 'object' && !val.__isInstanceOfSubX),
+      R.filter(([property, val]) => property !== '$' && property !== '$$' && typeof val === 'object' && !val.__isInstanceOfSubX),
       R.forEach(([property, val]) => { target[property] = new SubX(val, this, [property]) })
     )(target)
   }
@@ -110,7 +102,11 @@ describe('new design', () => {
       console.log(mutation)
     })
     n.a.b = 'hello'
-    n.a.b = 'world'
     n.c = 'test'
+
+    n.a.b = 'world'
+
+    n.a.b = {}
+    n.a.b.c = 5
   })
 })
