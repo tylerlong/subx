@@ -2,17 +2,16 @@
 import SubX from '../src/index'
 import {
   debounceTime,
-  map
+  map,
+  filter
 } from 'rxjs/operators'
-import { merge } from 'rxjs'
 import delay from 'timeout-as-promise'
 
 describe('computed properties', () => {
   test('demo 1', async () => {
-    const Person = SubX({
+    const Person = new SubX({
       firstName: 'San',
-      lastName: 'Zhang'
-    }).computed({
+      lastName: 'Zhang',
       fullName () {
         console.log('expensive computation')
         return `${this.firstName} ${this.lastName}`
@@ -20,7 +19,8 @@ describe('computed properties', () => {
     })
     const person = new Person()
 
-    merge(person.firstName$, person.lastName$).pipe(
+    person.$.pipe(
+      filter(action => action.prop === 'firstName' || action.prop === 'lastName'),
       debounceTime(100),
       map(() => person.fullName())
     ).subscribe(val => {
