@@ -19,8 +19,10 @@ const handler = {
     switch (prop) {
       case 'toJSON':
         return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
+      case 'toString':
+        return () => `SubX ${JSON.stringify(receiver, null, 2)}`
       case 'inspect':
-        return () => JSON.stringify(receiver, null, 2)
+        return () => receiver.toString()
       default:
         return target[prop]
     }
@@ -102,5 +104,6 @@ describe('new design', () => {
     n.a.b.c.d = {}
     n.a.b.c.d.e = {}
     console.log(n)
+    console.log(n + '')
   })
 })
