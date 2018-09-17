@@ -130,4 +130,29 @@ describe('new design', () => {
     expect(count1).toBe(0)
     expect(count2).toBe(2)
   })
+
+  test('override property', () => {
+    const p = SubX.create({ a: { b: {} } })
+    let count = 0
+    p.$$.subscribe(action => {
+      count += 1
+      console.log(action)
+    })
+    const b = p.a.b
+    b.c = {}
+    b.d = {}
+    p.a.b = {}
+    expect(count).toBe(3)
+    let count2 = 0
+    b.$$.subscribe(action => {
+      console.log(action)
+      count2 += 1
+    })
+    b.c = {}
+    b.d = {}
+    expect(count).toBe(3) // still 3, because b is not longer children of p
+    expect(count2).toBe(2)
+    p.a.b.c = {}
+    expect(count).toBe(4)
+  })
 })
