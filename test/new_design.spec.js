@@ -42,13 +42,9 @@ class SubX {
         emptyValue.$$ = new Subject()
         const proxy = new Proxy(emptyValue, handler)
         R.pipe(
-          R.toPairs,
+          R.concat,
           R.forEach(([prop, val]) => { proxy[prop] = val })
-        )(modelObj)
-        R.pipe(
-          R.toPairs,
-          R.forEach(([prop, val]) => { proxy[prop] = val })
-        )(obj)
+        )(R.toPairs(modelObj), R.toPairs(obj))
         proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
         return proxy
       }
