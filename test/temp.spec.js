@@ -9,11 +9,13 @@ import delay from 'timeout-as-promise'
 
 describe('computed properties', () => {
   test('demo 1', async () => {
+    let count = 0
     const Person = new SubX({
       firstName: 'San',
       lastName: 'Zhang',
       fullName () {
         console.log('expensive computation')
+        count += 1
         return `${this.firstName} ${this.lastName}`
       }
     })
@@ -34,5 +36,6 @@ describe('computed properties', () => {
     person.firstName = 'Wu'
 
     await delay(150)
+    expect(count).toBe(1)
   })
 })
