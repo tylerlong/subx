@@ -6,11 +6,13 @@ const handler = {
   set: (target, property, value, receiver) => {
     target.$.next({
       prop: property,
-      val: value
+      val: value,
+      type: 'SET'
     })
     target.$$.next({
       path: [property],
-      val: value
+      val: value,
+      type: 'SET'
     })
 
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
