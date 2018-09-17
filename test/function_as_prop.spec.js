@@ -4,16 +4,18 @@ import uuid from 'uuid/v1'
 
 describe('function as prop', () => {
   test('uuid', () => {
-    const Person = SubX({
-      id: () => uuid(),
+    const Person = new SubX({
+      // id: () => uuid(),
       firstName: '',
       lastName: ''
     })
     const person1 = new Person({
+      id: uuid(),
       firstName: 'San',
       lastName: 'Zhang'
     })
     const person2 = new Person({
+      id: uuid(),
       firstName: 'Si',
       lastName: 'Li'
     })
