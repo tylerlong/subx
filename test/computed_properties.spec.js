@@ -1,80 +1,16 @@
 /* eslint-env jest */
 import SubX from '../src/index'
-import { debounceTime, map } from 'rxjs/operators'
-import { merge } from 'rxjs'
+import { debounceTime, map, filter } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
+import * as R from 'ramda'
 
 describe('computed properties', () => {
-  test('self + arrow function', () => {
-    const Person = SubX({
-      firstName: 'San',
-      lastName: 'Zhang'
-    }).computed(self => ({
-      fullName: () => `${self.firstName} ${self.lastName}`
-    }))
-    const person = new Person()
-    expect(person.fullName()).toBe('San Zhang')
-
-    person.firstName = 'Si'
-    person.lastName = 'Li'
-    expect(person.fullName()).toBe('Si Li')
-
-    person.lastName = 'Wang'
-    person.firstName = 'Wu'
-    expect(person.fullName()).toBe('Wu Wang')
-  })
-
   test('this + normal function', () => {
-    const Person = SubX({
+    const Person = new SubX({
       firstName: 'San',
-      lastName: 'Zhang'
-    }).computed({
+      lastName: 'Zhang',
       fullName () {
         return `${this.firstName} ${this.lastName}`
-      }
-    })
-    const person = new Person()
-    expect(person.fullName()).toBe('San Zhang')
-
-    person.firstName = 'Si'
-    person.lastName = 'Li'
-    expect(person.fullName()).toBe('Si Li')
-
-    person.lastName = 'Wang'
-    person.firstName = 'Wu'
-    expect(person.fullName()).toBe('Wu Wang')
-  })
-
-  test('mixed 1', () => {
-    const Person = SubX({
-      firstName: 'San',
-      lastName: 'Zhang'
-    }).computed(self => ({
-      fullName () {
-        return `${self.firstName} ${self.lastName}`
-      }
-    }))
-    const person = new Person()
-    expect(person.fullName()).toBe('San Zhang')
-
-    person.firstName = 'Si'
-    person.lastName = 'Li'
-    expect(person.fullName()).toBe('Si Li')
-
-    person.lastName = 'Wang'
-    person.firstName = 'Wu'
-    expect(person.fullName()).toBe('Wu Wang')
-  })
-
-  test('mixed 2', () => {
-    const Person = SubX({
-      firstName: 'San',
-      lastName: 'Zhang'
-    }).computed(function (self) {
-      return {
-        fullName: () => {
-          return `${self.firstName} ${self.lastName}`
-        }
       }
     })
     const person = new Person()
@@ -92,10 +28,9 @@ describe('computed properties', () => {
   test('debounce expensive computation', async () => {
     let count = 0
     let fullName
-    const Person = SubX({
+    const Person = new SubX({
       firstName: 'San',
-      lastName: 'Zhang'
-    }).computed({
+      lastName: 'Zhang',
       fullName () {
         count += 1
         console.log('expensive computation')
@@ -104,9 +39,10 @@ describe('computed properties', () => {
     })
     const person = new Person()
 
-    merge(person.firstName$, person.lastName$).pipe(
+    person.$.pipe(
+      filter(action => R.contains(action.prop, ['firstName', 'lastName'])),
       debounceTime(100),
-      map(val => person.fullName())
+      map(action => person.fullName())
     ).subscribe(val => {
       fullName = val
     })
@@ -124,33 +60,9 @@ describe('computed properties', () => {
   })
 
   test('computed property with arguments', () => {
-    const Person = SubX({
+    const Person = new SubX({
       firstName: 'San',
-      lastName: 'Zhang'
-    }).computed(self => ({
-      fullName: () => `${self.firstName} ${self.lastName}`,
-      greeting: (phrase) => `${phrase} ${self.fullName()}`
-    }))
-    const person = new Person()
-    expect(person.fullName()).toBe('San Zhang')
-    expect(person.greeting('Hi')).toBe('Hi San Zhang')
-
-    person.firstName = 'Si'
-    person.lastName = 'Li'
-    expect(person.fullName()).toBe('Si Li')
-    expect(person.greeting('Hello')).toBe('Hello Si Li')
-
-    person.lastName = 'Wang'
-    person.firstName = 'Wu'
-    expect(person.fullName()).toBe('Wu Wang')
-    expect(person.greeting('Good morning')).toBe('Good morning Wu Wang')
-  })
-
-  test('computed property with arguments 2', () => {
-    const Person = SubX({
-      firstName: 'San',
-      lastName: 'Zhang'
-    }).computed({
+      lastName: 'Zhang',
       fullName () {
         return `${this.firstName} ${this.lastName}`
       },
