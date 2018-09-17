@@ -28,20 +28,19 @@ const handler = {
 
 const SubX = {
   create: (value, parent, prop) => {
-    value.$ = new Subject()
-    value.$$ = new Subject()
-    value.$.subscribe(action => value.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
-    if (parent) {
-      value.$$.subscribe(action => parent.$$.next(R.assoc('path', [prop, ...action.path], action)))
-    }
+    const emptyValue = R.empty(value)
+    emptyValue.$ = new Subject()
+    emptyValue.$$ = new Subject()
+    const proxy = new Proxy(emptyValue, handler)
     R.pipe(
-      R.dissoc('$'),
-      R.dissoc('$$'),
       R.toPairs,
-      R.filter(([, val]) => typeof val === 'object'),
-      R.forEach(([prop, val]) => { value[prop] = SubX.create(val, value, prop) })
+      R.forEach(([prop, val]) => { proxy[prop] = val })
     )(value)
-    return new Proxy(value, handler)
+    proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
+    if (parent) {
+      proxy.$$.subscribe(action => parent.$$.next(R.assoc('path', [prop, ...action.path], action)))
+    }
+    return proxy
   }
 }
 
