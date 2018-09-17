@@ -2,11 +2,11 @@
 import { Subject } from 'rxjs'
 import * as R from 'ramda'
 
-const handler = {
+const createHandler = parent => ({
   set: (target, property, value, receiver) => {
     // const oldVal = target[property]
     if (typeof value === 'object' && !value.__isInstanceOfSubX) {
-      target[property] = new SubX(value)
+      target[property] = new SubX(value, parent)
     } else {
       target[property] = value
     }
@@ -32,16 +32,16 @@ const handler = {
     }
     return target[property]
   }
-}
+})
 
 class SubX extends Proxy {
-  constructor (target) {
+  constructor (target, parent) {
+    super(target, createHandler(parent))
     R.pipe(
       R.toPairs,
       R.filter(([, val]) => typeof val === 'object' && !val.__isInstanceOfSubX),
-      R.forEach(([property, val]) => { target[property] = new SubX(val) })
+      R.forEach(([property, val]) => { target[property] = new SubX(val, this) })
     )(target)
-    super(target, handler)
   }
 }
 
