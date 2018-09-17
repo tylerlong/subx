@@ -3,7 +3,7 @@ import SubX from '../src/index'
 
 describe('index', () => {
   test('props', () => {
-    const Model = SubX({
+    const Model = new SubX({
       a: 'hello',
       b: 'world'
     })
@@ -12,47 +12,47 @@ describe('index', () => {
     expect(model.b).toBe('world')
 
     let count = 0
-    let mutations = []
+    let actions = []
     model.$.subscribe(val => {
       count += 1
-      mutations.push(val)
+      actions.push(val)
     })
     model.a = '111'
     model.b = '222'
     expect(count).toBe(2)
-    expect(mutations).toEqual([
-      { prop: 'a', val: '111', oldVal: 'hello' },
-      { prop: 'b', val: '222', oldVal: 'world' }
+    expect(actions).toEqual([
+      { type: 'SET', prop: 'a', val: '111', oldVal: 'hello' },
+      { type: 'SET', prop: 'b', val: '222', oldVal: 'world' }
     ])
   })
 
   test('streams', () => {
-    const Model = SubX({
+    const Model = new SubX({
       a: 'hello'
     })
     const model = new Model()
-    const mutations = []
-    model.a$.subscribe(val => {
-      mutations.push(val)
+    const actions = []
+    model.$.subscribe(val => {
+      actions.push(val)
     })
     model.a = 'world'
-    expect(mutations).toEqual([{ prop: 'a', val: 'world', oldVal: 'hello' }])
+    expect(actions).toEqual([{ type: 'SET', prop: 'a', val: 'world', oldVal: 'hello' }])
   })
 
   test('different ways to trigger event', () => {
-    const Model = SubX({
+    const Model = new SubX({
       a: '111'
     })
     const model = new Model()
-    const mutations = []
-    model.a$.subscribe(val => {
-      mutations.push(val)
+    const actions = []
+    model.$.subscribe(val => {
+      actions.push(val)
     })
     model.a = '222'
     model['a'] = '333'
-    expect(mutations).toEqual([
-      { prop: 'a', val: '222', oldVal: '111' },
-      { prop: 'a', val: '333', oldVal: '222' }
+    expect(actions).toEqual([
+      { type: 'SET', prop: 'a', val: '222', oldVal: '111' },
+      { type: 'SET', prop: 'a', val: '333', oldVal: '222' }
     ])
   })
 })
