@@ -40,9 +40,9 @@ describe('computed properties', () => {
     const person = new Person()
 
     person.$.pipe(
-      filter(action => R.contains(action.prop, ['firstName', 'lastName'])),
+      filter(event => R.contains(event.prop, ['firstName', 'lastName'])),
       debounceTime(100),
-      map(action => person.fullName())
+      map(event => person.fullName())
     ).subscribe(val => {
       fullName = val
     })

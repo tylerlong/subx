@@ -12,15 +12,15 @@ describe('index', () => {
     expect(model.b).toBe('world')
 
     let count = 0
-    let actions = []
+    let events = []
     model.$.subscribe(val => {
       count += 1
-      actions.push(val)
+      events.push(val)
     })
     model.a = '111'
     model.b = '222'
     expect(count).toBe(2)
-    expect(actions).toEqual([
+    expect(events).toEqual([
       { type: 'SET', prop: 'a', val: '111', oldVal: 'hello' },
       { type: 'SET', prop: 'b', val: '222', oldVal: 'world' }
     ])
@@ -31,12 +31,12 @@ describe('index', () => {
       a: 'hello'
     })
     const model = new Model()
-    const actions = []
+    const events = []
     model.$.subscribe(val => {
-      actions.push(val)
+      events.push(val)
     })
     model.a = 'world'
-    expect(actions).toEqual([{ type: 'SET', prop: 'a', val: 'world', oldVal: 'hello' }])
+    expect(events).toEqual([{ type: 'SET', prop: 'a', val: 'world', oldVal: 'hello' }])
   })
 
   test('different ways to trigger event', () => {
@@ -44,13 +44,13 @@ describe('index', () => {
       a: '111'
     })
     const model = new Model()
-    const actions = []
+    const events = []
     model.$.subscribe(val => {
-      actions.push(val)
+      events.push(val)
     })
     model.a = '222'
     model['a'] = '333'
-    expect(actions).toEqual([
+    expect(events).toEqual([
       { type: 'SET', prop: 'a', val: '222', oldVal: '111' },
       { type: 'SET', prop: 'a', val: '333', oldVal: '222' }
     ])

@@ -21,7 +21,7 @@ const handler = {
       } else {
         proxy = SubX.create(val) // for recursive
       }
-      proxy.__subscription__ = proxy.$$.subscribe(action => receiver.$$.next(R.assoc('path', [prop, ...action.path], action)))
+      proxy.__subscription__ = proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event)))
       target[prop] = proxy
     } else {
       target[prop] = val
@@ -70,7 +70,7 @@ class SubX {
           R.reject(([prop, val]) => prop === '$' || prop === '$$'),
           R.forEach(([prop, val]) => { proxy[prop] = val })
         )(R.toPairs(modelObj), R.toPairs(obj))
-        proxy.$.subscribe(action => proxy.$$.next(R.pipe(R.assoc('path', [action.prop]), R.dissoc('prop'))(action)))
+        proxy.$.subscribe(event => proxy.$$.next(R.pipe(R.assoc('path', [event.prop]), R.dissoc('prop'))(event)))
         return proxy
       }
     }

@@ -8,17 +8,17 @@ describe('new design', () => {
   test('prototype', () => {
     const p = SubX.create({ hello: 'world' })
 
-    p.$.subscribe(action => {
-      console.log('1:', action)
+    p.$.subscribe(event => {
+      console.log('1:', event)
     })
     p.firstName = 'Si'
     p.lastName = 'Li'
 
-    p.$.subscribe(action => {
-      console.log('2:', action)
+    p.$.subscribe(event => {
+      console.log('2:', event)
     })
-    p.$$.subscribe(action => {
-      console.log('3:', action)
+    p.$$.subscribe(event => {
+      console.log('3:', event)
     })
     p.firstName = 'Wu'
     p.lastName = 'Wang'
@@ -28,8 +28,8 @@ describe('new design', () => {
 
   test('array', () => {
     const a = SubX.create([])
-    a.$.subscribe(action => {
-      console.log(action)
+    a.$.subscribe(event => {
+      console.log(event)
     })
     a.push(1)
     a.push(2)
@@ -39,24 +39,24 @@ describe('new design', () => {
 
   test('nested', () => {
     const n = SubX.create({ a: { } })
-    n.$.subscribe(action => {
-      console.log(action)
+    n.$.subscribe(event => {
+      console.log(event)
     })
-    n.a.$.subscribe(action => {
-      console.log(action)
+    n.a.$.subscribe(event => {
+      console.log(event)
     })
     n.a.b = 'hello'
   })
 
   test('$$', () => {
     const n = SubX.create({ a: { } })
-    n.$$.subscribe(action => {
-      console.log(action)
+    n.$$.subscribe(event => {
+      console.log(event)
     })
     n.a.b = {}
     n.a.b.c = {}
-    n.a.b.c.$$.subscribe(action => {
-      console.log(action)
+    n.a.b.c.$$.subscribe(event => {
+      console.log(event)
     })
     n.a.b.c.d = {}
     n.a.b.c.d.e = {}
@@ -69,8 +69,8 @@ describe('new design', () => {
     p.firstName = 'Chuntao'
     p.lastName = 'Liu'
     console.log(p.fullName())
-    p.$.subscribe(action => {
-      console.log(action)
+    p.$.subscribe(event => {
+      console.log(event)
       console.log(p.fullName())
     })
     p.firstName = 'Tyler'
@@ -81,8 +81,8 @@ describe('new design', () => {
     const p = SubX.create({ firstName: '', lastName: '' })
     p.firstName = 'Chuntao'
     p.lastName = 'Liu'
-    const firstName$ = p.$.pipe(filter(action => action.prop === 'firstName'), map(action => action.val), startWith(p.firstName))
-    const lastName$ = p.$.pipe(filter(action => action.prop === 'lastName'), map(action => action.val), startWith(p.lastName))
+    const firstName$ = p.$.pipe(filter(event => event.prop === 'firstName'), map(event => event.val), startWith(p.firstName))
+    const lastName$ = p.$.pipe(filter(event => event.prop === 'lastName'), map(event => event.val), startWith(p.lastName))
     combineLatest(firstName$, lastName$).subscribe(([firstName, lastName]) => {
       console.log(`${firstName} ${lastName}`)
     })
@@ -114,16 +114,16 @@ describe('new design', () => {
     delete p.firstName
     expect(p.firstName).toBeUndefined()
     let count1 = 0
-    p.$$.pipe(filter(action => action.type === 'SET')).subscribe(action => {
+    p.$$.pipe(filter(event => event.type === 'SET')).subscribe(event => {
       count1 += 1
-      console.log(action)
+      console.log(event)
     })
     const test = p.test
     delete p.test
     let count2 = 0
-    test.$$.subscribe(action => {
+    test.$$.subscribe(event => {
       count2 += 1
-      console.log(action)
+      console.log(event)
     })
     test.a = {}
     test.a.b = {}
@@ -134,9 +134,9 @@ describe('new design', () => {
   test('override property', () => {
     const p = SubX.create({ a: { b: {} } })
     let count = 0
-    p.$$.subscribe(action => {
+    p.$$.subscribe(event => {
       count += 1
-      console.log(action)
+      console.log(event)
     })
     const b = p.a.b
     b.c = {}
@@ -144,8 +144,8 @@ describe('new design', () => {
     p.a.b = {}
     expect(count).toBe(3)
     let count2 = 0
-    b.$$.subscribe(action => {
-      console.log(action)
+    b.$$.subscribe(event => {
+      console.log(event)
       count2 += 1
     })
     b.c = {}
@@ -159,15 +159,15 @@ describe('new design', () => {
   test('delete event', () => {
     const Person = new SubX({ firstName: '', lastName: '' })
     const p = new Person({ firstName: 'Chuntao', lastName: 'Liu' })
-    const actions = []
-    p.$$.subscribe(action => {
-      actions.push(action)
-      console.log(action)
+    const events = []
+    p.$$.subscribe(event => {
+      events.push(event)
+      console.log(event)
     })
     delete p.firstName
     delete p.lastName
-    expect(actions.length).toBe(2)
-    expect(actions).toEqual([{
+    expect(events.length).toBe(2)
+    expect(events).toEqual([{
       type: 'DELETE',
       path: ['firstName'],
       val: 'Chuntao'

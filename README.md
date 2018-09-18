@@ -4,16 +4,16 @@ Subject X, Reactive Subject
 
 Pronunciation: [Subject X]
 
+SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). So it's better to have some RxJS knowledge.
+
 
 ## What is Reactive Subject?
 
-Subject is the same concept as the subject in [observer pattern](https://en.wikipedia.org/wiki/Observer_pattern).
+Subject is the similar concept as the subject in [observer pattern](https://en.wikipedia.org/wiki/Observer_pattern).
 
-A reactive subject is a special JavaScript object which allows you to subscribe to its **actions/mutations**. If you are a React + Redux developer, you might find the word "action" very familiar. But in case you are a Vue.js + Vuex developer, you might prefer the word "mutation".
+A reactive subject is a special JavaScript object which allows you to subscribe to its **events**. If you are a React + Redux developer, events is similar to **actions**. If you are a Vue.js + Vuex developer, events is similar to **mutations**.
 
-The wonderful thing of SubX is: you don't need to manually create actions/mutations, this library generates them for you automatically!
-
-In this projects, we call actions/mutations **events**.
+The wonderful thing of SubX is: you don't need to manually create events/actions/mutations, this library generates them for you automatically! We will see how it works below.
 
 
 ## Installation
@@ -34,8 +34,8 @@ const person = SubX.create({
     firstName: 'San',
     lastName: 'Zhang'
 })
-person.$.subscribe(action => {
-    console.log('Property changed', action)
+person.$.subscribe(event => {
+    console.log(event)
 })
 person.firstName = 'Si'
 person.lastName = 'Li'
@@ -45,7 +45,7 @@ person.firstName = 'Wu'
 
 In the sample code above, `person` is an reactive subject.
 
-`person.$` is a stream of actions/mutations.
+`person.$` is a stream of events.
 
 We can subscribe to them by `person.$.subscribe(...)`.
 
@@ -210,3 +210,4 @@ You can see that `expensive computation` was only printed once although we chang
 - Track changes to nested subject (property itself is a subject)
 - Get some inspiration from rxdb
     - https://pubkey.github.io/rxdb/rx-schema.html
+- $$ = $.pipe(map(...))

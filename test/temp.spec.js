@@ -22,7 +22,7 @@ describe('computed properties', () => {
     const person = new Person()
 
     person.$.pipe(
-      filter(action => action.prop === 'firstName' || action.prop === 'lastName'),
+      filter(event => event.prop === 'firstName' || event.prop === 'lastName'),
       debounceTime(100),
       map(() => person.fullName())
     ).subscribe(val => {
