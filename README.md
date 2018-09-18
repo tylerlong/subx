@@ -1,21 +1,9 @@
 # SubX
 
-Subject X, Reactive Subject
-
-Pronunciation: [Sub X]
+Subject X, Reactive Subject. Pronunciation: [Sub X]
 
 SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). So it's better to have some RxJS knowledge.
-
-
-## What is Reactive Subject?
-
-Subject is the similar concept as the subject in [observer pattern](https://en.wikipedia.org/wiki/Observer_pattern).
-
-A reactive subject is a special JavaScript object which allows you to subscribe to its **events**. If you are a React + Redux developer, events is similar to **actions**. If you are a Vue.js + Vuex developer, events is similar to **mutations**.
-
-The wonderful thing of SubX is: you don't need to manually create events/actions/mutations, this library generates them for you automatically! We will see how it works below.
-
-In content below, we call a reactive subject a **SubX object**.
+It's OK if you don't know RxJS, it doesn't prevent you from using this library.
 
 
 ## Installation
@@ -38,10 +26,6 @@ person.firstName = 'Tyler'
 person.lastName = 'Long'
 ```
 
-In the sample code above, `person` is a SubX object.
-
-`person.$` is a stream of events which you can subscribe to.
-
 #### Console output
 
 ```
@@ -49,7 +33,16 @@ In the sample code above, `person` is a SubX object.
 { type: 'SET', prop: 'lastName', val: 'Long', oldVal: undefined }
 ```
 
-So from the events, we know that which properties were 'SET', and the values before and after the operations.
+In the sample code above, `person` is a SubX object. `person.$` is a stream of events which you can subscribe to.
+
+
+## What is Reactive Subject?
+
+Subject is the similar concept as the subject in [observer pattern](https://en.wikipedia.org/wiki/Observer_pattern).
+
+A reactive subject is a special JavaScript object which allows you to subscribe to its **events**. If you are a React + Redux developer, events is similar to **actions**. If you are a Vue.js + Vuex developer, events is similar to **mutations**.
+
+In content below, we call a reactive subject a **SubX object**.
 
 
 ## OOP-Style sample
@@ -150,9 +143,7 @@ rectangle.size.height = 100
 ```
 ```
 
-It does **NOT** work, as you can see the console outputs nothing.
-
-This is because `rectangle.$` only provides events for `rectangle`'s **direct** properties.
+It does **NOT** work, as you can see the console outputs nothing. This is because `rectangle.$` only provides events for `rectangle`'s **direct** properties.
 
 Take `rectangle.position.x = 0` for example, we changed `x`, which is a direct property of `rectangle.postion`.
 `rectangle.postion.$` can track this event while `rectangle.$` cannot.
@@ -187,8 +178,7 @@ Solution above works, but there is a better way: `$$`
 
 ### $$
 
-`obj.$$` tracks all the events inside `obj`, be it its own events or its children's events.
-
+`obj.$$` tracks all the events inside `obj`, be them its own events or its children's events.
 Children could be direct children or indirect children (children's children).
 
 ```js
@@ -200,7 +190,7 @@ rectangle.size.width = 200
 rectangle.size.height = 100
 ```
 
-### Console output
+#### Console output
 
 ```
 { type: 'SET',
@@ -240,6 +230,56 @@ tells us that `rectangle.size.height` changed from `undefined` to `100`.
 
 Since nested objects are also SubX objects, they support `$$` too.
 For example you can `rectangle.size.$$.subscribe(...)` to track rectangle.size and its children's events.
+
+
+## Events with timestamp
+
+Want events with timestamp? RxJS provides us with [such an operator](https://rxjs-dev.firebaseapp.com/api/operators/timestamp).
+
+```js
+import { timestamp } from 'rxjs/operators'
+
+const rectangle = SubX.create({ position: { } })
+rectangle.$$.pipe(timestamp()).subscribe(console.log)
+rectangle.position.x = 0
+```
+
+#### Console output
+
+```
+Timestamp {
+      value:
+       { type: 'SET',
+         val: 0,
+         oldVal: undefined,
+         path: [ 'position', 'x' ] },
+      timestamp: 1537247605018 }
+```
+
+
+### flat event with timestamp
+
+Want a flat event with timestamp instead? While, you can [map](https://rxjs-dev.firebaseapp.com/api/operators/map) it.
+
+```js
+const rectangle = SubX.create({ position: { } })
+rectangle.$$.pipe(
+    timestamp(),
+    map(event => ({ ...event.value, timestamp: event.timestamp }))
+).subscribe(console.log)
+rectangle.position.x = 0
+```
+
+#### Console output
+
+```
+{ type: 'SET',
+    val: 0,
+    oldVal: undefined,
+    path: [ 'position', 'x' ],
+    timestamp: 1537248003912 }
+```
+
 
 
 ## Filter events

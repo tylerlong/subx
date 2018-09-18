@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { filter } from 'rxjs/operators'
+import { filter, timestamp, map } from 'rxjs/operators'
 import { merge } from 'rxjs'
 
 import SubX from '../src/index'
@@ -102,5 +102,20 @@ describe('demo', () => {
     rectangle.position.y = 0
     rectangle.size.width = 200
     rectangle.size.height = 100
+  })
+
+  test('timestamp', () => {
+    const rectangle = SubX.create({ position: { } })
+    rectangle.$$.pipe(timestamp()).subscribe(console.log)
+    rectangle.position.x = 0
+  })
+
+  test('timestamp flat', () => {
+    const rectangle = SubX.create({ position: { } })
+    rectangle.$$.pipe(
+      timestamp(),
+      map(event => ({ ...event.value, timestamp: event.timestamp }))
+    ).subscribe(console.log)
+    rectangle.position.x = 0
   })
 })
