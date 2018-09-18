@@ -84,4 +84,16 @@ describe('computed properties', () => {
     expect(person.fullName()).toBe('Wu Wang')
     expect(person.greeting('Good morning')).toBe('Good morning Wu Wang')
   })
+
+  test('computed property as getter', () => {
+    const Person = new SubX({
+      firstName: 'San',
+      lastName: 'Zhang',
+      get fullName () {
+        return `${this.firstName} ${this.lastName}`
+      }
+    })
+    const person = new Person()
+    expect(person.fullName).toBe('San Zhang')
+  })
 })
