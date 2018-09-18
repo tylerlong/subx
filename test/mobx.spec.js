@@ -1,10 +1,18 @@
 /* eslint-env jest */
+import * as R from 'ramda'
 
-const computed = f => {
+const computed = (o, f) => {
   let cache = {}
+  const dependencies = {}
   const temp = function (...args) {
-    if (!(args in cache)) {
-      cache[args] = f(...args)
+    if (!(args in cache) || R.pipe(R.keys, R.any(key => dependencies[key] !== o[key]))(dependencies)) {
+      const proxy = new Proxy(o, {
+        get: (target, prop, receiver) => {
+          dependencies[prop] = target[prop]
+          return target[prop]
+        }
+      })
+      cache[args] = f.bind(proxy)(...args)
     }
     return cache[args]
   }
@@ -21,9 +29,15 @@ describe('mobx', () => {
         return this.a + this.b
       }
     }
-    o.c = computed(o.c.bind(o))
+    o.c = computed(o, o.c)
     console.log(o.c())
     console.log(o.c())
+
+    console.log(o.c(1))
+    console.log(o.c(1))
+
+    o.a = 2
+    console.log(o.c(1))
     console.log(o.c(1))
   })
 })
