@@ -454,3 +454,4 @@ You can see that `expensive computation` was only printed once although we chang
 - Get some inspiration from rxdb
     - https://pubkey.github.io/rxdb/rx-schema.html
 - Ref: https://github.com/bcherny/undux
+- Compare SubX with mobx / mobx-state-tree
