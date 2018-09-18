@@ -118,4 +118,17 @@ describe('demo', () => {
     ).subscribe(console.log)
     rectangle.position.x = 0
   })
+
+  test('array', () => {
+    const list = SubX.create([1, 2, 3])
+    list.$.subscribe(console.log)
+    list.push(4)
+    list.shift()
+  })
+
+  test('delete', () => {
+    const person = SubX.create({ firstName: '' })
+    person.$.subscribe(console.log)
+    delete person.firstName
+  })
 })

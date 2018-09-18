@@ -281,6 +281,54 @@ rectangle.position.x = 0
 ```
 
 
+## Array events
+
+In JavaScript, array is also object (`typeof [] === 'object'`). This library works with array as well.
+
+```js
+const list = SubX.create([1,2,3])
+list.$.subscribe(console.log)
+list.push(4)
+list.shift()
+```
+
+
+#### Console output
+
+```
+{ type: 'SET', prop: '3', val: 4, oldVal: undefined }
+{ type: 'SET', prop: 'length', val: 4, oldVal: 4 }
+{ type: 'SET', prop: '0', val: 2, oldVal: 1 }
+{ type: 'SET', prop: '1', val: 3, oldVal: 2 }
+{ type: 'SET', prop: '2', val: 4, oldVal: 3 }
+{ type: 'DELETE', prop: '3', val: 4 }
+{ type: 'SET', prop: 'length', val: 3, oldVal: 4 }
+```
+
+You can see that an single method call `list.shift()` could trigger multiple events.
+The behavior is idential to [Proxy handler](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler).
+
+
+## Types of events
+
+Currently there are two kinds of events: `SET` & `DELETE`.
+
+Most of the event mentioned in this page are `SET` events. `SET` means a property has been assigned to. Such as `person.firstName = 'John'`.
+
+`DELETE` events are triggered as well. We already see one of such event above in "Array events" section. Here is one more sample:
+
+```js
+const person = SubX.create({ firstName: '' })
+person.$.subscribe(console.log)
+delete person.firstName
+```
+
+#### Console output
+
+```
+{ type: 'DELETE', prop: 'firstName', val: '' }
+```
+
 
 ## Filter events
 
