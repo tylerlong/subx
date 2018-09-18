@@ -248,12 +248,12 @@ rectangle.position.x = 0
 
 ```
 Timestamp {
-      value:
-       { type: 'SET',
-         val: 0,
-         oldVal: undefined,
-         path: [ 'position', 'x' ] },
-      timestamp: 1537247605018 }
+    value:
+    { type: 'SET',
+        val: 0,
+        oldVal: undefined,
+        path: [ 'position', 'x' ] },
+    timestamp: 1537247605018 }
 ```
 
 
@@ -262,6 +262,8 @@ Timestamp {
 Want a flat event with timestamp instead? While, you can [map](https://rxjs-dev.firebaseapp.com/api/operators/map) it.
 
 ```js
+import { timestamp, map } from 'rxjs/operators'
+
 const rectangle = SubX.create({ position: { } })
 rectangle.$$.pipe(
     timestamp(),
@@ -332,81 +334,63 @@ delete person.firstName
 
 ## Filter events
 
-SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs), so you can filter it just like filtering any RxJS event streams(Observables).
+Let's say you only interested in 'SET' events, you can [filter](https://rxjs-dev.firebaseapp.com/api/operators/filter) the event stream before `subscribe`:
 
 ```js
-import { filter, map } from 'rxjs/operators'
+import { filter } from 'rxjs/operators'
 
-const person = SubX.create({
-    firstName: 'San',
-    lastName: 'Zhang'
-})
-const firstName$ = person.$.pipe(
-    filter(event => event.prop === 'firstName')
-    map(event => event.val)
-)
-firstName$.subscribe(val => {
-    console.log('First name changed to', val)
-})
-person.firstName = 'Si'
-person.firstName = 'Wu'
+person.$.pipe(
+    filter(event => event.type === 'SET')
+).subscribe(console.log)
 ```
 
-We call variables end with `$` streams. So `firstName$` is a stream of first names.
 
+## RxJS operators
 
+SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). In RxJS, methods that transform or query sequences are called **operators**.
 
-#### Console output
+RxJS comes with "batteries included" because there are [lots of operators](https://www.learnrxjs.io/operators/). In fact, it's one of RxJS's main strengths, it's also one of SubX's main strengths, thanks to RxJS.
 
-```
-First name changed to Si
-First name changed to Wu
-```
+We've already seen some examples of operartor above, such as `timestamp`, `map` & `filter`. The more operators you manage, the more things you can do with SubX.
 
 
 ## Computed properties
 
 ```js
-const Person = SubX({
+const Person = new SubX({
     firstName: 'San',
-    lastName: 'Zhang'
-}).computed({
-    fullName () { // Check sample code below if you want to use arrow function instead
-        console.log('fullName computed property')
+    lastName: 'Zhang',
+    fullName () {
         return `${this.firstName} ${this.lastName}`
+    },
+    greeting (phrase) {
+        return `${phrase} ${this.fullName()}`
     }
 })
 const person = new Person()
 expect(person.fullName()).toBe('San Zhang')
-
-person.firstName = 'Si'
-person.lastName = 'Li'
-expect(person.fullName()).toBe('Si Li')
-
-person.lastName = 'Wang'
-person.firstName = 'Wu'
-expect(person.fullName()).toBe('Wu Wang')
+expect(person.greeting('Hi')).toBe('Hi San Zhang')
 ```
 
-#### Console output
+Computed property is just a function in object, such as `fullName` & `greeting` above.
 
-```
-fullName computed property
-fullName computed property
-fullName computed property
-```
+Computed property is especially useful when you write the code in OOP-Style. Because all the objects automatically get the computed properties from class, so you don't need to define them for each object again and again.
 
-### Use arrow function for computed properties
 
-If you want to use arrow function instead, use `self` instead of `this`:
+### Computed property as getter
+
+For computed property without arguments, you can define it as a getter:
 
 ```js
-const Person = SubX({
+const Person = new SubX({
     firstName: 'San',
-    lastName: 'Zhang'
-}).computed(self => ({
-    fullName: () => `${self.firstName} ${self.lastName}`
-}))
+    lastName: 'Zhang',
+    get fullName () {
+        return `${this.firstName} ${this.lastName}`
+    }
+})
+const person = new Person()
+expect(person.fullName).toBe('San Zhang')
 ```
 
 
@@ -414,20 +398,19 @@ const Person = SubX({
 
 Sometimes it is expensive to compute a property. We would like to avoid doing the computation too often.
 
-Let's assume that `person.fullName()` is an expensive computation. And we definitely don't want to execute it again and again in a short peroid of time.
+Let's assume that `person.fullName()` is an expensive computation.
+And we definitely don't want to execute it again and again in a short peroid of time.
 
 Intead, we only need the last `fullName` value when `firstName` and `lastName` stop changing for a while.
 
 ```js
-import { merge, debounceTime } from 'rxjs/operators'
-import delay from 'timeout-as-promise'
+import { debounceTime, map } from 'rxjs/operators'
 
 let count = 0
 let fullName
-const Person = SubX({
+const Person = new SubX({
     firstName: 'San',
-    lastName: 'Zhang'
-}).computed({
+    lastName: 'Zhang',
     fullName () {
         count += 1
         console.log('expensive computation')
@@ -436,9 +419,9 @@ const Person = SubX({
 })
 const person = new Person()
 
-merge(person.firstName$, person.lastName$).pipe(
+person.$.pipe(
     debounceTime(100),
-    map(val => person.fullName())
+    map(event => person.fullName())
 ).subscribe(val => {
     fullName = val
 })
@@ -455,19 +438,12 @@ expect(count).toBe(1) // no more than 1 time of expensive computation
 expect(fullName).toBe('Wu Wang')
 ```
 
-In this case we think `fullName` is determined by `firstName` and `lastName` so we use
-
-```js
-merge(person.firstName$, person.lastName$)
-```
-
 We use `debounceTime(100)` so that the expensive operation will not execute until `firstName` & `lastName` have stopped changing for 100 milliseconds.
 
 #### Console output
 
 ```
 expensive computation
-Full name changed Wu Wang
 ```
 
 You can see that `expensive computation` was only printed once although we changed `firstName` & `lastName` four times in total.
@@ -475,10 +451,6 @@ You can see that `expensive computation` was only printed once although we chang
 
 ## Todo
 
-- Track changes to array property
-    - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-    - https://stackoverflow.com/questions/5100376/how-to-watch-for-array-changes
-- Track changes to nested subject (property itself is a subject)
 - Get some inspiration from rxdb
     - https://pubkey.github.io/rxdb/rx-schema.html
 - $$ = $.pipe(map(...))

@@ -131,4 +131,20 @@ describe('demo', () => {
     person.$.subscribe(console.log)
     delete person.firstName
   })
+
+  test('computed property', () => {
+    const Person = new SubX({
+      firstName: 'San',
+      lastName: 'Zhang',
+      fullName () {
+        return `${this.firstName} ${this.lastName}`
+      },
+      greeting (phrase) {
+        return `${phrase} ${this.fullName()}`
+      }
+    })
+    const person = new Person()
+    expect(person.fullName()).toBe('San Zhang')
+    expect(person.greeting('Hi')).toBe('Hi San Zhang')
+  })
 })

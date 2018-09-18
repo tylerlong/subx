@@ -1,8 +1,7 @@
 /* eslint-env jest */
 import SubX from '../src/index'
-import { debounceTime, map, filter } from 'rxjs/operators'
+import { debounceTime, map } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
-import * as R from 'ramda'
 
 describe('computed properties', () => {
   test('this + normal function', () => {
@@ -40,7 +39,6 @@ describe('computed properties', () => {
     const person = new Person()
 
     person.$.pipe(
-      filter(event => R.contains(event.prop, ['firstName', 'lastName'])),
       debounceTime(100),
       map(event => person.fullName())
     ).subscribe(val => {
