@@ -453,4 +453,4 @@ You can see that `expensive computation` was only printed once although we chang
 
 - Get some inspiration from rxdb
     - https://pubkey.github.io/rxdb/rx-schema.html
-- $$ = $.pipe(map(...))
+- Ref: https://github.com/bcherny/undux
