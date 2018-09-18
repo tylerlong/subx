@@ -2,7 +2,7 @@
 
 Subject X, Reactive Subject
 
-Pronunciation: [Subject X]
+Pronunciation: [Sub X]
 
 SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). So it's better to have some RxJS knowledge.
 
@@ -14,6 +14,8 @@ Subject is the similar concept as the subject in [observer pattern](https://en.w
 A reactive subject is a special JavaScript object which allows you to subscribe to its **events**. If you are a React + Redux developer, events is similar to **actions**. If you are a Vue.js + Vuex developer, events is similar to **mutations**.
 
 The wonderful thing of SubX is: you don't need to manually create events/actions/mutations, this library generates them for you automatically! We will see how it works below.
+
+In content below, we call a reactive subject a **SubX object**.
 
 
 ## Installation
@@ -27,36 +29,217 @@ import SubX from 'subx'
 ```
 
 
-## Sample
+## Quickstart sample
 
 ```js
-const person = SubX.create({
-    firstName: 'San',
-    lastName: 'Zhang'
-})
-person.$.subscribe(event => {
-    console.log(event)
-})
-person.firstName = 'Si'
-person.lastName = 'Li'
-person.lastName = 'Wang'
-person.firstName = 'Wu'
+const person = SubX.create({})
+person.$.subscribe(console.log)
+person.firstName = 'Tyler'
+person.lastName = 'Long'
 ```
 
-In the sample code above, `person` is an reactive subject.
+In the sample code above, `person` is a SubX object.
 
-`person.$` is a stream of events.
+`person.$` is a stream of events which you can subscribe to.
 
-We can subscribe to them by `person.$.subscribe(...)`.
+#### Console output
+
+```
+{ type: 'SET', prop: 'firstName', val: 'Tyler', oldVal: undefined }
+{ type: 'SET', prop: 'lastName', val: 'Long', oldVal: undefined }
+```
+
+So from the events, we know that which properties were 'SET', and the values before and after the operations.
+
+
+## OOP-Style sample
+
+If you are a big fan of OOP, here is another sample for you:
+
+```js
+const Person = new SubX({ firstName: '' })
+
+const person1 = new Person()
+person1.$.subscribe(console.log)
+person1.firstName = 'Tyler'
+
+const person2 = new Person({ firstName: 'Peter' })
+person2.$.subscribe(console.log)
+person2.firstName = 'David'
+```
+
+So you can create a `Person` class first, then create as many persons (such as `person1` & `person2`) as you want using this class.
+
+#### Console output
+
+```
+{ type: 'SET', prop: 'firstName', val: 'Tyler', oldVal: '' }
+{ type: 'SET', prop: 'firstName', val: 'David', oldVal: 'Peter' }
+```
+
+
+## Dynamic properties
+
+You might have already noticed that you can dynamically add properties to a SubX object.
+And newly added properties are also reactive:
+
+```js
+const s = SubX.create({ prop1: 1 })
+s.$.subscribe(console.log)
+s.prop2 = 2
+```
+
+#### Console output
+
+```
+{ type: 'SET', prop: 'prop2', val: 2, oldVal: undefined }
+```
+
+In the sample above, `prop2` is dynamically added property and we got its events.
+
+
+## Nested objects
+
+It's very common to have nested objects. And this library handles them pretty well.
+All nested objects in a SubX object are also SubX objects.
+
+```js
+const rectangle = SubX.create({ position: { }, size: { } })
+rectangle.position.$.subscribe(console.log)
+rectangle.size.$.subscribe(console.log)
+rectangle.position.x = 0
+rectangle.position.y = 0
+rectangle.size.width = 200
+rectangle.size.height = 100
+```
+
+In the sample above, `rectangle` is a SubX object. It has two nested objects: `position`and `size`.
+As I said before, nested objects inside a SubX object are also SubX objects. So `position`and `size` are SubX objects.
+That's why you can subscribe two theirs events.
+
+#### Console output
+
+```
+{ type: 'SET', prop: 'x', val: 0, oldVal: undefined }
+{ type: 'SET', prop: 'y', val: 0, oldVal: undefined }
+{ type: 'SET', prop: 'width', val: 200, oldVal: undefined }
+{ type: 'SET', prop: 'height', val: 100, oldVal: undefined }
+```
+
+
+## track children properties' events
+
+```js
+const rectangle = SubX.create({ position: { }, size: { } })
+```
+
+Given the SubX object above, what if we want a **single** stream to track the events from BOTH `postion` and `size`?
+
+Let's try this first:
+
+```js
+rectangle.$.subscribe(console.log)
+rectangle.position.x = 0
+rectangle.position.y = 0
+rectangle.size.width = 200
+rectangle.size.height = 100
+```
+
+#### Console output
+
+```
+```
+
+It does **NOT** work, as you can see the console outputs nothing.
+
+This is because `rectangle.$` only provides events for `rectangle`'s **direct** properties.
+
+Take `rectangle.position.x = 0` for example, we changed `x`, which is a direct property of `rectangle.postion`.
+`rectangle.postion.$` can track this event while `rectangle.$` cannot.
+
+
+### Merge event streams
+
+One solution is to merge event streams:
+
+```js
+import { merge } from 'rxjs'
+
+const mergeStream$ = merge(rectangle.position.$, rectangle.size.$)
+mergeStream$.subscribe(console.log)
+rectangle.position.x = 0
+rectangle.position.y = 0
+rectangle.size.width = 200
+rectangle.size.height = 100
+```
+
+#### Console output
+
+```
+{ type: 'SET', prop: 'x', val: 0, oldVal: undefined }
+{ type: 'SET', prop: 'y', val: 0, oldVal: undefined }
+{ type: 'SET', prop: 'width', val: 200, oldVal: undefined }
+{ type: 'SET', prop: 'height', val: 100, oldVal: undefined }
+```
+
+Solution above works, but there is a better way: `$$`
+
+
+### $$
+
+`obj.$$` tracks all the events inside `obj`, be it its own events or its children's events.
+
+Children could be direct children or indirect children (children's children).
+
+```js
+const rectangle = SubX.create({ position: { }, size: { } })
+rectangle.$$.subscribe(console.log)
+rectangle.position.x = 0
+rectangle.position.y = 0
+rectangle.size.width = 200
+rectangle.size.height = 100
+```
 
 ### Console output
 
 ```
-Property changed { type: 'SET', prop: 'firstName', val: 'Si', oldVal: 'San' }
-Property changed { type: 'SET', prop: 'lastName', val: 'Li', oldVal: 'Zhang' }
-Property changed { type: 'SET', prop: 'lastName', val: 'Wang', oldVal: 'Li' }
-Property changed { type: 'SET', prop: 'firstName', val: 'Wu', oldVal: 'Si' }
+{ type: 'SET',
+    val: 0,
+    oldVal: undefined,
+    path: [ 'position', 'x' ] }
+
+{ type: 'SET',
+    val: 0,
+    oldVal: undefined,
+    path: [ 'position', 'y' ] }
+
+{ type: 'SET',
+    val: 200,
+    oldVal: undefined,
+    path: [ 'size', 'width' ] }
+
+{ type: 'SET',
+    val: 100,
+    oldVal: undefined,
+    path: [ 'size', 'height' ] }
 ```
+
+Since the changes could be either to its own properties or its children's properties,
+the events include a `path` property to tell you which property triggers the event.
+
+So
+
+```
+{ type: 'SET',
+    val: 100,
+    oldVal: undefined,
+    path: [ 'size', 'height' ] }
+```
+
+tells us that `rectangle.size.height` changed from `undefined` to `100`.
+
+Since nested objects are also SubX objects, they support `$$` too.
+For example you can `rectangle.size.$$.subscribe(...)` to track rectangle.size and its children's events.
 
 
 ## Filter events
@@ -85,7 +268,7 @@ We call variables end with `$` streams. So `firstName$` is a stream of first nam
 
 
 
-### Console output
+#### Console output
 
 ```
 First name changed to Si
@@ -117,7 +300,7 @@ person.firstName = 'Wu'
 expect(person.fullName()).toBe('Wu Wang')
 ```
 
-### Console output
+#### Console output
 
 ```
 fullName computed property
@@ -192,7 +375,7 @@ merge(person.firstName$, person.lastName$)
 
 We use `debounceTime(100)` so that the expensive operation will not execute until `firstName` & `lastName` have stopped changing for 100 milliseconds.
 
-### Console output
+#### Console output
 
 ```
 expensive computation
