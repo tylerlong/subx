@@ -14,7 +14,7 @@ const handler = {
     if (oldVal && oldVal.__isSubX__) {
       oldVal.__subscription__.unsubscribe()
     }
-    if (typeof val === 'object') {
+    if (typeof val === 'object' && val !== null) {
       let proxy
       if (val.__isSubX__) {
         proxy = val
