@@ -10,13 +10,11 @@ describe('performance', () => {
     from([1, 2, 3]).pipe(
       map(i => {
         count1 += 1
-        console.log('map')
         return i * 2
       }),
       take(1)
     ).subscribe(i => {
       count2 += 1
-      console.log(i)
     })
     expect(count1).toBe(1)
     expect(count2).toBe(1)
@@ -27,13 +25,11 @@ describe('performance', () => {
     from([1, 2, 3]).pipe(
       map(i => {
         count1 += 1
-        console.log('map')
         return i * 2
       }),
       debounceTime(100)
     ).subscribe(i => {
       count2 += 1
-      console.log(i)
     })
     await delay(150)
     expect(count1).toBe(3) // why? debounceTime is async, cannot save map's execution.
