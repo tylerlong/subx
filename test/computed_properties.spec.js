@@ -26,18 +26,17 @@ describe('computed properties', () => {
 
   test('debounce expensive computation', async () => {
     let count = 0
-    let fullName
     const Person = new SubX({
       firstName: 'San',
       lastName: 'Zhang',
       fullName () {
         count += 1
-        console.log('expensive computation')
         return `${this.firstName} ${this.lastName}`
       }
     })
     const person = new Person()
 
+    let fullName
     person.$.pipe(
       debounceTime(100),
       map(event => person.fullName())

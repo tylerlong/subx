@@ -25,23 +25,29 @@ describe('mobx', () => {
     const o = {
       a: 1,
       b: 2,
-      c () {
-        console.log('inside')
+      c (d = 0) {
         count += 1
-        return this.a + this.b
+        return this.a + this.b + d
       }
     }
     o.c = computed(o, o.c)
-    console.log(o.c())
-    console.log(o.c())
+    const r1 = o.c()
+    const r2 = o.c()
+    expect(r1).toBe(3)
+    expect(r2).toBe(3)
+    expect(count).toBe(1)
 
-    console.log(o.c(1))
-    console.log(o.c(1))
+    const r3 = o.c(1)
+    const r4 = o.c(1)
+    expect(r3).toBe(4)
+    expect(r4).toBe(4)
+    expect(count).toBe(2)
 
     o.a = 2
-    console.log(o.c(1))
-    console.log(o.c(1))
-
-    expect(count).toBe(3) // `o.c` invoked 3 times
+    const r5 = o.c(1)
+    const r6 = o.c(1)
+    expect(r5).toBe(5)
+    expect(r6).toBe(5)
+    expect(count).toBe(3)
   })
 })
