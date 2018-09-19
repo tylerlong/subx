@@ -116,10 +116,92 @@ describe('array', () => {
   test('nested', () => {
     const o = SubX.create({ b: { a: [1, 2, 3] } })
 
+    // foreach
     let count = 0
     R.forEach(() => { count += 1 }, o.b.a)
     expect(count).toBe(3)
 
+    // keys
     expect(R.keys(o.b.a)).toEqual(R.keys([1, 2, 3]))
+
+    // toPairs
+    expect(R.toPairs(o.b.a)).toEqual([['0', 1], ['1', 2], ['2', 3]])
+
+    // compare
+    expect(o.b.a).toEqual([1, 2, 3])
+    expect(R.equals(o.b.a, [1, 2, 3])).toBeTruthy()
+
+    let events = []
+    o.$$.subscribe(event => { events.push(event) })
+
+    // push
+    o.b.a.push(4)
+    expect(o.b.a).toEqual([1, 2, 3, 4])
+    expect(events).toEqual([
+      {
+        type: 'SET',
+        path: ['b', 'a', '3'],
+        val: 4,
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['b', 'a', 'length'],
+        val: 4,
+        oldVal: 4
+      }
+    ])
+
+    // assign
+    o.b.a = [1, 2, 3]
+    events = []
+    o.b.a[1] = 4
+    expect(o.b.a).toEqual([1, 4, 3])
+    expect(events).toEqual([
+      {
+        type: 'SET',
+        path: ['b', 'a', '1'],
+        val: 4,
+        oldVal: 2
+      }
+    ])
+
+    // unshift
+    o.b.a = [1, 2, 3]
+    events = []
+    o.b.a.unshift(0)
+    expect(o.b.a).toEqual([0, 1, 2, 3])
+    expect(events).toEqual([
+      {
+        type: 'SET',
+        path: ['b', 'a', '3'],
+        val: 3,
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['b', 'a', '2'],
+        val: 2,
+        oldVal: 3
+      },
+      {
+        type: 'SET',
+        path: ['b', 'a', '1'],
+        val: 1,
+        oldVal: 2
+      },
+      {
+        type: 'SET',
+        path: ['b', 'a', '0'],
+        val: 0,
+        oldVal: 1
+      },
+      {
+        type: 'SET',
+        path: ['b', 'a', 'length'],
+        val: 4,
+        oldVal: 4
+      }
+    ])
   })
 })
