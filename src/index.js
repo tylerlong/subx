@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs'
+import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
 const RESERVED_PROPERTIES = ['$', 'get$', 'set$', 'delete$', '$$', 'get$$', 'set$$', 'delete$$']
@@ -13,9 +14,7 @@ const handler = {
       return true
     }
     const oldVal = target[prop]
-    if (oldVal && oldVal.__isSubX__) {
-      oldVal.__subscription__.unsubscribe()
-    }
+    let subscription
     if (typeof val === 'object' && val !== null) {
       let proxy
       if (val.__isSubX__) {
@@ -23,12 +22,18 @@ const handler = {
       } else {
         proxy = SubX.create(val) // for recursive
       }
-      proxy.__subscription__ = proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event)))
+      subscription = proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event)))
       target[prop] = proxy
     } else {
       target[prop] = val
     }
     target.$.next({ type: 'SET', prop, val, oldVal })
+    if (subscription) {
+      // todo: unsub the current one
+      target.$.pipe(filter(event => event.prop === prop)).subscribe(event => {
+        subscription.unsubscribe()
+      })
+    }
     return true
   },
   get: (target, prop, receiver) => {
@@ -36,7 +41,7 @@ const handler = {
       case '__isSubX__':
         return true
       case 'toJSON':
-        return () => R.pipe(R.dissoc('$'), R.dissoc('$$'), R.dissoc('__subscription__'))(target)
+        return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
       case 'toString':
         return () => `SubX ${JSON.stringify(receiver, null, 2)}`
       case 'inspect':
@@ -50,9 +55,6 @@ const handler = {
       return false // disallow deletion of $ or $$
     }
     const val = target[prop]
-    if (val && val.__isSubX__) {
-      val.__subscription__.unsubscribe()
-    }
     delete target[prop]
     target.$.next({ type: 'DELETE', prop, val })
     return true

@@ -113,4 +113,13 @@ describe('array', () => {
       }
     ])
   })
+  test('nested', () => {
+    const o = SubX.create({ b: { a: [1, 2, 3] } })
+
+    let count = 0
+    R.forEach(() => { count += 1 }, o.b.a)
+    expect(count).toBe(3)
+
+    expect(R.keys(o.b.a)).toEqual(R.keys([1, 2, 3]))
+  })
 })
