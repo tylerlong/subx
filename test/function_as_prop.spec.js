@@ -5,7 +5,6 @@ import uuid from 'uuid/v1'
 describe('function as prop', () => {
   test('uuid', () => {
     const Person = new SubX({
-      // id: () => uuid(),
       firstName: '',
       lastName: ''
     })

@@ -32,11 +32,11 @@ describe('index', () => {
     })
     const model = new Model()
     const events = []
-    model.$.subscribe(val => {
+    model.$$.subscribe(val => {
       events.push(val)
     })
     model.a = 'world'
-    expect(events).toEqual([{ type: 'SET', prop: 'a', val: 'world', oldVal: 'hello' }])
+    expect(events).toEqual([{ type: 'SET', path: ['a'], val: 'world', oldVal: 'hello' }])
   })
 
   test('different ways to trigger event', () => {
@@ -45,14 +45,14 @@ describe('index', () => {
     })
     const model = new Model()
     const events = []
-    model.$.subscribe(val => {
+    model.$$.subscribe(val => {
       events.push(val)
     })
     model.a = '222'
     model['a'] = '333'
     expect(events).toEqual([
-      { type: 'SET', prop: 'a', val: '222', oldVal: '111' },
-      { type: 'SET', prop: 'a', val: '333', oldVal: '222' }
+      { type: 'SET', path: ['a'], val: '222', oldVal: '111' },
+      { type: 'SET', path: ['a'], val: '333', oldVal: '222' }
     ])
   })
 })

@@ -14,11 +14,11 @@ describe('demo', () => {
       firstName: 'San',
       lastName: 'Zhang'
     })
-    person.$.pipe(filter(event => event.prop === 'firstName')).subscribe(mutation => {
-      console.log('First name changed', mutation)
+    person.$.pipe(filter(event => event.prop === 'firstName')).subscribe(event => {
+      console.log('First name changed', event)
     })
-    person.$.pipe(filter(event => event.prop === 'lastName')).subscribe(mutation => {
-      console.log('Last name changed', mutation)
+    person.$.pipe(filter(event => event.prop === 'lastName')).subscribe(event => {
+      console.log('Last name changed', event)
     })
     person.firstName = 'Si'
     person.lastName = 'Li'
@@ -32,8 +32,8 @@ describe('demo', () => {
       lastName: 'Zhang'
     })
     const person = new Person()
-    person.$.subscribe(mutation => {
-      console.log('Prop changed', mutation)
+    person.$.subscribe(event => {
+      console.log('Prop changed', event)
     })
     person.firstName = 'Si'
     person.lastName = 'Li'
