@@ -42,6 +42,6 @@ describe('mobx', () => {
     console.log(o.c(1))
     console.log(o.c(1))
 
-    expect(count).toBe(3)
+    expect(count).toBe(3) // `o.c` invoked 3 times
   })
 })

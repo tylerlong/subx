@@ -307,7 +307,7 @@ list.shift()
 { type: 'SET', prop: 'length', val: 3, oldVal: 4 }
 ```
 
-You can see that an single method call `list.shift()` could trigger multiple events.
+You can see that a single method call `list.shift()` could trigger multiple events.
 The behavior is idential to [Proxy handler](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler).
 
 
@@ -374,7 +374,8 @@ expect(person.greeting('Hi')).toBe('Hi San Zhang')
 
 Computed property is just a function in object, such as `fullName` & `greeting` above.
 
-Computed property is especially useful when you write the code in OOP-Style. Because all the objects automatically get the computed properties from class, so you don't need to define them for each object again and again.
+Computed property is especially useful when you write the code in OOP-Style.
+Because all the objects automatically get the computed properties from class, so you don't need to define them for each object again and again.
 
 
 ### Computed property as getter
