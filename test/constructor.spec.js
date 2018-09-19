@@ -1,6 +1,8 @@
 /* eslint-env jest */
 import SubX from '../src/index'
 
+import './benchmark'
+
 describe('constructor', () => {
   test('no parameters', () => {
     const Todo = new SubX({

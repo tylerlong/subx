@@ -3,6 +3,8 @@ import SubX from '../src/index'
 import { debounceTime, map } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
 
+import './benchmark'
+
 describe('computed properties', () => {
   test('this + normal function', () => {
     const Person = new SubX({

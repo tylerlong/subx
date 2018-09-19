@@ -3,6 +3,8 @@ import { from } from 'rxjs'
 import { take, map, debounceTime } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
 
+import './benchmark'
+
 describe('performance', () => {
   test('take', () => {
     let count1 = 0

@@ -1,6 +1,8 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
+import './benchmark'
+
 const computed = (o, f) => {
   const cache = {}
   const dependencies = {}

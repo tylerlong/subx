@@ -3,6 +3,7 @@ import { Subject, combineLatest } from 'rxjs'
 import { filter, map, startWith } from 'rxjs/operators'
 
 import SubX from '../src/index'
+import './benchmark'
 
 describe('new design', () => {
   test('JSON.stringify', () => {

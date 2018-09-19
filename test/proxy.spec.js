@@ -1,6 +1,8 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
+import './benchmark'
+
 describe('test', () => {
   test('proxy for object properties', () => {
     let count = 0

@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index'
+import './benchmark'
 
 describe('null value', () => {
   test('should allow null assign', () => {

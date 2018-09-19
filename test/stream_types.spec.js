@@ -1,4 +1,5 @@
 /* eslint-env jest */
+import './benchmark'
 // import SubX from '../src/index'
 
 // const temp = proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event)))
