@@ -10,14 +10,12 @@ describe('unsubscribe', () => {
     let count1 = 0
     p.$$.pipe(filter(event => event.type === 'SET')).subscribe(event => {
       count1 += 1
-      console.log(event)
     })
     const test = p.test
     delete p.test
     let count2 = 0
     test.$$.subscribe(event => {
       count2 += 1
-      console.log(event)
     })
     test.a = {}
     test.a.b = {}
@@ -29,7 +27,6 @@ describe('unsubscribe', () => {
     let count = 0
     p.$$.subscribe(event => {
       count += 1
-      console.log(event)
     })
     const b = p.a.b
     b.c = {}
@@ -38,7 +35,6 @@ describe('unsubscribe', () => {
     expect(count).toBe(3)
     let count2 = 0
     b.$$.subscribe(event => {
-      console.log(event)
       count2 += 1
     })
     b.c = {}

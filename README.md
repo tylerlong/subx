@@ -460,3 +460,4 @@ You can see that `expensive computation` was only printed once although we chang
 - handler.has()
 - Replace `prop` with `path`
 - Why do unit tests take so long time?
+- How to undo the changes according to events?
