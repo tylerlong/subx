@@ -5,36 +5,14 @@ import { filter, map, startWith } from 'rxjs/operators'
 import SubX from '../src/index'
 
 describe('new design', () => {
-  test('prototype', () => {
+  test('JSON.stringify', () => {
     const p = SubX.create({ hello: 'world' })
-
-    p.$.subscribe(event => {
-      console.log('1:', event)
-    })
     p.firstName = 'Si'
     p.lastName = 'Li'
-
-    p.$.subscribe(event => {
-      console.log('2:', event)
-    })
-    p.$$.subscribe(event => {
-      console.log('3:', event)
-    })
     p.firstName = 'Wu'
     p.lastName = 'Wang'
 
     console.log(JSON.stringify(p, null, 2))
-  })
-
-  test('array', () => {
-    const a = SubX.create([])
-    a.$.subscribe(event => {
-      console.log(event)
-    })
-    a.push(1)
-    a.push(2)
-    a[1] = 3
-    a.unshift()
   })
 
   test('nested', () => {
