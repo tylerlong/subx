@@ -12,72 +12,137 @@ describe('new design', () => {
     p.firstName = 'Wu'
     p.lastName = 'Wang'
 
-    console.log(JSON.stringify(p, null, 2))
+    expect(JSON.stringify(p, null, 2)).toBe(`{
+  "hello": "world",
+  "firstName": "Wu",
+  "lastName": "Wang"
+}`
+    )
   })
 
   test('nested', () => {
     const n = SubX.create({ a: { } })
+
+    let count1 = 0
     n.$.subscribe(event => {
-      console.log(event)
+      count1 += 1
     })
+
+    let count2 = 0
     n.a.$.subscribe(event => {
-      console.log(event)
+      count2 += 1
     })
+
+    let count3 = 0
+    n.$$.subscribe(event => {
+      count3 += 1
+    })
+
     n.a.b = 'hello'
+    expect(count1).toBe(0)
+    expect(count2).toBe(1)
+    expect(count3).toBe(1)
   })
 
   test('$$', () => {
     const n = SubX.create({ a: { } })
+    const events1 = []
     n.$$.subscribe(event => {
-      console.log(event)
+      events1.push(event)
     })
     n.a.b = {}
     n.a.b.c = {}
+    const events2 = []
     n.a.b.c.$$.subscribe(event => {
-      console.log(event)
+      events2.push(event)
     })
     n.a.b.c.d = {}
     n.a.b.c.d.e = {}
-    console.log(n)
-    console.log(n + '')
-  })
 
-  test('computed property', () => {
-    const p = SubX.create({ firstName: '', lastName: '', fullName: function () { return `${this.firstName} ${this.lastName}` } })
-    p.firstName = 'Chuntao'
-    p.lastName = 'Liu'
-    console.log(p.fullName())
-    p.$.subscribe(event => {
-      console.log(event)
-      console.log(p.fullName())
-    })
-    p.firstName = 'Tyler'
-    p.lastName = 'Lau'
+    expect(events1).toEqual([
+      {
+        type: 'SET',
+        path: ['a', 'b'],
+        val: {},
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['a', 'b', 'c'],
+        val: {},
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['a', 'b', 'c', 'd'],
+        val: {},
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['a', 'b', 'c', 'd', 'e'],
+        val: {},
+        oldVal: undefined
+      }
+    ])
+
+    expect(events2).toEqual([
+      {
+        type: 'SET',
+        path: ['d'],
+        val: {},
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['d', 'e'],
+        val: {},
+        oldVal: undefined
+      }
+    ])
   })
 
   test('rxjs operators', () => {
     const p = SubX.create({ firstName: '', lastName: '' })
     p.firstName = 'Chuntao'
     p.lastName = 'Liu'
-    const firstName$ = p.$.pipe(filter(event => event.prop === 'firstName'), map(event => event.val), startWith(p.firstName))
-    const lastName$ = p.$.pipe(filter(event => event.prop === 'lastName'), map(event => event.val), startWith(p.lastName))
+    const firstName$ = p.$.pipe(
+      filter(event => event.prop === 'firstName'),
+      map(event => event.val), startWith(p.firstName)
+    )
+    const lastName$ = p.$.pipe(
+      filter(event => event.prop === 'lastName'),
+      map(event => event.val),
+      startWith(p.lastName)
+    )
+    const data = []
     combineLatest(firstName$, lastName$).subscribe(([firstName, lastName]) => {
-      console.log(`${firstName} ${lastName}`)
+      data.push([firstName, lastName])
     })
     p.firstName = 'Tyler'
     p.lastName = 'Lau'
+
+    expect(data).toEqual([
+      ['Chuntao', 'Liu'],
+      ['Tyler', 'Liu'],
+      ['Tyler', 'Lau']
+    ])
   })
 
   test('class', () => {
-    const Person = new SubX({ firstName: 'San', lastName: 'Zhang', fullName: function () { return `${this.firstName} ${this.lastName}` } })
+    const Person = new SubX({
+      firstName: 'San',
+      lastName: 'Zhang',
+      fullName: function () { return `${this.firstName} ${this.lastName}` }
+    })
     const p = new Person({ firstName: 'Chuntao' })
-    console.log(p.fullName())
+    expect(p.fullName()).toBe('Chuntao Zhang')
   })
 
   test('instanceof', () => {
     const Person = new SubX({ name: 'Tyler Liu' })
     const p = new Person()
-    console.log(p.name)
+    expect(p.name).toBe('Tyler Liu')
     expect(p instanceof Person).toBe(false)
   })
 
@@ -93,7 +158,6 @@ describe('new design', () => {
     const events = []
     p.$$.subscribe(event => {
       events.push(event)
-      console.log(event)
     })
     delete p.firstName
     delete p.lastName
