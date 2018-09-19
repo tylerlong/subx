@@ -39,6 +39,7 @@ describe('array', () => {
       events.push(event)
     })
     a.push(4)
+    expect(a).toEqual([1, 2, 3, 4])
     expect(events).toEqual([
       {
         type: 'SET',
@@ -54,50 +55,62 @@ describe('array', () => {
       }
     ])
   })
-  test('array', () => {
+  test('assign', () => {
     const a = SubX.create([1, 2, 3])
-    console.log(a)
-    // const events = []
-    // a.$.subscribe(event => {
-    //   events.push(event)
-    // })
-    // a.push(1)
-    // a.push(2)
-    // a[1] = 3
-    // a.unshift(0)
-    // console.log(a)
-    // expect(R.toPairs(a)).toEqual([['0', 0], ['1', 1], ['2', 3]])
-    // expect(events).toEqual([
-    //   {
-    //     type: 'SET',
-    //     prop: '0',
-    //     val: 1,
-    //     oldVal: undefined
-    //   },
-    //   {
-    //     type: 'SET',
-    //     prop: 'length',
-    //     val: 1,
-    //     oldVal: 1
-    //   },
-    //   {
-    //     type: 'SET',
-    //     prop: '1',
-    //     val: 2,
-    //     oldVal: undefined
-    //   },
-    //   {
-    //     type: 'SET',
-    //     prop: 'length',
-    //     val: 2,
-    //     oldVal: 2
-    //   },
-    //   {
-    //     type: 'SET',
-    //     prop: '1',
-    //     val: 3,
-    //     oldVal: 2
-    //   }
-    // ])
+    const events = []
+    a.$$.subscribe(event => {
+      events.push(event)
+    })
+    a[1] = 4
+    expect(a).toEqual([1, 4, 3])
+    expect(events).toEqual([
+      {
+        type: 'SET',
+        path: ['1'],
+        val: 4,
+        oldVal: 2
+      }
+    ])
+  })
+  test('unshift', () => {
+    const a = SubX.create([1, 2, 3])
+    const events = []
+    a.$$.subscribe(event => {
+      events.push(event)
+    })
+    a.unshift(0)
+    expect(a).toEqual([0, 1, 2, 3])
+    expect(events).toEqual([
+      {
+        type: 'SET',
+        path: ['3'],
+        val: 3,
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['2'],
+        val: 2,
+        oldVal: 3
+      },
+      {
+        type: 'SET',
+        path: ['1'],
+        val: 1,
+        oldVal: 2
+      },
+      {
+        type: 'SET',
+        path: ['0'],
+        val: 0,
+        oldVal: 1
+      },
+      {
+        type: 'SET',
+        path: ['length'],
+        val: 4,
+        oldVal: 4
+      }
+    ])
   })
 })
