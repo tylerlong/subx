@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import { filter, timestamp, map } from 'rxjs/operators'
-import { merge } from 'rxjs'
+// import { merge } from 'rxjs'
 
 import SubX from '../src/index'
 
@@ -15,10 +15,10 @@ describe('demo', () => {
       lastName: 'Zhang'
     })
     person.$.pipe(filter(event => event.prop === 'firstName')).subscribe(event => {
-      console.log('First name changed', event)
+      // console.log('First name changed', event)
     })
     person.$.pipe(filter(event => event.prop === 'lastName')).subscribe(event => {
-      console.log('Last name changed', event)
+      // console.log('Last name changed', event)
     })
     person.firstName = 'Si'
     person.lastName = 'Li'
@@ -33,7 +33,7 @@ describe('demo', () => {
     })
     const person = new Person()
     person.$.subscribe(event => {
-      console.log('Prop changed', event)
+      // console.log('Prop changed', event)
     })
     person.firstName = 'Si'
     person.lastName = 'Li'
@@ -43,7 +43,7 @@ describe('demo', () => {
 
   test('simplest', () => {
     const person = SubX.create({})
-    person.$.subscribe(console.log)
+    // person.$.subscribe(console.log)
     person.firstName = 'Tyler'
     person.lastName = 'Long'
   })
@@ -52,24 +52,24 @@ describe('demo', () => {
     const Person = new SubX({ firstName: '' })
 
     const person1 = new Person()
-    person1.$.subscribe(console.log)
+    // person1.$.subscribe(console.log)
     person1.firstName = 'Tyler'
 
     const person2 = new Person({ firstName: 'Peter' })
-    person2.$.subscribe(console.log)
+    // person2.$.subscribe(console.log)
     person2.firstName = 'David'
   })
 
   test('dynamic prop', () => {
     const s = SubX.create({ prop1: 1 })
-    s.$.subscribe(console.log)
+    // s.$.subscribe(console.log)
     s.prop2 = 2
   })
 
   test('nested objects', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
-    rectangle.position.$.subscribe(console.log)
-    rectangle.size.$.subscribe(console.log)
+    // rectangle.position.$.subscribe(console.log)
+    // rectangle.size.$.subscribe(console.log)
     rectangle.position.x = 0
     rectangle.position.y = 0
     rectangle.size.width = 200
@@ -78,7 +78,7 @@ describe('demo', () => {
 
   test('track recursive - solution 1 (does NOT work)', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
-    rectangle.$.subscribe(console.log)
+    // rectangle.$.subscribe(console.log)
     rectangle.position.x = 0
     rectangle.position.y = 0
     rectangle.size.width = 200
@@ -87,8 +87,8 @@ describe('demo', () => {
 
   test('merge stream', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
-    const mergeStream$ = merge(rectangle.position.$, rectangle.size.$)
-    mergeStream$.subscribe(console.log)
+    // const mergeStream$ = merge(rectangle.position.$, rectangle.size.$)
+    // mergeStream$.subscribe(console.log)
     rectangle.position.x = 0
     rectangle.position.y = 0
     rectangle.size.width = 200
@@ -97,7 +97,7 @@ describe('demo', () => {
 
   test('$$', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
-    rectangle.$$.subscribe(console.log)
+    // rectangle.$$.subscribe(console.log)
     rectangle.position.x = 0
     rectangle.position.y = 0
     rectangle.size.width = 200
@@ -106,7 +106,7 @@ describe('demo', () => {
 
   test('timestamp', () => {
     const rectangle = SubX.create({ position: { } })
-    rectangle.$$.pipe(timestamp()).subscribe(console.log)
+    // rectangle.$$.pipe(timestamp()).subscribe(console.log)
     rectangle.position.x = 0
   })
 
@@ -115,20 +115,21 @@ describe('demo', () => {
     rectangle.$$.pipe(
       timestamp(),
       map(event => ({ ...event.value, timestamp: event.timestamp }))
-    ).subscribe(console.log)
+    )
+    // .subscribe(console.log)
     rectangle.position.x = 0
   })
 
   test('array', () => {
     const list = SubX.create([1, 2, 3])
-    list.$.subscribe(console.log)
+    // list.$.subscribe(console.log)
     list.push(4)
     list.shift()
   })
 
   test('delete', () => {
     const person = SubX.create({ firstName: '' })
-    person.$.subscribe(console.log)
+    // person.$.subscribe(console.log)
     delete person.firstName
   })
 
