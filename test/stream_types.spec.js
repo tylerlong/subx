@@ -1,11 +1,6 @@
 /* eslint-env jest */
 // import SubX from '../src/index'
 
-// const RESERVED_PROPERTIES = ['$', 'get$', 'set$', 'delete$', '$$', 'get$$', 'set$$', 'delete$$']
-// // const CACHE_KEYWORDS = ['']
-
-// todo: should check null value
-
 // const temp = proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event)))
 //       const temp2 = target.$.pipe(filter(event => event.prop === prop)).subscribe(() => {
 //         temp.unsubscribe()

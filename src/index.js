@@ -29,9 +29,9 @@ const handler = {
     }
     target.$.next({ type: 'SET', prop, val, oldVal })
     if (subscription) {
-      // todo: unsub the current one
-      target.$.pipe(filter(event => event.prop === prop)).subscribe(event => {
+      const temp = target.$.pipe(filter(event => event.prop === prop)).subscribe(event => {
         subscription.unsubscribe()
+        temp.unsubscribe()
       })
     }
     return true
