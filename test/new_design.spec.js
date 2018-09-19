@@ -87,53 +87,6 @@ describe('new design', () => {
     expect(d.$$ instanceof Subject).toBe(true)
   })
 
-  test('delete property', () => {
-    const p = SubX.create({ firstName: 'San', test: {} })
-    delete p.firstName
-    expect(p.firstName).toBeUndefined()
-    let count1 = 0
-    p.$$.pipe(filter(event => event.type === 'SET')).subscribe(event => {
-      count1 += 1
-      console.log(event)
-    })
-    const test = p.test
-    delete p.test
-    let count2 = 0
-    test.$$.subscribe(event => {
-      count2 += 1
-      console.log(event)
-    })
-    test.a = {}
-    test.a.b = {}
-    expect(count1).toBe(0)
-    expect(count2).toBe(2)
-  })
-
-  test('override property', () => {
-    const p = SubX.create({ a: { b: {} } })
-    let count = 0
-    p.$$.subscribe(event => {
-      count += 1
-      console.log(event)
-    })
-    const b = p.a.b
-    b.c = {}
-    b.d = {}
-    p.a.b = {}
-    expect(count).toBe(3)
-    let count2 = 0
-    b.$$.subscribe(event => {
-      console.log(event)
-      count2 += 1
-    })
-    b.c = {}
-    b.d = {}
-    expect(count).toBe(3) // still 3, because b is not longer children of p
-    expect(count2).toBe(2)
-    p.a.b.c = {}
-    expect(count).toBe(4)
-  })
-
   test('delete event', () => {
     const Person = new SubX({ firstName: '', lastName: '' })
     const p = new Person({ firstName: 'Chuntao', lastName: 'Liu' })
