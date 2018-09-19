@@ -9,10 +9,6 @@ const handler = {
     if (prop === '$' || prop === '$$') {
       return false // disallow overriding $ or $$
     }
-    if (prop.startsWith('__') && prop.endsWith('__')) {
-      target[prop] = val
-      return true
-    }
     const oldVal = target[prop]
     let subscription
     if (typeof val === 'object' && val !== null) {
