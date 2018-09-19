@@ -11,6 +11,18 @@ describe('array', () => {
     R.forEach(() => { count += 1 }, a)
     expect(count).toBe(4)
   })
+  test('foreach 2', () => {
+    const a = SubX.create([1, 2, 3, 4])
+    a[1] = 2
+    a[2] = 3
+    let count = 0
+    R.forEach(() => { count += 1 }, a)
+    expect(count).toBe(4)
+  })
+  test('keys', () => {
+    const a = SubX.create([1, 2, 3])
+    expect(R.keys(a)).toEqual(R.keys([1, 2, 3]))
+  })
   test('array', () => {
     // const a = SubX.create([])
     // const events = []

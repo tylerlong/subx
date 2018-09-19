@@ -1,6 +1,8 @@
 import { Subject } from 'rxjs'
 import * as R from 'ramda'
 
+const RESERVED_PROPERTIES = ['$', 'get$', 'set$', 'delete$', '$$', 'get$$', 'set$$', 'delete$$']
+
 const handler = {
   set: (target, prop, val, receiver) => {
     if (prop === '$' || prop === '$$') {
@@ -54,6 +56,9 @@ const handler = {
     delete target[prop]
     target.$.next({ type: 'DELETE', prop, val })
     return true
+  },
+  ownKeys (target) {
+    return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
   }
 }
 
