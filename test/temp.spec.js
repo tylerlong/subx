@@ -23,7 +23,7 @@ describe('computed properties', () => {
 
     person.$.pipe(
       filter(event => event.prop === 'firstName' || event.prop === 'lastName'),
-      debounceTime(100),
+      debounceTime(10),
       map(() => person.fullName())
     ).subscribe(val => {
       console.log('Full name changed', val)
@@ -35,7 +35,7 @@ describe('computed properties', () => {
     person.lastName = 'Wang'
     person.firstName = 'Wu'
 
-    await delay(150)
+    await delay(15)
     expect(count).toBe(1)
   })
 })

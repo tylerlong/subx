@@ -27,11 +27,11 @@ describe('performance', () => {
         count1 += 1
         return i * 2
       }),
-      debounceTime(100)
+      debounceTime(10)
     ).subscribe(i => {
       count2 += 1
     })
-    await delay(150)
+    await delay(15)
     expect(count1).toBe(3) // why? debounceTime is async, cannot save map's execution.
     expect(count2).toBe(1)
   })
