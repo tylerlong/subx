@@ -23,8 +23,40 @@ describe('array', () => {
     const a = SubX.create([1, 2, 3])
     expect(R.keys(a)).toEqual(R.keys([1, 2, 3]))
   })
+  test('toPairs', () => {
+    const a = SubX.create([1, 2, 3])
+    expect(R.toPairs(a)).toEqual([['0', 1], ['1', 2], ['2', 3]])
+  })
+  test('compare', () => {
+    const a = SubX.create([1, 2, 3])
+    expect(a).toEqual([1, 2, 3])
+    expect(R.equals(a, [1, 2, 3])).toBeTruthy()
+  })
+  test('push', () => {
+    const a = SubX.create([1, 2, 3])
+    const events = []
+    a.$$.subscribe(event => {
+      events.push(event)
+    })
+    a.push(4)
+    expect(events).toEqual([
+      {
+        type: 'SET',
+        path: ['3'],
+        val: 4,
+        oldVal: undefined
+      },
+      {
+        type: 'SET',
+        path: ['length'],
+        val: 4,
+        oldVal: 4
+      }
+    ])
+  })
   test('array', () => {
-    // const a = SubX.create([])
+    const a = SubX.create([1, 2, 3])
+    console.log(a)
     // const events = []
     // a.$.subscribe(event => {
     //   events.push(event)
