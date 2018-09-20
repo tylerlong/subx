@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { Subject, combineLatest } from 'rxjs'
+import { combineLatest } from 'rxjs'
 import { filter, map, startWith } from 'rxjs/operators'
 
 import SubX from '../src/index'
@@ -145,12 +145,6 @@ describe('new design', () => {
     const p = new Person()
     expect(p.name).toBe('Tyler Liu')
     expect(p instanceof Person).toBe(false)
-  })
-
-  test('$ or $$ as prop', () => {
-    const d = SubX.create({ $: '$', $$: '$$' })
-    expect(d.$ instanceof Subject).toBe(true)
-    expect(d.$$ instanceof Subject).toBe(true)
   })
 
   test('delete event', () => {

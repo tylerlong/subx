@@ -2,12 +2,12 @@ import { Subject } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
-const RESERVED_PROPERTIES = ['$', 'get$', 'set$', 'delete$', '$$', 'get$$', 'set$$', 'delete$$']
+const RESERVED_PROPERTIES = ['$', 'get$', 'set$', 'delete$', 'has$', '$$', 'get$$', 'set$$', 'delete$$', 'has$$']
 
 const handler = {
   set: (target, prop, val, receiver) => {
-    if (prop === '$' || prop === '$$') {
-      return false // disallow overriding $ or $$
+    if (R.contains(prop, RESERVED_PROPERTIES)) {
+      return false // disallow overriding reserved keywords
     }
     const oldVal = target[prop]
     let subscription
@@ -37,7 +37,7 @@ const handler = {
       case '__isSubX__':
         return true
       case 'toJSON':
-        return () => R.pipe(R.dissoc('$'), R.dissoc('$$'))(target)
+        return () => R.reduce((t, k) => R.dissoc(k, t), target, RESERVED_PROPERTIES)
       case 'toString':
         return () => `SubX ${JSON.stringify(receiver, null, 2)}`
       case 'inspect':
@@ -47,8 +47,8 @@ const handler = {
     }
   },
   deleteProperty: (target, prop) => {
-    if (prop === '$' || prop === '$$') {
-      return false // disallow deletion of $ or $$
+    if (R.contains(prop, RESERVED_PROPERTIES)) {
+      return false // disallow deletion of reserved keywords
     }
     const val = target[prop]
     delete target[prop]
@@ -70,7 +70,7 @@ class SubX {
         const proxy = new Proxy(emptyValue, handler)
         R.pipe(
           R.concat,
-          R.reject(([prop, val]) => prop === '$' || prop === '$$'),
+          R.reject(([prop, val]) => R.contains(prop, RESERVED_PROPERTIES)),
           R.forEach(([prop, val]) => { proxy[prop] = val })
         )(R.toPairs(modelObj), R.toPairs(obj))
         proxy.$.subscribe(event => proxy.$$.next(R.pipe(R.assoc('path', [event.prop]), R.dissoc('prop'))(event)))
