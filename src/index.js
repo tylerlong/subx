@@ -66,6 +66,9 @@ const handler = {
   },
   preventExtensions: target => {
     return false // disallow preventExtensions
+  },
+  defineProperty: (target, property, descriptor) => {
+    return false // disallow defineProperty
   }
 }
 
