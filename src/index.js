@@ -7,7 +7,7 @@ const RESERVED_PROPERTIES = ['$', 'get$', 'set$', 'delete$', 'has$', '$$', 'get$
 const handler = {
   set: (target, prop, val, receiver) => {
     if (R.contains(prop, RESERVED_PROPERTIES)) {
-      return false // disallow overriding reserved keywords
+      prop = `_${prop}` // prefix reserved keywords with underscore
     }
     const oldVal = target[prop]
     let subscription
@@ -70,7 +70,6 @@ class SubX {
         const proxy = new Proxy(emptyValue, handler)
         R.pipe(
           R.concat,
-          R.reject(([prop, val]) => R.contains(prop, RESERVED_PROPERTIES)),
           R.forEach(([prop, val]) => { proxy[prop] = val })
         )(R.toPairs(modelObj), R.toPairs(obj))
         proxy.$.subscribe(event => proxy.$$.next(R.pipe(R.assoc('path', [event.prop]), R.dissoc('prop'))(event)))
