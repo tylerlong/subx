@@ -83,4 +83,26 @@ describe('test', () => {
     p.shift()
     // console.log(p)
   })
+  test('handler.has', () => {
+    const o = {}
+    let count1 = 0
+    let count2 = 0
+    const handler = {
+      get: (target, prop, receiver) => {
+        count1 += 1
+        return target[prop]
+      },
+      has: (target, prop) => {
+        count2 += 1
+        return prop in target
+      }
+    }
+    const p = new Proxy(o, handler)
+    expect('a' in p).toBe(false)
+    expect(count2).toBe(1)
+    p.a = 1
+    expect('a' in p).toBe(true)
+    expect(count1).toBe(0)
+    expect(count2).toBe(2)
+  })
 })
