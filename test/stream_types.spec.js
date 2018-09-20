@@ -3,7 +3,7 @@ import './benchmark'
 // import SubX from '../src/index'
 
 // const temp = proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event)))
-//       const temp2 = target.$.pipe(filter(event => event.prop === prop)).subscribe(() => {
+//       const temp2 = target.$.pipe(filter(event => event.path[0] === prop)).subscribe(() => {
 //         temp.unsubscribe()
 //         temp2.unsubscribe()
 //       })

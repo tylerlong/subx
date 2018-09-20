@@ -23,9 +23,9 @@ const handler = {
     } else {
       target[prop] = val
     }
-    target.$.next({ type: 'SET', prop, val, oldVal })
+    target.$.next({ type: 'SET', path: [prop], val, oldVal })
     if (subscription) {
-      const temp = target.$.pipe(filter(event => event.prop === prop)).subscribe(event => {
+      const temp = target.$.pipe(filter(event => event.path[0] === prop)).subscribe(event => {
         subscription.unsubscribe()
         temp.unsubscribe()
       })
@@ -52,7 +52,7 @@ const handler = {
     }
     const val = target[prop]
     delete target[prop]
-    target.$.next({ type: 'DELETE', prop, val })
+    target.$.next({ type: 'DELETE', path: [prop], val })
     return true
   },
   ownKeys: target => {
@@ -72,7 +72,7 @@ class SubX {
           R.concat,
           R.forEach(([prop, val]) => { proxy[prop] = val })
         )(R.toPairs(modelObj), R.toPairs(obj))
-        proxy.$.subscribe(event => proxy.$$.next(R.pipe(R.assoc('path', [event.prop]), R.dissoc('prop'))(event)))
+        proxy.$.subscribe(event => proxy.$$.next(event))
         return proxy
       }
     }

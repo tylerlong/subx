@@ -22,8 +22,8 @@ describe('index', () => {
     model.b = '222'
     expect(count).toBe(2)
     expect(events).toEqual([
-      { type: 'SET', prop: 'a', val: '111', oldVal: 'hello' },
-      { type: 'SET', prop: 'b', val: '222', oldVal: 'world' }
+      { type: 'SET', path: ['a'], val: '111', oldVal: 'hello' },
+      { type: 'SET', path: ['b'], val: '222', oldVal: 'world' }
     ])
   })
 

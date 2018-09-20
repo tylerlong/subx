@@ -29,8 +29,8 @@ person.lastName = 'Long'
 #### Console output
 
 ```
-{ type: 'SET', prop: 'firstName', val: 'Tyler', oldVal: undefined }
-{ type: 'SET', prop: 'lastName', val: 'Long', oldVal: undefined }
+{ type: 'SET', path: ['firstName'], val: 'Tyler', oldVal: undefined }
+{ type: 'SET', path: ['lastName'], val: 'Long', oldVal: undefined }
 ```
 
 In the sample code above, `person` is a SubX object. `person.$` is a stream of events which you can subscribe to.
@@ -66,8 +66,8 @@ So you can create a `Person` class first, then create as many persons (such as `
 #### Console output
 
 ```
-{ type: 'SET', prop: 'firstName', val: 'Tyler', oldVal: '' }
-{ type: 'SET', prop: 'firstName', val: 'David', oldVal: 'Peter' }
+{ type: 'SET', path: ['firstName'], val: 'Tyler', oldVal: '' }
+{ type: 'SET', path: ['firstName'], val: 'David', oldVal: 'Peter' }
 ```
 
 
@@ -85,7 +85,7 @@ s.prop2 = 2
 #### Console output
 
 ```
-{ type: 'SET', prop: 'prop2', val: 2, oldVal: undefined }
+{ type: 'SET', path: ['prop2'], val: 2, oldVal: undefined }
 ```
 
 In the sample above, `prop2` is dynamically added property and we got its events.
@@ -113,10 +113,10 @@ That's why you can subscribe two theirs events.
 #### Console output
 
 ```
-{ type: 'SET', prop: 'x', val: 0, oldVal: undefined }
-{ type: 'SET', prop: 'y', val: 0, oldVal: undefined }
-{ type: 'SET', prop: 'width', val: 200, oldVal: undefined }
-{ type: 'SET', prop: 'height', val: 100, oldVal: undefined }
+{ type: 'SET', path: ['x'], val: 0, oldVal: undefined }
+{ type: 'SET', path: ['y'], val: 0, oldVal: undefined }
+{ type: 'SET', path: ['width'], val: 200, oldVal: undefined }
+{ type: 'SET', path: ['height'], val: 100, oldVal: undefined }
 ```
 
 
@@ -167,10 +167,10 @@ rectangle.size.height = 100
 #### Console output
 
 ```
-{ type: 'SET', prop: 'x', val: 0, oldVal: undefined }
-{ type: 'SET', prop: 'y', val: 0, oldVal: undefined }
-{ type: 'SET', prop: 'width', val: 200, oldVal: undefined }
-{ type: 'SET', prop: 'height', val: 100, oldVal: undefined }
+{ type: 'SET', path: ['x'], val: 0, oldVal: undefined }
+{ type: 'SET', path: ['y'], val: 0, oldVal: undefined }
+{ type: 'SET', path: ['width'], val: 200, oldVal: undefined }
+{ type: 'SET', path: ['height'], val: 100, oldVal: undefined }
 ```
 
 Solution above works, but there is a better way: `$$`
@@ -298,13 +298,13 @@ list.shift()
 #### Console output
 
 ```
-{ type: 'SET', prop: '3', val: 4, oldVal: undefined }
-{ type: 'SET', prop: 'length', val: 4, oldVal: 4 }
-{ type: 'SET', prop: '0', val: 2, oldVal: 1 }
-{ type: 'SET', prop: '1', val: 3, oldVal: 2 }
-{ type: 'SET', prop: '2', val: 4, oldVal: 3 }
-{ type: 'DELETE', prop: '3', val: 4 }
-{ type: 'SET', prop: 'length', val: 3, oldVal: 4 }
+{ type: 'SET', path: ['3'], val: 4, oldVal: undefined }
+{ type: 'SET', path: ['length'], val: 4, oldVal: 4 }
+{ type: 'SET', path: ['0'], val: 2, oldVal: 1 }
+{ type: 'SET', path: ['1'], val: 3, oldVal: 2 }
+{ type: 'SET', path: ['2'], val: 4, oldVal: 3 }
+{ type: 'DELETE', path: ['3'], val: 4 }
+{ type: 'SET', path: ['length'], val: 3, oldVal: 4 }
 ```
 
 You can see that a single method call `list.shift()` could trigger multiple events.
@@ -328,7 +328,7 @@ delete person.firstName
 #### Console output
 
 ```
-{ type: 'DELETE', prop: 'firstName', val: '' }
+{ type: 'DELETE', path: ['firstName'], val: '' }
 ```
 
 
@@ -458,6 +458,5 @@ You can see that `expensive computation` was only printed once although we chang
 - Compare SubX with mobx / mobx-state-tree
 - Check immer and iflow
 - handler.has()
-- Replace `prop` with `path`
-- Why do unit tests take so long time?
 - How to undo the changes according to events?
+- handler.ownKeys should be an event too?

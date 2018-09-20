@@ -108,11 +108,11 @@ describe('new design', () => {
     p.firstName = 'Chuntao'
     p.lastName = 'Liu'
     const firstName$ = p.$.pipe(
-      filter(event => event.prop === 'firstName'),
+      filter(event => event.path[0] === 'firstName'),
       map(event => event.val), startWith(p.firstName)
     )
     const lastName$ = p.$.pipe(
-      filter(event => event.prop === 'lastName'),
+      filter(event => event.path[0] === 'lastName'),
       map(event => event.val),
       startWith(p.lastName)
     )

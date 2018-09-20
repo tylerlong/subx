@@ -21,13 +21,13 @@ describe('null value', () => {
     expect(events1).toEqual([
       {
         type: 'SET',
-        prop: 'name',
+        path: ['name'],
         val: 'hello',
         oldVal: undefined
       },
       {
         type: 'SET',
-        prop: 'name',
+        path: ['name'],
         val: null,
         oldVal: 'hello'
       }

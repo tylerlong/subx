@@ -15,10 +15,10 @@ describe('demo', () => {
       firstName: 'San',
       lastName: 'Zhang'
     })
-    person.$.pipe(filter(event => event.prop === 'firstName')).subscribe(event => {
+    person.$.pipe(filter(event => event.path[0] === 'firstName')).subscribe(event => {
       // console.log('First name changed', event)
     })
-    person.$.pipe(filter(event => event.prop === 'lastName')).subscribe(event => {
+    person.$.pipe(filter(event => event.path[0] === 'lastName')).subscribe(event => {
       // console.log('Last name changed', event)
     })
     person.firstName = 'Si'
