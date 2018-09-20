@@ -46,7 +46,7 @@ const handler = {
         return target[prop]
     }
   },
-  deleteProperty (target, prop) {
+  deleteProperty: (target, prop) => {
     if (prop === '$' || prop === '$$') {
       return false // disallow deletion of $ or $$
     }
@@ -55,7 +55,7 @@ const handler = {
     target.$.next({ type: 'DELETE', prop, val })
     return true
   },
-  ownKeys (target) {
+  ownKeys: target => {
     return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
   }
 }
