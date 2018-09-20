@@ -63,6 +63,9 @@ const handler = {
   },
   setPrototypeOf: (target, prototype) => {
     return false // disallow setPrototypeOf
+  },
+  preventExtensions: target => {
+    return false // disallow preventExtensions
   }
 }
 
