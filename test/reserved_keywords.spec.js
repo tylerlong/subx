@@ -14,7 +14,29 @@ describe('Reserved keywords', () => {
 }`)
   })
 
-  test('nested keyword properties', () => {
+  test('assign', () => {
+    const p = SubX.create({})
+    p.$$ = 'hello'
+    p.delete$ = 'world'
+    expect(JSON.stringify(p, null, 2)).toBe(`{
+  "_$$": "hello",
+  "_delete$": "world"
+}`)
+  })
 
+  test('nested', () => {
+    const p = SubX.create({ a: { $: { } }, b: { } })
+    p.b.get$$ = 'wonderful'
+    p.a._$.c = 'good'
+    expect(JSON.stringify(p, null, 2)).toBe(`{
+  "a": {
+    "_$": {
+      "c": "good"
+    }
+  },
+  "b": {
+    "_get$$": "wonderful"
+  }
+}`)
   })
 })
