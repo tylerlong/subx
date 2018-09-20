@@ -2,7 +2,10 @@ import { Subject } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
-const RESERVED_PROPERTIES = ['$', 'get$', 'set$', 'delete$', 'has$', '$$', 'get$$', 'set$$', 'delete$$', 'has$$']
+const RESERVED_PROPERTIES = [
+  '$', 'set$', 'delete$', 'get$', 'has$', 'ownKeys$',
+  '$$', 'set$$', 'delete$$', 'get$$', 'has$$', 'ownKeys$$'
+]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -57,6 +60,9 @@ const handler = {
   },
   ownKeys: target => {
     return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
+  },
+  setPrototypeOf: (target, prototype) => {
+    return false // disallow setPrototypeOf
   }
 }
 
