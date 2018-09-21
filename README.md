@@ -454,14 +454,15 @@ You can see that `expensive computation` was only printed once although we chang
 
 - Get some inspiration from rxdb
     - https://pubkey.github.io/rxdb/rx-schema.html
+    - It is not schemaless which I hate
 - Ref: https://github.com/bcherny/undux
 - Compare SubX with mobx / mobx-state-tree
+    - not schemaless
+    - Redux is schemaless, but most of the time you have to make your schema "flat". It's not true schemaless
 - Check immer and iflow
-- handler.has()
 - How to undo the changes according to events?
-- handler.ownKeys should be an event too?
-- allow setPrototypeOf and monitor changes from its prototype? advanced feature.
 - allow preventExtensions and handle this case for computed property implementation.
+    - Proxy handler doesn't support freeze and isFrozen, so it's better to disallow all similar cases.
 - React render method is the computed property!
     - reduce the times of react render.
     - SubX.create(this.props) ?
