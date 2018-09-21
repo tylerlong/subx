@@ -462,3 +462,7 @@ You can see that `expensive computation` was only printed once although we chang
 - handler.ownKeys should be an event too?
 - allow setPrototypeOf and monitor changes from its prototype? advanced feature.
 - allow preventExtensions and handle this case for computed property implementation.
+- React render method is the computed property!
+    - reduce the times of react render.
+    - SubX.create(this.props) ?
+    - How to handle nested react components?

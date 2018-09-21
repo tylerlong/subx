@@ -3,8 +3,8 @@ import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
 const RESERVED_PROPERTIES = [
-  '$', 'set$', 'delete$', 'get$', 'has$', 'ownKeys$',
-  '$$', 'set$$', 'delete$$', 'get$$', 'has$$', 'ownKeys$$'
+  '$', 'set$', 'delete$', 'get$', 'has$', 'keys$',
+  '$$', 'set$$', 'delete$$', 'get$$', 'has$$', 'keys$$'
 ]
 
 const handler = {
@@ -25,6 +25,7 @@ const handler = {
       subscriptions.push(proxy.delete$$.subscribe(event => receiver.delete$$.next(R.assoc('path', [prop, ...event.path], event))))
       subscriptions.push(proxy.get$$.subscribe(event => receiver.get$$.next(R.assoc('path', [prop, ...event.path], event))))
       subscriptions.push(proxy.has$$.subscribe(event => receiver.has$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.keys$$.subscribe(event => receiver.keys$$.next(R.assoc('path', [prop, ...event.path], event))))
       target[prop] = proxy
     } else {
       target[prop] = val
@@ -71,7 +72,9 @@ const handler = {
     return val
   },
   ownKeys: target => {
-    return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
+    const val = R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
+    target.keys$.next({ type: 'KEYS', path: [], val })
+    return val
   },
   setPrototypeOf: (target, prototype) => {
     return false // disallow setPrototypeOf
@@ -94,12 +97,14 @@ class SubX {
         val.delete$ = new Subject()
         val.get$ = new Subject()
         val.has$ = new Subject()
+        val.keys$ = new Subject()
         val.$ = merge(val.set$, val.delete$)
 
         val.set$$ = new Subject()
         val.delete$$ = new Subject()
         val.get$$ = new Subject()
         val.has$$ = new Subject()
+        val.keys$$ = new Subject()
         val.$$ = merge(val.set$$, val.delete$$)
 
         const proxy = new Proxy(val, handler)
@@ -112,6 +117,7 @@ class SubX {
         proxy.delete$.subscribe(event => proxy.delete$$.next(event))
         proxy.get$.subscribe(event => proxy.get$$.next(event))
         proxy.has$.subscribe(event => proxy.has$$.next(event))
+        proxy.keys$.subscribe(event => proxy.keys$$.next(event))
         return proxy
       }
     }
