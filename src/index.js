@@ -21,7 +21,8 @@ const handler = {
       } else {
         proxy = SubX.create(val) // for recursive
       }
-      subscriptions.push(proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.set$$.subscribe(event => receiver.set$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.delete$$.subscribe(event => receiver.delete$$.next(R.assoc('path', [prop, ...event.path], event))))
       subscriptions.push(proxy.get$$.subscribe(event => receiver.get$$.next(R.assoc('path', [prop, ...event.path], event))))
       subscriptions.push(proxy.has$$.subscribe(event => receiver.has$$.next(R.assoc('path', [prop, ...event.path], event))))
       target[prop] = proxy
@@ -87,21 +88,28 @@ class SubX {
   constructor (modelObj = {}) {
     class Model {
       constructor (obj = {}) {
-        const emptyValue = R.empty(obj)
-        emptyValue.set$ = new Subject()
-        emptyValue.delete$ = new Subject()
-        emptyValue.get$ = new Subject()
-        emptyValue.has$ = new Subject()
-        emptyValue.$ = merge(emptyValue.set$, emptyValue.delete$)
-        emptyValue.$$ = new Subject()
-        emptyValue.get$$ = new Subject()
-        emptyValue.has$$ = new Subject()
-        const proxy = new Proxy(emptyValue, handler)
+        const val = R.empty(obj)
+
+        val.set$ = new Subject()
+        val.delete$ = new Subject()
+        val.get$ = new Subject()
+        val.has$ = new Subject()
+        val.$ = merge(val.set$, val.delete$)
+
+        val.set$$ = new Subject()
+        val.delete$$ = new Subject()
+        val.get$$ = new Subject()
+        val.has$$ = new Subject()
+        val.$$ = merge(val.set$$, val.delete$$)
+
+        const proxy = new Proxy(val, handler)
         R.pipe(
           R.concat,
           R.forEach(([prop, val]) => { proxy[prop] = val })
         )(R.toPairs(modelObj), R.toPairs(obj))
-        proxy.$.subscribe(event => proxy.$$.next(event))
+
+        proxy.set$.subscribe(event => proxy.set$$.next(event))
+        proxy.delete$.subscribe(event => proxy.delete$$.next(event))
         proxy.get$.subscribe(event => proxy.get$$.next(event))
         proxy.has$.subscribe(event => proxy.has$$.next(event))
         return proxy

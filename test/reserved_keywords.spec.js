@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { Subject, Observable } from 'rxjs'
+import { Observable } from 'rxjs'
 
 import SubX from '../src/index'
 
@@ -7,7 +7,7 @@ describe('Reserved keywords', () => {
   test('original data has keywords as prop', () => {
     const d = SubX.create({ $: 1, $$: 2 })
     expect(d.$).toBeInstanceOf(Observable)
-    expect(d.$$).toBeInstanceOf(Subject)
+    expect(d.$$).toBeInstanceOf(Observable)
     expect(JSON.stringify(d, null, 2)).toBe(`{
   "_$": 1,
   "_$$": 2
