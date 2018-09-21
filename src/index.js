@@ -36,27 +36,21 @@ const handler = {
     return true
   },
   get: (target, prop, receiver) => {
-    let val
+    if (!R.contains(prop, RESERVED_PROPERTIES)) {
+      target.get$.next({ type: 'GET', path: [prop] })
+    }
     switch (prop) {
       case '__isSubX__':
-        val = true
-        break
+        return true
       case 'toJSON':
-        val = () => R.reduce((t, k) => R.dissoc(k, t), target, RESERVED_PROPERTIES)
-        break
+        return () => R.reduce((t, k) => R.dissoc(k, t), target, RESERVED_PROPERTIES)
       case 'toString':
-        val = () => `SubX ${JSON.stringify(receiver, null, 2)}`
-        break
+        return () => `SubX ${JSON.stringify(receiver, null, 2)}`
       case 'inspect':
-        val = () => receiver.toString()
-        break
+        return () => receiver.toString()
       default:
-        val = target[prop]
+        return target[prop]
     }
-    if (!R.contains(prop, RESERVED_PROPERTIES)) {
-      target.get$.next({ type: 'GET', path: [prop], val })
-    }
-    return val
   },
   deleteProperty: (target, prop) => {
     if (R.contains(prop, RESERVED_PROPERTIES)) {
