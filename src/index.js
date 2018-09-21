@@ -23,6 +23,7 @@ const handler = {
       }
       subscriptions.push(proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event))))
       subscriptions.push(proxy.get$$.subscribe(event => receiver.get$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.has$$.subscribe(event => receiver.has$$.next(R.assoc('path', [prop, ...event.path], event))))
       target[prop] = proxy
     } else {
       target[prop] = val
@@ -63,6 +64,11 @@ const handler = {
     target.delete$.next({ type: 'DELETE', path: [prop], val })
     return true
   },
+  has: (target, prop) => {
+    const val = prop in target
+    target.has$.next({ type: 'HAS', path: [prop], val })
+    return val
+  },
   ownKeys: target => {
     return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
   },
@@ -85,9 +91,11 @@ class SubX {
         emptyValue.set$ = new Subject()
         emptyValue.delete$ = new Subject()
         emptyValue.get$ = new Subject()
+        emptyValue.has$ = new Subject()
         emptyValue.$ = merge(emptyValue.set$, emptyValue.delete$)
         emptyValue.$$ = new Subject()
         emptyValue.get$$ = new Subject()
+        emptyValue.has$$ = new Subject()
         const proxy = new Proxy(emptyValue, handler)
         R.pipe(
           R.concat,
@@ -95,6 +103,7 @@ class SubX {
         )(R.toPairs(modelObj), R.toPairs(obj))
         proxy.$.subscribe(event => proxy.$$.next(event))
         proxy.get$.subscribe(event => proxy.get$$.next(event))
+        proxy.has$.subscribe(event => proxy.has$$.next(event))
         return proxy
       }
     }
