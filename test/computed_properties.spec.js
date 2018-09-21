@@ -40,7 +40,7 @@ describe('computed properties', () => {
 
     let fullName
     person.$.pipe(
-      debounceTime(10),
+      debounceTime(5),
       map(event => person.fullName())
     ).subscribe(val => {
       fullName = val
@@ -52,7 +52,7 @@ describe('computed properties', () => {
     person.lastName = 'Wang'
     person.firstName = 'Wu'
 
-    await delay(15)
+    await delay(10)
 
     expect(count).toBe(1) // no more than 1 time of expensive computation
     expect(fullName).toBe('Wu Wang')
