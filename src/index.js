@@ -13,7 +13,7 @@ const handler = {
       prop = `_${prop}` // prefix reserved keywords with underscore
     }
     const oldVal = target[prop]
-    let subscription
+    let subscriptions = []
     if (typeof val === 'object' && val !== null) {
       let proxy
       if (val.__isSubX__) { // p.b = p.a
@@ -21,13 +21,15 @@ const handler = {
       } else {
         proxy = SubX.create(val) // for recursive
       }
-      subscription = proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event)))
+      subscriptions.push(proxy.$$.subscribe(event => receiver.$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.get$$.subscribe(event => receiver.get$$.next(R.assoc('path', [prop, ...event.path], event))))
       target[prop] = proxy
     } else {
       target[prop] = val
     }
     target.set$.next({ type: 'SET', path: [prop], val, oldVal })
-    if (subscription) {
+    while (subscriptions.length > 0) {
+      const subscription = subscriptions.pop()
       const temp = target.$.pipe(filter(event => event.path[0] === prop)).subscribe(event => {
         subscription.unsubscribe()
         temp.unsubscribe()
@@ -85,12 +87,14 @@ class SubX {
         emptyValue.get$ = new Subject()
         emptyValue.$ = merge(emptyValue.set$, emptyValue.delete$)
         emptyValue.$$ = new Subject()
+        emptyValue.get$$ = new Subject()
         const proxy = new Proxy(emptyValue, handler)
         R.pipe(
           R.concat,
           R.forEach(([prop, val]) => { proxy[prop] = val })
         )(R.toPairs(modelObj), R.toPairs(obj))
         proxy.$.subscribe(event => proxy.$$.next(event))
+        proxy.get$.subscribe(event => proxy.get$$.next(event))
         return proxy
       }
     }
