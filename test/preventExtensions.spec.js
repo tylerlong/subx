@@ -22,12 +22,18 @@ describe('preventExtensions', () => {
     p.a = 1
     expect(p.a).toBe(1)
   })
+  // test('SubX', () => {
+  //   const p = SubX.create({})
+  //   const f = () => Object.preventExtensions(p)
+  //   expect(f).toThrow(TypeError)
+  //   Reflect.preventExtensions(p)
+  //   p.a = 1
+  //   expect(p.a).toBe(1)
+  // })
   test('SubX', () => {
     const p = SubX.create({})
-    const f = () => Object.preventExtensions(p)
-    expect(f).toThrow(TypeError)
-    Reflect.preventExtensions(p)
-    p.a = 1
-    expect(p.a).toBe(1)
+    Object.preventExtensions(p) // or Reflect.preventExtensions(p)
+    expect(() => { p.a = 1 }).toThrow(TypeError)
+    expect(p.a).toBeUndefined()
   })
 })
