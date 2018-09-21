@@ -6,5 +6,5 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  expect(new Date() - start).toBeLessThanOrEqual(25)
+  expect(new Date() - start).toBeLessThanOrEqual(20)
 })

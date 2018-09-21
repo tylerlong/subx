@@ -1,9 +1,9 @@
 /* eslint-env jest */
-import SubX from '../src/index'
 import { debounceTime, map } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
 
 import './benchmark'
+import SubX from '../src/index'
 
 describe('computed properties', () => {
   test('this + normal function', () => {

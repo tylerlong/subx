@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index'
+import './benchmark'
 
 describe('defineProperty', () => {
   test('default', () => {
