@@ -16,7 +16,7 @@ const handler = {
     let subscription
     if (typeof val === 'object' && val !== null) {
       let proxy
-      if (val.__isSubX__) {
+      if (val.__isSubX__) { // p.b = p.a
         proxy = val
       } else {
         proxy = SubX.create(val) // for recursive
@@ -36,18 +36,27 @@ const handler = {
     return true
   },
   get: (target, prop, receiver) => {
+    let val
     switch (prop) {
       case '__isSubX__':
-        return true
+        val = true
+        break
       case 'toJSON':
-        return () => R.reduce((t, k) => R.dissoc(k, t), target, RESERVED_PROPERTIES)
+        val = () => R.reduce((t, k) => R.dissoc(k, t), target, RESERVED_PROPERTIES)
+        break
       case 'toString':
-        return () => `SubX ${JSON.stringify(receiver, null, 2)}`
+        val = () => `SubX ${JSON.stringify(receiver, null, 2)}`
+        break
       case 'inspect':
-        return () => receiver.toString()
+        val = () => receiver.toString()
+        break
       default:
-        return target[prop]
+        val = target[prop]
     }
+    if (!R.contains(prop, RESERVED_PROPERTIES)) {
+      target.get$.next({ type: 'GET', path: [prop], val })
+    }
+    return val
   },
   deleteProperty: (target, prop) => {
     if (R.contains(prop, RESERVED_PROPERTIES)) {
@@ -79,6 +88,7 @@ class SubX {
         const emptyValue = R.empty(obj)
         emptyValue.set$ = new Subject()
         emptyValue.delete$ = new Subject()
+        emptyValue.get$ = new Subject()
         emptyValue.$ = merge(emptyValue.set$, emptyValue.delete$)
         emptyValue.$$ = new Subject()
         const proxy = new Proxy(emptyValue, handler)
