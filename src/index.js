@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs'
+import { Subject, merge } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
@@ -26,7 +26,7 @@ const handler = {
     } else {
       target[prop] = val
     }
-    target.$.next({ type: 'SET', path: [prop], val, oldVal })
+    target.set$.next({ type: 'SET', path: [prop], val, oldVal })
     if (subscription) {
       const temp = target.$.pipe(filter(event => event.path[0] === prop)).subscribe(event => {
         subscription.unsubscribe()
@@ -55,7 +55,7 @@ const handler = {
     }
     const val = target[prop]
     delete target[prop]
-    target.$.next({ type: 'DELETE', path: [prop], val })
+    target.delete$.next({ type: 'DELETE', path: [prop], val })
     return true
   },
   ownKeys: target => {
@@ -77,7 +77,9 @@ class SubX {
     class Model {
       constructor (obj = {}) {
         const emptyValue = R.empty(obj)
-        emptyValue.$ = new Subject()
+        emptyValue.set$ = new Subject()
+        emptyValue.delete$ = new Subject()
+        emptyValue.$ = merge(emptyValue.set$, emptyValue.delete$)
         emptyValue.$$ = new Subject()
         const proxy = new Proxy(emptyValue, handler)
         R.pipe(

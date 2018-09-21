@@ -461,4 +461,4 @@ You can see that `expensive computation` was only printed once although we chang
 - How to undo the changes according to events?
 - handler.ownKeys should be an event too?
 - allow setPrototypeOf and monitor changes from its prototype? advanced feature.
-- allow preventExtensions and handle this case for computed implementation.
+- allow preventExtensions and handle this case for computed property implementation.
