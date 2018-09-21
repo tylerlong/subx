@@ -1,6 +1,4 @@
 /* eslint-env jest */
-import './benchmark'
-
 describe('instanceof', () => {
   test('normal', () => {
     class A {}

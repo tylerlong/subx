@@ -2,7 +2,6 @@
 import * as R from 'ramda'
 
 import SubX from '../src/index'
-import './benchmark'
 
 describe('array', () => {
   test('foreach', () => {

@@ -3,7 +3,6 @@ import { filter, timestamp, map } from 'rxjs/operators'
 // import { merge } from 'rxjs'
 
 import SubX from '../src/index'
-import './benchmark'
 
 describe('demo', () => {
   test('props changed events', () => {

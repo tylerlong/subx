@@ -1,6 +1,5 @@
 /* eslint-env jest */
 import SubX from '../src/index'
-import './benchmark'
 
 describe('get stream', () => {
   test('default', () => {

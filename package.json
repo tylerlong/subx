@@ -35,5 +35,8 @@
     "dist/*",
     "src/*",
     "yarn.lock"
-  ]
+  ],
+  "jest": {
+    "setupTestFrameworkScriptFile": "./test/setup.js"
+  }
 }

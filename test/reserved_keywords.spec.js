@@ -1,7 +1,6 @@
 /* eslint-env jest */
 import { Subject, Observable } from 'rxjs'
 
-import './benchmark'
 import SubX from '../src/index'
 
 describe('Reserved keywords', () => {

@@ -2,7 +2,6 @@
 import { debounceTime, map } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
 
-import './benchmark'
 import SubX from '../src/index'
 
 describe('computed properties', () => {
