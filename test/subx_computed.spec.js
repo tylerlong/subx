@@ -1,41 +1,6 @@
 /* eslint-env jest */
-import * as R from 'ramda'
-import { filter } from 'rxjs/operators'
-
 import SubX from '../src/index'
-
-const computed = (subx, f) => {
-  let cache
-  let changed = true
-  const wrapped = () => {
-    if (changed) {
-      const gets = []
-      const subscriptions = []
-      subscriptions.push(subx.get$.subscribe(event => gets.push(event)))
-      cache = f.bind(subx)()
-      changed = false
-      R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-
-      if (gets.length > 0) {
-        const relevantGets = R.reduce((events, event) => {
-          if (events.length > 0 && R.startsWith(events[0].path, event.path)) {
-            events.shift()
-          }
-          events.unshift(event)
-          return events
-        }, [], gets)
-        const changeSubscription = subx.$.pipe(
-          filter(event => R.any(rGet => R.equals(rGet.path, event.path), relevantGets))
-        ).subscribe(event => {
-          changed = true
-          changeSubscription.unsubscribe()
-        })
-      }
-    }
-    return cache
-  }
-  return wrapped
-}
+import computed from '../src/computed'
 
 describe('SubX computed', () => {
   test('cache', () => {
