@@ -2,6 +2,8 @@ import { Subject, merge } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
+// import computed from './computed'
+
 const RESERVED_PROPERTIES = [
   '$', 'set$', 'delete$', 'get$', 'has$', 'keys$',
   '$$', 'set$$', 'delete$$', 'get$$', 'has$$', 'keys$$'
@@ -107,15 +109,16 @@ class SubX {
         const proxy = new Proxy(newObj, handler)
         R.pipe(
           R.concat,
-          R.forEach(([target, prop, val]) => {
+          R.forEach(([target, prop]) => {
             const descriptor = Object.getOwnPropertyDescriptor(target, prop)
             if ('value' in descriptor) {
-              proxy[prop] = val
+              proxy[prop] = target[prop]
             } else if ('get' in descriptor && descriptor.set === undefined) { // getter function
+              // descriptor.get = computed(proxy, descriptor.get)
               Object.defineProperty(newObj, prop, descriptor)
             }
           })
-        )(R.map(R.prepend(modelObj), R.toPairs(modelObj)), R.map(R.prepend(obj), R.toPairs(obj)))
+        )(R.map(key => [modelObj, key], R.keys(modelObj)), R.map(key => [obj, key], R.keys(obj)))
 
         proxy.set$.subscribe(event => proxy.set$$.next(event))
         proxy.delete$.subscribe(event => proxy.delete$$.next(event))
