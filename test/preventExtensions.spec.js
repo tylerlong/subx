@@ -30,7 +30,7 @@ describe('preventExtensions', () => {
   //   p.a = 1
   //   expect(p.a).toBe(1)
   // })
-  test('SubX', () => {
+  test('SubX', () => { // We do nothing to preventExtensions. Because JS proxy doesn't support Object.freeze/seal
     const p = SubX.create({})
     Object.preventExtensions(p) // or Reflect.preventExtensions(p)
     expect(() => { p.a = 1 }).toThrow(TypeError)

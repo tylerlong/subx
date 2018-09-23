@@ -18,6 +18,7 @@ describe('SubX computed', () => {
     expect(f()).toBe('Tyler Liu')
     expect(count).toBe(1)
   })
+
   test('re-compute', () => {
     let count = 0
     const p = SubX.create({
@@ -37,6 +38,7 @@ describe('SubX computed', () => {
     expect(f()).toBe('Peter Liu')
     expect(count).toBe(2)
   })
+
   test('cache by correct key', () => {
     let count = 0
     const p = SubX.create({
@@ -62,6 +64,7 @@ describe('SubX computed', () => {
     expect(f()).toBe('Lau')
     expect(count).toBe(2)
   })
+
   test('delete trigger re-compute', () => {
     let count = 0
     const p = SubX.create({
@@ -80,5 +83,37 @@ describe('SubX computed', () => {
     expect(f()).toBe('Tyler undefined')
     expect(f()).toBe('Tyler undefined')
     expect(count).toBe(2)
+  })
+
+  test('nothing change assignment won\'t trigger re-compute', () => {
+    let count = 0
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      fullName: function () {
+        count += 1
+        return `${this.firstName} ${this.lastName}`
+      }
+    })
+    const f = computed(p, p.fullName)
+    expect(f()).toBe('Tyler Liu')
+    expect(f()).toBe('Tyler Liu')
+    expect(count).toBe(1)
+    p.firstName = 'Peter'
+    expect(f()).toBe('Peter Liu')
+    expect(f()).toBe('Peter Liu')
+    expect(count).toBe(2)
+    p.firstName = 'Peter'
+    expect(f()).toBe('Peter Liu')
+    expect(f()).toBe('Peter Liu')
+    expect(count).toBe(2) // still 2
+    p.lastName = 'Liu'
+    expect(f()).toBe('Peter Liu')
+    expect(f()).toBe('Peter Liu')
+    expect(count).toBe(2) // still 2
+    p.firstName = 'Tyler'
+    expect(f()).toBe('Tyler Liu')
+    expect(f()).toBe('Tyler Liu')
+    expect(count).toBe(3)
   })
 })
