@@ -9,24 +9,26 @@ const computed = (subx, f) => {
   let changed = true
   const wrapped = () => {
     if (changed) {
-      const getEvents = []
-      const getSub = subx.get$.subscribe(event => getEvents.push(event))
-
+      const gets = []
+      const subscriptions = []
+      subscriptions.push(subx.get$.subscribe(event => gets.push(event)))
       cache = f.bind(subx)()
       changed = false
+      R.forEach(subscription => subscription.unsubscribe(), subscriptions)
 
-      getSub.unsubscribe()
-      if (getEvents.length > 0) {
-        const compactEvents = R.reduce((events, event) => {
+      if (gets.length > 0) {
+        const relevantGets = R.reduce((events, event) => {
           if (events.length > 0 && R.startsWith(events[0].path, event.path)) {
             events.shift()
           }
           events.unshift(event)
           return events
-        }, [], getEvents)
-        const changeSub = subx.$.pipe(filter(event => R.any(ce => R.equals(ce.path, event.path), compactEvents))).subscribe(event => {
+        }, [], gets)
+        const changeSubscription = subx.$.pipe(
+          filter(event => R.any(rGet => R.equals(rGet.path, event.path), relevantGets))
+        ).subscribe(event => {
           changed = true
-          changeSub.unsubscribe()
+          changeSubscription.unsubscribe()
         })
       }
     }
@@ -41,7 +43,6 @@ describe('SubX computed', () => {
     const p = SubX.create({
       firstName: 'Tyler',
       lastName: 'Liu',
-      age: 30,
       fullName: function () {
         count += 1
         return `${this.firstName} ${this.lastName}`
@@ -57,7 +58,6 @@ describe('SubX computed', () => {
     const p = SubX.create({
       firstName: 'Tyler',
       lastName: 'Liu',
-      age: 30,
       fullName: function () {
         count += 1
         return `${this.firstName} ${this.lastName}`
@@ -95,6 +95,25 @@ describe('SubX computed', () => {
     expect(count).toBe(1)
     p.lastName = 'Lau'
     expect(f()).toBe('Lau')
+    expect(count).toBe(2)
+  })
+  test('delete trigger re-compute', () => {
+    let count = 0
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      fullName: function () {
+        count += 1
+        return `${this.firstName} ${this.lastName}`
+      }
+    })
+    const f = computed(p, p.fullName)
+    expect(f()).toBe('Tyler Liu')
+    expect(f()).toBe('Tyler Liu')
+    expect(count).toBe(1)
+    delete p.lastName
+    expect(f()).toBe('Tyler undefined')
+    expect(f()).toBe('Tyler undefined')
     expect(count).toBe(2)
   })
 })
