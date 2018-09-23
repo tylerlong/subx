@@ -2,7 +2,7 @@ import { Subject, merge } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
-// import computed from './computed'
+import computed from './computed'
 
 const RESERVED_PROPERTIES = [
   '$', 'set$', 'delete$', 'get$', 'has$', 'keys$',
@@ -114,7 +114,7 @@ class SubX {
             if ('value' in descriptor) {
               proxy[prop] = target[prop]
             } else if ('get' in descriptor && descriptor.set === undefined) { // getter function
-              // descriptor.get = computed(proxy, descriptor.get)
+              descriptor.get = computed(proxy, descriptor.get)
               Object.defineProperty(newObj, prop, descriptor)
             }
           })
