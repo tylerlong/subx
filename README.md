@@ -465,3 +465,5 @@ You can see that `expensive computation` was only printed once although we chang
     - reduce the times of react render.
     - SubX.create(this.props) ?
     - How to handle nested react components?
+- As Michael found, `seal`, `freeze` & `preventExtensions`  all trigger `preventExtensions` and `defineProperty`.
+    - should support defineProperty?

@@ -116,4 +116,72 @@ describe('SubX computed', () => {
     expect(f()).toBe('Tyler Liu')
     expect(count).toBe(3)
   })
+
+  test('cache has', () => {
+    let count = 0
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      fullName: function () {
+        count += 1
+        return `${this.firstName} ${'lastName' in this ? 'has last name' : 'no last name'}`
+      }
+    })
+    const f = computed(p, p.fullName)
+    expect(f()).toBe('Tyler has last name')
+    expect(f()).toBe('Tyler has last name')
+    expect(count).toBe(1)
+    delete p.lastName
+    expect(f()).toBe('Tyler no last name')
+    expect(f()).toBe('Tyler no last name')
+    expect(count).toBe(2)
+  })
+
+  test('delete non-exist doesn\'t trigger re-compute', () => {
+    let count = 0
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      fullName: function () {
+        count += 1
+        return `${this.firstName} ${'middleName' in this ? 'has middle name' : 'no middle name'}`
+      }
+    })
+    const f = computed(p, p.fullName)
+    expect(f()).toBe('Tyler no middle name')
+    expect(f()).toBe('Tyler no middle name')
+    expect(count).toBe(1)
+    delete p.middleName
+    expect(f()).toBe('Tyler no middle name')
+    expect(f()).toBe('Tyler no middle name')
+    expect(count).toBe(1)
+    p.middleName = 'chun'
+    expect(f()).toBe('Tyler has middle name')
+    expect(f()).toBe('Tyler has middle name')
+    expect(count).toBe(2)
+  })
+
+  test('keys cache', () => {
+    let count = 0
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      names: function () {
+        count += 1
+        return `I have ${Object.keys(this).join(', ')}`
+      }
+    })
+    const f = computed(p, p.names)
+    expect(f()).toBe('I have firstName, lastName, names')
+    expect(f()).toBe('I have firstName, lastName, names')
+    expect(count).toBe(1)
+    p.firstName = 'Peter'
+    expect(f()).toBe('I have firstName, lastName, names')
+    expect(f()).toBe('I have firstName, lastName, names')
+    expect(count).toBe(1)
+    p.middleName = 'Chun'
+    expect(f()).toBe('I have firstName, lastName, names, middleName')
+    expect(f()).toBe('I have firstName, lastName, names, middleName')
+    expect(count).toBe(2)
+  })
 })
