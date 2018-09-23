@@ -467,3 +467,4 @@ You can see that `expensive computation` was only printed once although we chang
     - How to handle nested react components?
 - As Michael found, `seal`, `freeze` & `preventExtensions`  all trigger `preventExtensions` and `defineProperty`.
     - should support defineProperty?
+    - advanced feature, hold on

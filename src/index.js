@@ -88,27 +88,34 @@ class SubX {
   constructor (modelObj = {}) {
     class Model {
       constructor (obj = {}) {
-        const val = R.empty(obj)
+        const newObj = R.empty(obj)
 
-        val.set$ = new Subject()
-        val.delete$ = new Subject()
-        val.get$ = new Subject()
-        val.has$ = new Subject()
-        val.keys$ = new Subject()
-        val.$ = merge(val.set$, val.delete$)
+        newObj.set$ = new Subject()
+        newObj.delete$ = new Subject()
+        newObj.get$ = new Subject()
+        newObj.has$ = new Subject()
+        newObj.keys$ = new Subject()
+        newObj.$ = merge(newObj.set$, newObj.delete$)
 
-        val.set$$ = new Subject()
-        val.delete$$ = new Subject()
-        val.get$$ = new Subject()
-        val.has$$ = new Subject()
-        val.keys$$ = new Subject()
-        val.$$ = merge(val.set$$, val.delete$$)
+        newObj.set$$ = new Subject()
+        newObj.delete$$ = new Subject()
+        newObj.get$$ = new Subject()
+        newObj.has$$ = new Subject()
+        newObj.keys$$ = new Subject()
+        newObj.$$ = merge(newObj.set$$, newObj.delete$$)
 
-        const proxy = new Proxy(val, handler)
+        const proxy = new Proxy(newObj, handler)
         R.pipe(
           R.concat,
-          R.forEach(([prop, val]) => { proxy[prop] = val })
-        )(R.toPairs(modelObj), R.toPairs(obj))
+          R.forEach(([target, prop, val]) => {
+            const descriptor = Object.getOwnPropertyDescriptor(target, prop)
+            if ('value' in descriptor) {
+              proxy[prop] = val
+            } else if ('get' in descriptor && descriptor.set === undefined) { // getter function
+              Object.defineProperty(newObj, prop, descriptor)
+            }
+          })
+        )(R.map(R.prepend(modelObj), R.toPairs(modelObj)), R.map(R.prepend(obj), R.toPairs(obj)))
 
         proxy.set$.subscribe(event => proxy.set$$.next(event))
         proxy.delete$.subscribe(event => proxy.delete$$.next(event))
