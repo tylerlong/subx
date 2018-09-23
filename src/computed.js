@@ -11,7 +11,7 @@ const monitorGets = (subx, gets) => {
   let stream = empty()
   R.forEach(get => {
     const val = R.path(get.path, subx)
-    stream = merge(stream, subx.$.pipe(
+    stream = merge(stream, subx.$$.pipe(
       filter(event => R.startsWith(event.path, get.path)),
       filter(event => {
         const parentVal = R.path(R.init(get.path), subx)
@@ -31,7 +31,7 @@ const monitorHass = (subx, hass) => {
   let stream = empty()
   R.forEach(has => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx)
-    stream = merge(stream, subx.$.pipe(
+    stream = merge(stream, subx.$$.pipe(
       filter(event => R.startsWith(event.path, has.path)),
       filter(event => {
         const parentVal = R.path(R.init(has.path), subx)
@@ -51,7 +51,7 @@ const monitorkeyss = (subx, keyss) => {
   let stream = empty()
   R.forEach(keys => {
     const val = Object.keys(R.path(keys.path, subx))
-    stream = merge(stream, subx.$.pipe(
+    stream = merge(stream, subx.$$.pipe(
       filter(event => R.startsWith(event.path, keys.path) || (keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path))),
       filter(event => {
         const parentVal = R.path(keys.path, subx)
@@ -75,9 +75,9 @@ const computed = (subx, f) => {
       const hass = []
       const keyss = []
       const subscriptions = []
-      subscriptions.push(subx.get$.subscribe(event => gets.push(event)))
-      subscriptions.push(subx.has$.subscribe(event => hass.push(event)))
-      subscriptions.push(subx.keys$.subscribe(event => keyss.push(event)))
+      subscriptions.push(subx.get$$.subscribe(event => gets.push(event)))
+      subscriptions.push(subx.has$$.subscribe(event => hass.push(event)))
+      subscriptions.push(subx.keys$$.subscribe(event => keyss.push(event)))
       cache = f.bind(subx)()
       changed = false
       R.forEach(subscription => subscription.unsubscribe(), subscriptions)
