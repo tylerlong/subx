@@ -1,6 +1,7 @@
 # SubX
 
 [![Build Status](https://travis-ci.org/tylerlong/subx.svg?branch=master)](https://travis-ci.org/tylerlong/subx)
+[![npm version](https://badge.fury.io/js/subx.svg)](https://badge.fury.io/js/subx)
 
 Subject X, Reactive Subject. Pronunciation: [Sub X]
 
