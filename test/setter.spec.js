@@ -82,4 +82,42 @@ describe('setter', () => {
     expect(p.lastName).toBe('Zhang')
     expect(sets).toEqual(['fullName = San Zhang']) // doesn't trigger firstName set or lastName set
   })
+
+  test('handler.defineProperty', () => {
+    const o = { firstName: 'Tyler', lastName: 'Liu' }
+    const gets = []
+    const sets = []
+    const handler = {
+      get: (target, prop, receiver) => {
+        gets.push(`get ${prop}`)
+        return target[prop]
+      },
+      set: (target, prop, val, receiver) => {
+        sets.push(`${prop} = ${val}`)
+        target[prop] = val
+        return true
+      },
+      defineProperty: (target, prop, descriptor, receiver) => {
+        expect(receiver).toBeUndefined()
+        return Reflect.defineProperty(target, prop, descriptor)
+      }
+    }
+    const p = new Proxy(o, handler)
+    Object.defineProperty(p, 'fullName', {
+      get: function () {
+        return `${this.firstName} ${this.lastName}`
+      },
+      set: function (val) {
+        const [firstName, lastName] = val.split(' ')
+        this.firstName = firstName
+        this.lastName = lastName
+      }
+    })
+    expect(p.fullName).toBe('Tyler Liu')
+    expect(gets).toEqual(['get fullName']) // doesn't trigger firstName get or lastName get
+    p.fullName = 'San Zhang'
+    expect(p.firstName).toBe('San')
+    expect(p.lastName).toBe('Zhang')
+    expect(sets).toEqual(['fullName = San Zhang']) // doesn't trigger firstName set or lastName set
+  })
 })
