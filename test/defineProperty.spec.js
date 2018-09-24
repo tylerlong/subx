@@ -45,4 +45,15 @@ describe('defineProperty', () => {
     expect(f).toThrow(TypeError)
     expect(p.a).toBeUndefined()
   })
+  test('override with getter function', () => {
+    const o = { a: 1, b: 2, c: 3 }
+    expect(o.c).toBe(3)
+    Object.defineProperty(o, 'c', {
+      get: function () {
+        return this.a / this.b
+      }
+    })
+    expect(o.c).toBe(0.5)
+    expect('get' in Object.getOwnPropertyDescriptor(o, 'c')).toBeTruthy()
+  })
 })

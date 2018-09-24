@@ -59,4 +59,22 @@ describe('getter', () => {
     expect(p.fullName2()).toBe('Tyler Liu')
     expect(count2).toBe(2) // no cache
   })
+  test('subx invalidate cache', () => {
+    let count1 = 0
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      get fullName () {
+        count1 += 1
+        return `${this.firstName} ${this.lastName}`
+      }
+    })
+    expect(p.fullName).toBe('Tyler Liu')
+    expect(p.fullName).toBe('Tyler Liu')
+    expect(count1).toBe(1)
+    p.firstName = 'Peter'
+    expect(p.fullName).toBe('Peter Liu')
+    expect(p.fullName).toBe('Peter Liu')
+    expect(count1).toBe(2)
+  })
 })
