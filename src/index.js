@@ -106,6 +106,12 @@ class SubX {
         newObj.keys$$ = new Subject()
         newObj.$$ = merge(newObj.set$$, newObj.delete$$)
 
+        newObj.set$.subscribe(event => newObj.set$$.next(event))
+        newObj.delete$.subscribe(event => newObj.delete$$.next(event))
+        newObj.get$.subscribe(event => newObj.get$$.next(event))
+        newObj.has$.subscribe(event => newObj.has$$.next(event))
+        newObj.keys$.subscribe(event => newObj.keys$$.next(event))
+
         const proxy = new Proxy(newObj, handler)
         R.pipe(
           R.concat,
@@ -119,12 +125,6 @@ class SubX {
             }
           })
         )(R.map(key => [modelObj, key], R.keys(modelObj)), R.map(key => [obj, key], R.keys(obj)))
-
-        proxy.set$.subscribe(event => proxy.set$$.next(event))
-        proxy.delete$.subscribe(event => proxy.delete$$.next(event))
-        proxy.get$.subscribe(event => proxy.get$$.next(event))
-        proxy.has$.subscribe(event => proxy.has$$.next(event))
-        proxy.keys$.subscribe(event => proxy.keys$$.next(event))
         return proxy
       }
     }
