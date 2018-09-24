@@ -6,6 +6,15 @@ SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). So it's better to 
 It's OK if you don't know RxJS, it doesn't prevent you from using this library.
 
 
+## Features (compared to Redux or MobX)
+
+- Schemaless
+- Intuitive
+- No annotation necessary
+- Able to monitor dynamic and nested data structure
+- Allow you to focus on dynamic data stream instead of static data
+
+
 ## Installation
 
 ```
@@ -468,3 +477,4 @@ You can see that `expensive computation` was only printed once although we chang
 - As Michael found, `seal`, `freeze` & `preventExtensions`  all trigger `preventExtensions` and `defineProperty`.
     - should support defineProperty?
     - advanced feature, hold on
+    - definedProperty doesn't support parameter receiver. But we can save the receiver in `handler.get` & `handler.set`
