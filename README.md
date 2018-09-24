@@ -2,7 +2,7 @@
 
 Subject X, Reactive Subject. Pronunciation: [Sub X]
 
-SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). So it's better to have some RxJS knowledge.
+SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). It's better to have some RxJS knowledge.
 It's OK if you don't know RxJS, it doesn't prevent you from using this library.
 
 
@@ -10,7 +10,8 @@ It's OK if you don't know RxJS, it doesn't prevent you from using this library.
 
 - Schemaless
 - Intuitive
-- No annotation necessary
+- Based on RxJS, you can use all the RxJS operators
+- No annotation or weird configurations
 - Able to monitor dynamic and nested data structure
 - Allow you to focus on dynamic data stream instead of static data
 
@@ -29,7 +30,7 @@ import SubX from 'subx'
 ## Quickstart sample
 
 ```js
-const person = SubX.create({})
+const person = SubX.create()
 person.$.subscribe(console.log)
 person.firstName = 'Tyler'
 person.lastName = 'Long'
@@ -42,7 +43,7 @@ person.lastName = 'Long'
 { type: 'SET', path: ['lastName'], val: 'Long', oldVal: undefined }
 ```
 
-In the sample code above, `person` is a SubX object. `person.$` is a stream of events which you can subscribe to.
+In the sample code above, `person` is a SubX object. `person.$` is a stream of events about changes to `person`'s direct properties.
 
 
 ## What is Reactive Subject?
@@ -129,63 +130,82 @@ That's why you can subscribe two theirs events.
 ```
 
 
-## track children properties' events
+## Types of events
+
+Currently there are five kinds of events: `SET`, `DELETE`, `GET`, `HAS` & `KEYS`.
+
+The corresponding event streams are `set$`, `delete$`, `get$`, `has$` & `keys$`.
+
+`$` is the merge of `set$` & `delete$`. We provide it as sugar since it is mostly used.
+
+All the events mentioned above have their recursive counterpart: `set$$`, `delete$$`, `get$$`, `has$$`, `keys$$` & `$$`.
+
+If you only need stream of object's **direct** properties, use the `single-dollar` version, otherwise use the `double-dollar` version.
+
+### SET
+
+Most of the event mentioned in this page are `SET` events. `SET` means a property has been assigned to. Such as `person.firstName = 'John'`.
 
 ```js
-const rectangle = SubX.create({ position: { }, size: { } })
+const person = SubX.create({ firstName: 'Tyler' })
+person.set$.subscribe(console.log)
+person.firstName = 'Peter'
 ```
 
-Given the SubX object above, what if we want a **single** stream to track the events from BOTH `postion` and `size`?
-
-Let's try this first:
+### DELETE
+`DELETE` events are triggered as well. We already see one of such event above in "Array events" section. Here is one more sample:
 
 ```js
-rectangle.$.subscribe(console.log)
-rectangle.position.x = 0
-rectangle.position.y = 0
-rectangle.size.width = 200
-rectangle.size.height = 100
+const person = SubX.create({ firstName: '' })
+person.delete$.subscribe(console.log)
+delete person.firstName
 ```
 
-#### Console output
+### GET
 
-```
-```
-
-It does **NOT** work, as you can see the console outputs nothing. This is because `rectangle.$` only provides events for `rectangle`'s **direct** properties.
-
-Take `rectangle.position.x = 0` for example, we changed `x`, which is a direct property of `rectangle.postion`.
-`rectangle.postion.$` can track this event while `rectangle.$` cannot.
-
-
-### Merge event streams
-
-One solution is to merge event streams:
+`GET` events are triggered when you access a property
 
 ```js
-import { merge } from 'rxjs'
-
-const mergeStream$ = merge(rectangle.position.$, rectangle.size.$)
-mergeStream$.subscribe(console.log)
-rectangle.position.x = 0
-rectangle.position.y = 0
-rectangle.size.width = 200
-rectangle.size.height = 100
+const person = SubX.create({ firstName: '' })
+person.get$.subscribe(console.log)
+console.log(person.firstName)
 ```
 
-#### Console output
+### HAS
 
+`GET` events are triggered when you use the `in` operator
+
+```js
+const person = SubX.create({ firstName: '' })
+person.has$.subscribe(console.log)
+console.log('firstName' in person)
 ```
-{ type: 'SET', path: ['x'], val: 0, oldVal: undefined }
-{ type: 'SET', path: ['y'], val: 0, oldVal: undefined }
-{ type: 'SET', path: ['width'], val: 200, oldVal: undefined }
-{ type: 'SET', path: ['height'], val: 100, oldVal: undefined }
+
+### KEYS
+
+`KEYS` events are triggered when you use `Object.keys(...)`
+
+```js
+const person = SubX.create({ firstName: '' })
+person.keys$.subscribe(console.log)
+console.log(Object.keys(person))
 ```
 
-Solution above works, but there is a better way: `$$`
+
+## Filter events
+
+Let's say you only interested in 'SET' events, you can [filter](https://rxjs-dev.firebaseapp.com/api/operators/filter) the event stream before `subscribe`:
+
+```js
+import { filter } from 'rxjs/operators'
+
+person.$.pipe(
+    filter(event => event.type === 'SET')
+).subscribe(console.log)
+```
 
 
-### $$
+## Use `$$` to track children's properties' events recursiveky
 
 `obj.$$` tracks all the events inside `obj`, be them its own events or its children's events.
 Children could be direct children or indirect children (children's children).
@@ -223,22 +243,8 @@ rectangle.size.height = 100
     path: [ 'size', 'height' ] }
 ```
 
-Since the changes could be either to its own properties or its children's properties,
-the events include a `path` property to tell you which property triggers the event.
-
-So
-
-```
-{ type: 'SET',
-    val: 100,
-    oldVal: undefined,
-    path: [ 'size', 'height' ] }
-```
-
-tells us that `rectangle.size.height` changed from `undefined` to `100`.
-
 Since nested objects are also SubX objects, they support `$$` too.
-For example you can `rectangle.size.$$.subscribe(...)` to track rectangle.size and its children's events.
+For example you can `rectangle.size.$$.subscribe(...)` to track `rectangle.size` and its children's events.
 
 
 ## Events with timestamp
@@ -320,40 +326,6 @@ You can see that a single method call `list.shift()` could trigger multiple even
 The behavior is idential to [Proxy handler](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler).
 
 
-## Types of events
-
-Currently there are two kinds of events: `SET` & `DELETE`.
-
-Most of the event mentioned in this page are `SET` events. `SET` means a property has been assigned to. Such as `person.firstName = 'John'`.
-
-`DELETE` events are triggered as well. We already see one of such event above in "Array events" section. Here is one more sample:
-
-```js
-const person = SubX.create({ firstName: '' })
-person.$.subscribe(console.log)
-delete person.firstName
-```
-
-#### Console output
-
-```
-{ type: 'DELETE', path: ['firstName'], val: '' }
-```
-
-
-## Filter events
-
-Let's say you only interested in 'SET' events, you can [filter](https://rxjs-dev.firebaseapp.com/api/operators/filter) the event stream before `subscribe`:
-
-```js
-import { filter } from 'rxjs/operators'
-
-person.$.pipe(
-    filter(event => event.type === 'SET')
-).subscribe(console.log)
-```
-
-
 ## RxJS operators
 
 SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). In RxJS, methods that transform or query sequences are called **operators**.
@@ -369,32 +341,6 @@ We've already seen some examples of operartor above, such as `timestamp`, `map` 
 const Person = new SubX({
     firstName: 'San',
     lastName: 'Zhang',
-    fullName () {
-        return `${this.firstName} ${this.lastName}`
-    },
-    greeting (phrase) {
-        return `${phrase} ${this.fullName()}`
-    }
-})
-const person = new Person()
-expect(person.fullName()).toBe('San Zhang')
-expect(person.greeting('Hi')).toBe('Hi San Zhang')
-```
-
-Computed property is just a function in object, such as `fullName` & `greeting` above.
-
-Computed property is especially useful when you write the code in OOP-Style.
-Because all the objects automatically get the computed properties from class, so you don't need to define them for each object again and again.
-
-
-### Computed property as getter
-
-For computed property without arguments, you can define it as a getter:
-
-```js
-const Person = new SubX({
-    firstName: 'San',
-    lastName: 'Zhang',
     get fullName () {
         return `${this.firstName} ${this.lastName}`
     }
@@ -403,10 +349,23 @@ const person = new Person()
 expect(person.fullName).toBe('San Zhang')
 ```
 
+We use "convention over configuration" here: getter functions are computed properties.
 
-## Expensive computed property
+If you don't need it to be computed property, just don't make it a getter function.
 
-Sometimes it is expensive to compute a property. We would like to avoid doing the computation too often.
+What is the different between computed property and a normal function? Computed property caches its results, it won't re-compute until necessary.
+
+So in the example above, you can call `person.fullName` multiple times but it will only compute once. It won't re-compute until you change either `firstName` or `lastName` and invoke `person.fullName` again.
+
+Computed property is especially handy when you write the code in OOP-Style.
+Because all the objects automatically get the computed properties from class, so you don't need to define them for each object again and again.
+
+
+## To make computed property even more efficient
+
+We know that computed property caches it result and won't re-compute until necessary.
+
+But if relevant data changes frequently, cache doesn't help at all.
 
 Let's assume that `person.fullName()` is an expensive computation.
 And we definitely don't want to execute it again and again in a short peroid of time.
@@ -421,7 +380,7 @@ let fullName
 const Person = new SubX({
     firstName: 'San',
     lastName: 'Zhang',
-    fullName () {
+    get fullName () {
         count += 1
         console.log('expensive computation')
         return `${this.firstName} ${this.lastName}`
@@ -431,7 +390,7 @@ const person = new Person()
 
 person.$.pipe(
     debounceTime(100),
-    map(event => person.fullName())
+    map(event => person.fullName)
 ).subscribe(val => {
     fullName = val
 })
