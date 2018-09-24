@@ -23,11 +23,11 @@ const handler = {
       } else {
         proxy = SubX.create(val) // for recursive
       }
-      subscriptions.push(proxy.set$$.subscribe(event => receiver.set$$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.delete$$.subscribe(event => receiver.delete$$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.get$$.subscribe(event => receiver.get$$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.has$$.subscribe(event => receiver.has$$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.keys$$.subscribe(event => receiver.keys$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.set$$.subscribe(event => target.set$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.delete$$.subscribe(event => target.delete$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.get$$.subscribe(event => target.get$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.has$$.subscribe(event => target.has$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.keys$$.subscribe(event => target.keys$$.next(R.assoc('path', [prop, ...event.path], event))))
       target[prop] = proxy
     } else {
       target[prop] = val
