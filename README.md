@@ -2,18 +2,23 @@
 
 Subject X, Reactive Subject. Pronunciation: [Sub X]
 
+You can use SubX as a state container library like Redux & MobX.
+
 SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). It's better to have some RxJS knowledge.
 It's OK if you don't know RxJS, it doesn't prevent you from using this library.
 
 
 ## Features (compared to Redux or MobX)
 
-- Schemaless
-- Intuitive
+- Schemaless, you don't need specify all you data fields at the beginning. You can add them gradually and dynamically.
+- Intuitive, just follow common sense
+- Super easy to use: forget actions, reducers, dispatchers, containers...etc.
 - Based on RxJS, you can use all the RxJS operators
-- No annotation or weird configurations
+- No annotation or weird configurations/syntax
+- Very few new concepts/terminology: you only need to know what is events stream and you are good to go.
 - Able to monitor dynamic and nested data structure
 - Allow you to focus on dynamic data stream instead of static data
+- Small. fewer than 300 lines of code. (Unbelievable, huh?)
 
 
 ## Installation
@@ -204,8 +209,10 @@ person.$.pipe(
 ).subscribe(console.log)
 ```
 
+Example above isn't useful in real project because there is already `person.set$` available. It just shows you how to filter events.
 
-## Use `$$` to track children's properties' events recursiveky
+
+## Use `$$` to track children's properties' events recursively
 
 `obj.$$` tracks all the events inside `obj`, be them its own events or its children's events.
 Children could be direct children or indirect children (children's children).
@@ -418,16 +425,23 @@ expensive computation
 You can see that `expensive computation` was only printed once although we changed `firstName` & `lastName` four times in total.
 
 
+## Compare with MobX and Redux
+
+### Schemaless
+
+SubX is truely schemaless while MobX and Redux are not.
+
+MobX requires you to specify your properties and decorate them with `@observable` so it is not schemaless.
+
+Redux "is schemaless", but most of the time you need to keep you state "flat", otherwise you will have nightmare writing reducers. So it is not truely schemaless.
+
+
 ## Todo
 
 - Get some inspiration from rxdb
     - https://pubkey.github.io/rxdb/rx-schema.html
     - It is not schemaless which I hate
-- Ref: https://github.com/bcherny/undux
-- Compare SubX with mobx / mobx-state-tree
-    - not schemaless
-    - Redux is schemaless, but most of the time you have to make your schema "flat". It's not true schemaless
-- Check immer and iflow
+- Check immer
 - How to undo the changes according to events?
 - React render method is the computed property!
     - reduce the times of react render.
@@ -437,3 +451,4 @@ You can see that `expensive computation` was only printed once although we chang
     - should support defineProperty?
     - advanced feature, hold on
     - definedProperty doesn't support parameter receiver. But we can save the receiver in `handler.get` & `handler.set`
+- Create a todo mvc demo
