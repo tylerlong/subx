@@ -47,7 +47,7 @@ const monitorHass = (subx, hass) => {
 }
 
 const monitorkeyss = (subx, keyss) => {
-  const uniqkeyss = R.uniqBy(keys => keys.path, keyss)
+  const uniqKeyss = R.uniqBy(keys => keys.path, keyss)
   let stream = empty()
   R.forEach(keys => {
     const val = Object.keys(R.path(keys.path, subx))
@@ -62,7 +62,7 @@ const monitorkeyss = (subx, keyss) => {
         }
       })
     ))
-  }, uniqkeyss)
+  }, uniqKeyss)
   return stream
 }
 
