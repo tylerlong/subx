@@ -53,9 +53,17 @@ const handler = {
       case 'toJSON':
         return () => R.reduce((t, k) => R.dissoc(k, t), target, RESERVED_PROPERTIES)
       case 'toString':
-        return () => `SubX ${JSON.stringify(receiver, null, 2)}`
+        return () => '[object SubX]'
       case util.inspect.custom:
-        return () => receiver.toString()
+        return () => {
+          const temp = {}
+          R.pipe(
+            R.keys,
+            R.reject(k => R.contains(k, RESERVED_PROPERTIES)),
+            R.forEach(k => Object.defineProperty(temp, k, Object.getOwnPropertyDescriptor(target, k)))
+          )(target)
+          return temp
+        }
       default:
         return target[prop]
     }

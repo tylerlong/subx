@@ -455,3 +455,5 @@ Redux "is schemaless", but most of the time you need to keep you state "flat", o
     - advanced feature, hold on
     - definedProperty doesn't support parameter receiver. But we can save the receiver in `handler.get` & `handler.set`
 - Create a todo mvc demo
+- Rename it
+    - Max: 'Current X'
