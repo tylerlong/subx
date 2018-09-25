@@ -1,6 +1,7 @@
 import { Subject, merge } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
+import util from 'util'
 
 import computed from './computed'
 
@@ -53,7 +54,7 @@ const handler = {
         return () => R.reduce((t, k) => R.dissoc(k, t), target, RESERVED_PROPERTIES)
       case 'toString':
         return () => `SubX ${JSON.stringify(receiver, null, 2)}`
-      case 'inspect':
+      case util.inspect.custom:
         return () => receiver.toString()
       default:
         return target[prop]
