@@ -16,7 +16,7 @@ const monitorGets = (subx, gets) => {
       filter(event => {
         const parentVal = R.path(R.init(get.path), subx)
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return !R.equals(val, parentVal[R.last(get.path)])
+          return val !== parentVal[R.last(get.path)]
         } else {
           return true
         }

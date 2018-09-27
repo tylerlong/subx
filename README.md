@@ -457,3 +457,4 @@ Redux "is schemaless", but most of the time you need to keep you state "flat", o
 - Create a todo mvc demo
 - Rename it
     - Max: 'Current X'
+    - Max: actuate
