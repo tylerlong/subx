@@ -478,7 +478,9 @@ Per https://www.nx-framework.com/blog/public/mobx-vs-nx/
 
 > There are a handful important JavaScript operations that MobX can not observe. These include expando (dynamically added) properties, for in loops and sparse arrays among others. Luckily ES6 has a solution to this problem.
 
-SubX has 100% language coverage because it is proxy based.
+SubX is designed to work with JSON-style data.
+It supports all the data structures that JSON supports.
+It also supports tracking all kinds of operations against the data structures.
 
 Redux's state is immutable so there is no need to observe.
 
