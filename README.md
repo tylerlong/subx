@@ -485,6 +485,11 @@ It also supports tracking all kinds of operations against the data structures.
 Redux's state is immutable so there is no need to observe.
 
 
+## Pitfalls
+
+- No circular data support. If you create circular data structure with SubX, the behavior is undefined.ß
+
+
 ## Todo
 
 - Get some inspiration from rxdb
@@ -511,5 +516,4 @@ Redux's state is immutable so there is no need to observe.
     - Maybe `derivated`, or `cache_invalidated`
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
-- Bug: doesn't support ES6 collections, such as `new Map()`
 - Issue: IE 11 doesn't support Proxy. And Proxy cannot be transcompiled or polyfilled
