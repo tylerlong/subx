@@ -439,6 +439,50 @@ MobX requires you to specify your properties and decorate them with `@observable
 Redux "is schemaless", but most of the time you need to keep you state "flat", otherwise you will have nightmare writing reducers. So it is not truely schemaless.
 
 
+### Mutability
+
+Redux's state is immutable. For example, `state.a = 1` is not allowed. You have to `state = { ...state, a: 1 }`.
+This could become combersome when you need to achieve `state.a.b.c.d.e = 1`:
+
+```js
+state = {
+    ...state,
+    a: {
+        ...state.a,
+        b: {
+            ...state.a.b
+            c: {
+                ...state.a.b.c,
+                d: {
+                    ...state.a.b.c.d
+                    e: 1
+                }
+            }
+        }
+    }
+}
+```
+
+Both SubX and MobX provide mutable state, so you can just update the state like you update a normal JavaScript object.
+
+
+### Predictability
+
+This is Redux's strength. Ref: https://hackernoon.com/the-fundamental-principles-behind-mobx-7a725f71f3e8
+Redux, officially, does NOT support async actions. I guess it is because predictability.
+
+
+### Language coverage
+
+Per https://www.nx-framework.com/blog/public/mobx-vs-nx/
+
+> There are a handful important JavaScript operations that MobX can not observe. These include expando (dynamically added) properties, for in loops and sparse arrays among others. Luckily ES6 has a solution to this problem.
+
+SubX has 100% language coverage because it is proxy based.
+
+Redux's state is immutable so there is no need to observe.
+
+
 ## Todo
 
 - Get some inspiration from rxdb
@@ -458,3 +502,12 @@ Redux "is schemaless", but most of the time you need to keep you state "flat", o
 - Rename it
     - Max: 'Current X'
     - Max: actuate
+- Get rid of `$$`. `$` is the recursive version. If user needs non-recursive version: `$.pipe(filter(event => event.path.length === 1))`
+- computed property emit event of type `COMPUTED`
+    - Otherwise it is a bug: considering when a computed property depends on another
+    - Should this be `SET` too? not a good idea. There is real set operation.
+    - Maybe `derivated`, or `cache_invalidated`
+- Similar concept: https://github.com/nx-js/observer-util
+    - It doesn't use RxJS
+- Bug: doesn't support ES6 collections, such as `new Map()`
+- Issue: IE 11 doesn't support Proxy. And Proxy cannot be transcompiled or polyfilled
