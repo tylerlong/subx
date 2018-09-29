@@ -487,7 +487,7 @@ Redux's state is immutable so there is no need to observe.
 
 ## Pitfalls
 
-- No circular data support. If you create circular data structure with SubX, the behavior is undefined.ß
+- **Circular data**. If you create circular data structure with SubX, the behavior is undefined.
 
 
 ## Todo
