@@ -534,6 +534,5 @@ Redux & MobX have better browser compatibility.
 - Rename it
     - Max: 'Current X'
     - Max: actuate
-- Get rid of `$`. `$` is the recursive version. If user needs non-recursive version: `$.pipe(filter(event => event.path.length === 1))`
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
