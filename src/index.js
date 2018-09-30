@@ -6,8 +6,8 @@ import util from 'util'
 import computed from './computed'
 
 const RESERVED_PROPERTIES = [
-  '$', 'set$', 'delete$', 'get$', 'has$', 'keys$',
-  '$$', 'set$$', 'delete$$', 'get$$', 'has$$', 'keys$$'
+  '$', 'set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$',
+  '$$', 'set$$', 'delete$$', 'get$$', 'has$$', 'keys$$', 'compute_begin$$', 'compute_finish$$', 'stale$$'
 ]
 
 const handler = {
@@ -29,6 +29,9 @@ const handler = {
       subscriptions.push(proxy.get$$.subscribe(event => target.get$$.next(R.assoc('path', [prop, ...event.path], event))))
       subscriptions.push(proxy.has$$.subscribe(event => target.has$$.next(R.assoc('path', [prop, ...event.path], event))))
       subscriptions.push(proxy.keys$$.subscribe(event => target.keys$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.compute_begin$$.subscribe(event => target.compute_begin$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.compute_finish$$.subscribe(event => target.compute_finish$$.next(R.assoc('path', [prop, ...event.path], event))))
+      subscriptions.push(proxy.stale$$.subscribe(event => target.stale$$.next(R.assoc('path', [prop, ...event.path], event))))
       target[prop] = proxy
     } else {
       target[prop] = val
@@ -106,20 +109,29 @@ class SubX {
         newObj.get$ = new Subject()
         newObj.has$ = new Subject()
         newObj.keys$ = new Subject()
-        newObj.$ = merge(newObj.set$, newObj.delete$)
+        newObj.compute_begin$ = new Subject()
+        newObj.compute_finish$ = new Subject()
+        newObj.stale$ = new Subject()
+        newObj.$ = merge(newObj.set$, newObj.delete$, newObj.stale$)
 
         newObj.set$$ = new Subject()
         newObj.delete$$ = new Subject()
         newObj.get$$ = new Subject()
         newObj.has$$ = new Subject()
         newObj.keys$$ = new Subject()
-        newObj.$$ = merge(newObj.set$$, newObj.delete$$)
+        newObj.compute_begin$$ = new Subject()
+        newObj.compute_finish$$ = new Subject()
+        newObj.stale$$ = new Subject()
+        newObj.$$ = merge(newObj.set$$, newObj.delete$$, newObj.stale$$)
 
         newObj.set$.subscribe(event => newObj.set$$.next(event))
         newObj.delete$.subscribe(event => newObj.delete$$.next(event))
         newObj.get$.subscribe(event => newObj.get$$.next(event))
         newObj.has$.subscribe(event => newObj.has$$.next(event))
         newObj.keys$.subscribe(event => newObj.keys$$.next(event))
+        newObj.compute_begin$.subscribe(event => newObj.compute_begin$$.next(event))
+        newObj.compute_finish$.subscribe(event => newObj.compute_finish$$.next(event))
+        newObj.stale$.subscribe(event => newObj.stale$$.next(event))
 
         const proxy = new Proxy(newObj, handler)
         R.pipe(
