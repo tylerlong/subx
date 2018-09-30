@@ -14,10 +14,10 @@ describe('demo', () => {
       firstName: 'San',
       lastName: 'Zhang'
     })
-    person.$.pipe(filter(event => event.path[0] === 'firstName')).subscribe(event => {
+    person.$$.pipe(filter(event => event.path[0] === 'firstName')).subscribe(event => {
       // console.log('First name changed', event)
     })
-    person.$.pipe(filter(event => event.path[0] === 'lastName')).subscribe(event => {
+    person.$$.pipe(filter(event => event.path[0] === 'lastName')).subscribe(event => {
       // console.log('Last name changed', event)
     })
     person.firstName = 'Si'
@@ -32,7 +32,7 @@ describe('demo', () => {
       lastName: 'Zhang'
     })
     const person = new Person()
-    person.$.subscribe(event => {
+    person.$$.subscribe(event => {
       // console.log('Prop changed', event)
     })
     person.firstName = 'Si'
@@ -43,7 +43,7 @@ describe('demo', () => {
 
   test('simplest', () => {
     const person = SubX.create({})
-    // person.$.subscribe(console.log)
+    // person.$$.subscribe(console.log)
     person.firstName = 'Tyler'
     person.lastName = 'Long'
   })
@@ -52,24 +52,24 @@ describe('demo', () => {
     const Person = new SubX({ firstName: '' })
 
     const person1 = new Person()
-    // person1.$.subscribe(console.log)
+    // person1.$$.subscribe(console.log)
     person1.firstName = 'Tyler'
 
     const person2 = new Person({ firstName: 'Peter' })
-    // person2.$.subscribe(console.log)
+    // person2.$$.subscribe(console.log)
     person2.firstName = 'David'
   })
 
   test('dynamic prop', () => {
     const s = SubX.create({ prop1: 1 })
-    // s.$.subscribe(console.log)
+    // s.$$.subscribe(console.log)
     s.prop2 = 2
   })
 
   test('nested objects', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
-    // rectangle.position.$.subscribe(console.log)
-    // rectangle.size.$.subscribe(console.log)
+    // rectangle.position.$$.subscribe(console.log)
+    // rectangle.size.$$.subscribe(console.log)
     rectangle.position.x = 0
     rectangle.position.y = 0
     rectangle.size.width = 200
@@ -78,7 +78,7 @@ describe('demo', () => {
 
   test('track recursive - solution 1 (does NOT work)', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
-    // rectangle.$.subscribe(console.log)
+    // rectangle.$$.subscribe(console.log)
     rectangle.position.x = 0
     rectangle.position.y = 0
     rectangle.size.width = 200
@@ -87,8 +87,8 @@ describe('demo', () => {
 
   test('merge stream', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
-    // const mergeStream$ = merge(rectangle.position.$, rectangle.size.$)
-    // mergeStream$.subscribe(console.log)
+    // const mergeStream$$ = merge(rectangle.position.$$, rectangle.size.$$)
+    // mergeStream$$.subscribe(console.log)
     rectangle.position.x = 0
     rectangle.position.y = 0
     rectangle.size.width = 200
@@ -122,14 +122,14 @@ describe('demo', () => {
 
   test('array', () => {
     const list = SubX.create([1, 2, 3])
-    // list.$.subscribe(console.log)
+    // list.$$.subscribe(console.log)
     list.push(4)
     list.shift()
   })
 
   test('delete', () => {
     const person = SubX.create({ firstName: '' })
-    // person.$.subscribe(console.log)
+    // person.$$.subscribe(console.log)
     delete person.firstName
   })
 

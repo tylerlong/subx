@@ -39,7 +39,7 @@ import SubX from 'subx'
 
 ```js
 const person = SubX.create()
-person.$.subscribe(console.log)
+person.$$.subscribe(console.log)
 person.firstName = 'Tyler'
 person.lastName = 'Long'
 ```
@@ -71,11 +71,11 @@ If you are a big fan of OOP, here is another sample for you:
 const Person = new SubX({ firstName: '' })
 
 const person1 = new Person()
-person1.$.subscribe(console.log)
+person1.$$.subscribe(console.log)
 person1.firstName = 'Tyler'
 
 const person2 = new Person({ firstName: 'Peter' })
-person2.$.subscribe(console.log)
+person2.$$.subscribe(console.log)
 person2.firstName = 'David'
 ```
 
@@ -96,7 +96,7 @@ And newly added properties are also reactive:
 
 ```js
 const s = SubX.create({ prop1: 1 })
-s.$.subscribe(console.log)
+s.$$.subscribe(console.log)
 s.prop2 = 2
 ```
 
@@ -116,8 +116,8 @@ All nested objects in a SubX object are also SubX objects.
 
 ```js
 const rectangle = SubX.create({ position: { }, size: { } })
-rectangle.position.$.subscribe(console.log)
-rectangle.size.$.subscribe(console.log)
+rectangle.position.$$.subscribe(console.log)
+rectangle.size.$$.subscribe(console.log)
 rectangle.position.x = 0
 rectangle.position.y = 0
 rectangle.size.width = 200
@@ -207,7 +207,7 @@ Let's say you only interested in 'SET' events, you can [filter](https://rxjs-dev
 ```js
 import { filter } from 'rxjs/operators'
 
-person.$.pipe(
+person.$$.pipe(
     filter(event => event.type === 'SET')
 ).subscribe(console.log)
 ```
@@ -314,7 +314,7 @@ In JavaScript, array is also object (`typeof [] === 'object'`). This library wor
 
 ```js
 const list = SubX.create([1,2,3])
-list.$.subscribe(console.log)
+list.$$.subscribe(console.log)
 list.push(4)
 list.shift()
 ```
@@ -398,7 +398,7 @@ const Person = new SubX({
 })
 const person = new Person()
 
-person.$.pipe(
+person.$$.pipe(
     debounceTime(100),
     map(event => person.fullName)
 ).subscribe(val => {

@@ -39,7 +39,7 @@ const handler = {
     target.set$.next({ type: 'SET', path: [prop], val, oldVal })
     while (subscriptions.length > 0) {
       const subscription = subscriptions.pop()
-      const temp = target.$.pipe(filter(event => event.path[0] === prop)).subscribe(event => {
+      const temp = target.$$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
         subscription.unsubscribe()
         temp.unsubscribe()
       })

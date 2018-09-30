@@ -13,7 +13,7 @@ describe('index', () => {
 
     let count = 0
     let events = []
-    model.$.subscribe(val => {
+    model.$$.subscribe(val => {
       count += 1
       events.push(val)
     })
