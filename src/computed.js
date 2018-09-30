@@ -36,7 +36,11 @@ const monitorHass = (subx, hass) => {
   let stream = empty()
   R.forEach(has => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx)
-    stream = merge(stream, subx.$$.pipe(
+    stream = merge(stream, subx.delete$$.pipe(filter(event =>
+      (event.path.length < has.path.length && R.startsWith(event.path, has.path)) ||
+      (val === true && R.equals(event.path, has.path))
+    )))
+    stream = merge(stream, subx.set$$.pipe(
       filter(event => R.startsWith(event.path, has.path)),
       filter(event => {
         const parentVal = R.path(R.init(has.path), subx)
