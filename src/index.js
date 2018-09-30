@@ -6,7 +6,6 @@ import util from 'util'
 import computed from './computed'
 
 const RESERVED_PROPERTIES = [
-  '$', 'set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$',
   '$$', 'set$$', 'delete$$', 'get$$', 'has$$', 'keys$$', 'compute_begin$$', 'compute_finish$$', 'stale$$'
 ]
 
@@ -36,7 +35,7 @@ const handler = {
     } else {
       target[prop] = val
     }
-    target.set$.next({ type: 'SET', path: [prop], val, oldVal })
+    target.set$$.next({ type: 'SET', path: [prop], val, oldVal })
     while (subscriptions.length > 0) {
       const subscription = subscriptions.pop()
       const temp = target.$$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
@@ -48,7 +47,7 @@ const handler = {
   },
   get: (target, prop, receiver) => {
     if (!R.contains(prop, RESERVED_PROPERTIES)) {
-      target.get$.next({ type: 'GET', path: [prop] })
+      target.get$$.next({ type: 'GET', path: [prop] })
     }
     switch (prop) {
       case '__isSubX__':
@@ -77,17 +76,17 @@ const handler = {
     }
     const val = target[prop]
     delete target[prop]
-    target.delete$.next({ type: 'DELETE', path: [prop], val })
+    target.delete$$.next({ type: 'DELETE', path: [prop], val })
     return true
   },
   has: (target, prop) => {
     const val = prop in target
-    target.has$.next({ type: 'HAS', path: [prop], val })
+    target.has$$.next({ type: 'HAS', path: [prop], val })
     return val
   },
   ownKeys: target => {
     const val = R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
-    target.keys$.next({ type: 'KEYS', path: [], val })
+    target.keys$$.next({ type: 'KEYS', path: [], val })
     return val
   },
   setPrototypeOf: (target, prototype) => {
@@ -104,16 +103,6 @@ class SubX {
       constructor (obj = {}) {
         const newObj = R.empty(obj)
 
-        newObj.set$ = new Subject()
-        newObj.delete$ = new Subject()
-        newObj.get$ = new Subject()
-        newObj.has$ = new Subject()
-        newObj.keys$ = new Subject()
-        newObj.compute_begin$ = new Subject()
-        newObj.compute_finish$ = new Subject()
-        newObj.stale$ = new Subject()
-        newObj.$ = merge(newObj.set$, newObj.delete$)
-
         newObj.set$$ = new Subject()
         newObj.delete$$ = new Subject()
         newObj.get$$ = new Subject()
@@ -123,15 +112,6 @@ class SubX {
         newObj.compute_finish$$ = new Subject()
         newObj.stale$$ = new Subject()
         newObj.$$ = merge(newObj.set$$, newObj.delete$$)
-
-        newObj.set$.subscribe(event => newObj.set$$.next(event))
-        newObj.delete$.subscribe(event => newObj.delete$$.next(event))
-        newObj.get$.subscribe(event => newObj.get$$.next(event))
-        newObj.has$.subscribe(event => newObj.has$$.next(event))
-        newObj.keys$.subscribe(event => newObj.keys$$.next(event))
-        newObj.compute_begin$.subscribe(event => newObj.compute_begin$$.next(event))
-        newObj.compute_finish$.subscribe(event => newObj.compute_finish$$.next(event))
-        newObj.stale$.subscribe(event => newObj.stale$$.next(event))
 
         const proxy = new Proxy(newObj, handler)
         R.pipe(

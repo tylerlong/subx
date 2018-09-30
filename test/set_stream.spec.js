@@ -5,7 +5,7 @@ describe('set stream', () => {
   test('set$', () => {
     const p = SubX.create()
     const events = []
-    p.set$.subscribe(event => {
+    p.set$$.subscribe(event => {
       events.push(event)
     })
     p.a = 'hello'

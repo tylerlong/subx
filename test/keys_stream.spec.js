@@ -5,7 +5,7 @@ describe('keys stream', () => {
   test('keys$', () => {
     const p = SubX.create()
     const events = []
-    p.keys$.subscribe(event => {
+    p.keys$$.subscribe(event => {
       events.push(event)
     })
     p.a = Object.keys(p)

@@ -1,11 +1,13 @@
 /* eslint-env jest */
+import { filter } from 'rxjs/operators'
+
 import SubX from '../src/index'
 
 describe('get stream', () => {
   test('default', () => {
     const p = SubX.create()
     const events = []
-    p.get$.subscribe(event => {
+    p.get$$.subscribe(event => {
       events.push(event)
     })
     p.b = p.a
@@ -20,7 +22,7 @@ describe('get stream', () => {
   test('nested', () => {
     const p = SubX.create({ a: { b: { c: 'hello' } } })
     const events1 = []
-    p.get$.subscribe(event => {
+    p.get$$.pipe(filter(event => event.path.length === 1)).subscribe(event => {
       events1.push(event)
     })
     const events2 = []

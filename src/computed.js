@@ -92,18 +92,18 @@ const computed = (subx, f) => {
       subscriptions.push(subx.get$$.subscribe(event => count === 0 && gets.push(event)))
       subscriptions.push(subx.has$$.subscribe(event => count === 0 && hass.push(event)))
       subscriptions.push(subx.keys$$.subscribe(event => count === 0 && keyss.push(event)))
-      subx.compute_begin$.next({ type: 'COMPUTE_BEGIN', path: [functionName] })
+      subx.compute_begin$$.next({ type: 'COMPUTE_BEGIN', path: [functionName] })
       subx.compute_begin$$.subscribe(event => { count += 1 })
       subx.compute_finish$$.subscribe(event => { count -= 1 })
       cache = f.bind(subx)()
       stale = false
       R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-      subx.compute_finish$.next({ type: 'COMPUTE_FINISH', path: [functionName] })
+      subx.compute_finish$$.next({ type: 'COMPUTE_FINISH', path: [functionName] })
       const stream = merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss))
       const subscription = stream.subscribe(event => {
         stale = true
         subscription.unsubscribe()
-        subx.stale$.next({ type: 'STALE', path: [functionName] })
+        subx.stale$$.next({ type: 'STALE', path: [functionName] })
       })
     }
     return cache

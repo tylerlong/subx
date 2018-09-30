@@ -156,7 +156,7 @@ Most of the event mentioned in this page are `SET` events. `SET` means a propert
 
 ```js
 const person = SubX.create({ firstName: 'Tyler' })
-person.set$.subscribe(console.log)
+person.set$$.subscribe(console.log)
 person.firstName = 'Peter'
 ```
 
@@ -165,7 +165,7 @@ person.firstName = 'Peter'
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.delete$.subscribe(console.log)
+person.delete$$.subscribe(console.log)
 delete person.firstName
 ```
 
@@ -175,7 +175,7 @@ delete person.firstName
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.get$.subscribe(console.log)
+person.get$$.subscribe(console.log)
 console.log(person.firstName)
 ```
 
@@ -185,7 +185,7 @@ console.log(person.firstName)
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.has$.subscribe(console.log)
+person.has$$.subscribe(console.log)
 console.log('firstName' in person)
 ```
 
@@ -195,7 +195,7 @@ console.log('firstName' in person)
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.keys$.subscribe(console.log)
+person.keys$$.subscribe(console.log)
 console.log(Object.keys(person))
 ```
 
