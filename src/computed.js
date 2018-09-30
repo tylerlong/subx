@@ -12,8 +12,18 @@ const monitorGets = (subx, gets) => {
   R.forEach(get => {
     const val = R.path(get.path, subx)
     stream = merge(stream, subx.$$.pipe(
-      filter(event => R.startsWith(event.path, get.path)),
       filter(event => {
+        switch (event.type) {
+          case 'STALE':
+            return event.path === get.path
+          default: // SET & DELETE
+            return R.startsWith(event.path, get.path)
+        }
+      }),
+      filter(event => {
+        if (event.type === 'STALE') {
+          return true
+        }
         const parentVal = R.path(R.init(get.path), subx)
         if (typeof parentVal === 'object' && parentVal !== null) {
           return val !== parentVal[R.last(get.path)]
