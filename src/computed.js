@@ -68,9 +68,9 @@ const monitorkeyss = (subx, keyss) => {
 
 const computed = (subx, f) => {
   let cache
-  let changed = true
+  let stale = true
   const wrapped = () => {
-    if (changed) {
+    if (stale) {
       const gets = []
       const hass = []
       const keyss = []
@@ -79,11 +79,11 @@ const computed = (subx, f) => {
       subscriptions.push(subx.has$$.subscribe(event => hass.push(event)))
       subscriptions.push(subx.keys$$.subscribe(event => keyss.push(event)))
       cache = f.bind(subx)()
-      changed = false
+      stale = false
       R.forEach(subscription => subscription.unsubscribe(), subscriptions)
       const stream = merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss))
       const subscription = stream.subscribe(event => {
-        changed = true
+        stale = true
         subscription.unsubscribe()
       })
     }
