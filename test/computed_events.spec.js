@@ -46,4 +46,70 @@ describe('computed events', () => {
       { type: 'STALE', path: [ 'fullName' ] }
     ])
   })
+
+  test('Nested computed', () => {
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      get fullName () {
+        return `${this.firstName} ${this.lastName}`
+      },
+      get longFullName () {
+        return `${this.fullName}`
+      }
+    })
+    const events = []
+    const computeBegin = []
+    const computeFinish = []
+    p.$$.subscribe(event => events.push(event))
+    p.compute_begin$$.subscribe(event => computeBegin.push(event))
+    p.compute_finish$$.subscribe(event => computeFinish.push(event))
+
+    expect(p.longFullName).toBe('Tyler Liu')
+    expect(p.longFullName).toBe('Tyler Liu')
+    expect(computeBegin).toEqual([
+      { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
+      { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
+    ])
+    expect(computeFinish).toEqual([
+      { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
+      { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] }
+    ])
+    expect(events).toEqual([])
+
+    p.firstName = 'Peter'
+    expect(computeBegin).toEqual([
+      { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
+      { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
+    ])
+    expect(computeFinish).toEqual([
+      { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
+      { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] }
+    ])
+    expect(events).toEqual([
+      { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' },
+      { type: 'STALE', path: [ 'fullName' ] },
+      { type: 'STALE', path: [ 'longFullName' ] }
+    ])
+
+    expect(p.longFullName).toBe('Peter Liu')
+    expect(p.longFullName).toBe('Peter Liu')
+    expect(computeBegin).toEqual([
+      { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
+      { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] },
+      { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
+      { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
+    ])
+    expect(computeFinish).toEqual([
+      { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
+      { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] },
+      { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
+      { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] }
+    ])
+    expect(events).toEqual([
+      { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' },
+      { type: 'STALE', path: [ 'fullName' ] },
+      { type: 'STALE', path: [ 'longFullName' ] }
+    ])
+  })
 })
