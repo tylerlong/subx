@@ -112,7 +112,7 @@ class SubX {
         newObj.compute_begin$ = new Subject()
         newObj.compute_finish$ = new Subject()
         newObj.stale$ = new Subject()
-        newObj.$ = merge(newObj.set$, newObj.delete$, newObj.stale$)
+        newObj.$ = merge(newObj.set$, newObj.delete$)
 
         newObj.set$$ = new Subject()
         newObj.delete$$ = new Subject()
@@ -122,7 +122,7 @@ class SubX {
         newObj.compute_begin$$ = new Subject()
         newObj.compute_finish$$ = new Subject()
         newObj.stale$$ = new Subject()
-        newObj.$$ = merge(newObj.set$$, newObj.delete$$, newObj.stale$$)
+        newObj.$$ = merge(newObj.set$$, newObj.delete$$)
 
         newObj.set$.subscribe(event => newObj.set$$.next(event))
         newObj.delete$.subscribe(event => newObj.delete$$.next(event))
