@@ -1,6 +1,6 @@
 import * as R from 'ramda'
 import { empty, merge } from 'rxjs'
-import { filter } from 'rxjs/operators'
+import { filter, merge as _merge } from 'rxjs/operators'
 
 const monitorGets = (subx, gets) => {
   const relevantGets = R.reduce((events, event) =>
@@ -63,17 +63,8 @@ const monitorkeyss = (subx, keyss) => {
     const val = Object.keys(R.path(keys.path, subx))
     stream = merge(stream, subx.delete$$.pipe(
       filter(event => keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path)),
-      filter(event => {
-        const parentVal = R.path(keys.path, subx)
-        if (typeof parentVal === 'object' && parentVal !== null) {
-          return !R.equals(Object.keys(parentVal), val)
-        } else {
-          return true
-        }
-      })
-    ))
-    stream = merge(stream, subx.set$$.pipe(
-      filter(event => R.startsWith(event.path, keys.path) || (keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path))),
+      _merge(subx.set$$.pipe(
+        filter(event => R.startsWith(event.path, keys.path) || (keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path))))),
       filter(event => {
         const parentVal = R.path(keys.path, subx)
         if (typeof parentVal === 'object' && parentVal !== null) {
