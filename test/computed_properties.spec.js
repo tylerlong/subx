@@ -38,7 +38,7 @@ describe('computed properties', () => {
     const person = new Person()
 
     let fullName
-    person.$$.pipe(
+    person.$.pipe(
       debounceTime(5),
       map(event => person.fullName())
     ).subscribe(val => {

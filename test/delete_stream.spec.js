@@ -5,7 +5,7 @@ describe('delete stream', () => {
   test('delete$', () => {
     const p = SubX.create({ a: {}, b: {} })
     const events = []
-    p.delete$$.subscribe(event => {
+    p.delete$.subscribe(event => {
       events.push(event)
     })
     delete p.a
@@ -23,10 +23,10 @@ describe('delete stream', () => {
       }
     ])
   })
-  test('delete$$', () => {
+  test('delete$', () => {
     const p = SubX.create({ a: {}, b: {} })
     const events = []
-    p.delete$$.subscribe(event => {
+    p.delete$.subscribe(event => {
       events.push(event)
     })
     delete p.a.c

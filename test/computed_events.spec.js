@@ -14,10 +14,10 @@ describe('computed events', () => {
     const stale = []
     const computeBegin = []
     const computeFinish = []
-    p.$$.subscribe(event => events.push(event))
-    p.stale$$.subscribe(event => stale.push(event))
-    p.compute_begin$$.subscribe(event => computeBegin.push(event))
-    p.compute_finish$$.subscribe(event => computeFinish.push(event))
+    p.$.subscribe(event => events.push(event))
+    p.stale$.subscribe(event => stale.push(event))
+    p.compute_begin$.subscribe(event => computeBegin.push(event))
+    p.compute_finish$.subscribe(event => computeFinish.push(event))
 
     expect(p.fullName).toBe('Tyler Liu')
     expect(p.fullName).toBe('Tyler Liu')
@@ -69,10 +69,10 @@ describe('computed events', () => {
     const stale = []
     const computeBegin = []
     const computeFinish = []
-    p.$$.subscribe(event => events.push(event))
-    p.stale$$.subscribe(event => stale.push(event))
-    p.compute_begin$$.subscribe(event => computeBegin.push(event))
-    p.compute_finish$$.subscribe(event => computeFinish.push(event))
+    p.$.subscribe(event => events.push(event))
+    p.stale$.subscribe(event => stale.push(event))
+    p.compute_begin$.subscribe(event => computeBegin.push(event))
+    p.compute_finish$.subscribe(event => computeFinish.push(event))
 
     expect(p.longFullName).toBe('Tyler Liu')
     expect(p.longFullName).toBe('Tyler Liu')

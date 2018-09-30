@@ -35,7 +35,7 @@ describe('array', () => {
   test('push', () => {
     const a = SubX.create([1, 2, 3])
     const events = []
-    a.$$.subscribe(event => {
+    a.$.subscribe(event => {
       events.push(event)
     })
     a.push(4)
@@ -58,7 +58,7 @@ describe('array', () => {
   test('assign', () => {
     const a = SubX.create([1, 2, 3])
     const events = []
-    a.$$.subscribe(event => {
+    a.$.subscribe(event => {
       events.push(event)
     })
     a[1] = 4
@@ -75,7 +75,7 @@ describe('array', () => {
   test('unshift', () => {
     const a = SubX.create([1, 2, 3])
     const events = []
-    a.$$.subscribe(event => {
+    a.$.subscribe(event => {
       events.push(event)
     })
     a.unshift(0)
@@ -132,7 +132,7 @@ describe('array', () => {
     expect(R.equals(o.b.a, [1, 2, 3])).toBeTruthy()
 
     let events = []
-    o.$$.subscribe(event => { events.push(event) })
+    o.$.subscribe(event => { events.push(event) })
 
     // push
     o.b.a.push(4)

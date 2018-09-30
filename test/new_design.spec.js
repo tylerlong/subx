@@ -24,12 +24,12 @@ describe('new design', () => {
     const n = SubX.create({ a: { } })
 
     let count1 = 0
-    n.$$.subscribe(event => {
+    n.$.subscribe(event => {
       count1 += 1
     })
 
     let count2 = 0
-    n.a.$$.subscribe(event => {
+    n.a.$.subscribe(event => {
       count2 += 1
     })
 
@@ -38,16 +38,16 @@ describe('new design', () => {
     expect(count2).toBe(1)
   })
 
-  test('$$', () => {
+  test('$', () => {
     const n = SubX.create({ a: { } })
     const events1 = []
-    n.$$.subscribe(event => {
+    n.$.subscribe(event => {
       events1.push(event)
     })
     n.a.b = {}
     n.a.b.c = {}
     const events2 = []
-    n.a.b.c.$$.subscribe(event => {
+    n.a.b.c.$.subscribe(event => {
       events2.push(event)
     })
     n.a.b.c.d = {}
@@ -100,17 +100,17 @@ describe('new design', () => {
     const p = SubX.create({ firstName: '', lastName: '' })
     p.firstName = 'Chuntao'
     p.lastName = 'Liu'
-    const firstName$$ = p.$$.pipe(
+    const firstName$ = p.$.pipe(
       filter(event => event.path[0] === 'firstName'),
       map(event => event.val), startWith(p.firstName)
     )
-    const lastName$$ = p.$$.pipe(
+    const lastName$ = p.$.pipe(
       filter(event => event.path[0] === 'lastName'),
       map(event => event.val),
       startWith(p.lastName)
     )
     const data = []
-    combineLatest(firstName$$, lastName$$).subscribe(([firstName, lastName]) => {
+    combineLatest(firstName$, lastName$).subscribe(([firstName, lastName]) => {
       data.push([firstName, lastName])
     })
     p.firstName = 'Tyler'
@@ -144,7 +144,7 @@ describe('new design', () => {
     const Person = new SubX({ firstName: '', lastName: '' })
     const p = new Person({ firstName: 'Chuntao', lastName: 'Liu' })
     const events = []
-    p.$$.subscribe(event => {
+    p.$.subscribe(event => {
       events.push(event)
     })
     delete p.firstName

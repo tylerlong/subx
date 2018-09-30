@@ -5,7 +5,7 @@ describe('double dollar', () => {
   test('default', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
     const events = []
-    rectangle.$$.subscribe(event => {
+    rectangle.$.subscribe(event => {
       events.push(event)
     })
     rectangle.position.x = 0
@@ -36,11 +36,11 @@ describe('double dollar', () => {
   test('relative', () => {
     const rectangle = SubX.create({ position: { }, size: { } })
     const events1 = []
-    rectangle.position.$$.subscribe(event => {
+    rectangle.position.$.subscribe(event => {
       events1.push(event)
     })
     const events2 = []
-    rectangle.size.$$.subscribe(event => {
+    rectangle.size.$.subscribe(event => {
       events2.push(event)
     })
     rectangle.position.x = 0

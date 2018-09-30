@@ -6,7 +6,7 @@ describe('null value', () => {
     const person = SubX.create({})
 
     const events = []
-    person.$$.subscribe(event => {
+    person.$.subscribe(event => {
       events.push(event)
     })
 

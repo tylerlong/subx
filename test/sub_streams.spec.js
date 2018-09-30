@@ -7,7 +7,7 @@ describe('sub streams', () => {
   test('set$', () => {
     const p = SubX.create()
     const events = []
-    p.set$$.subscribe(event => {
+    p.set$.subscribe(event => {
       events.push(event)
     })
     p.a = 1
@@ -39,7 +39,7 @@ describe('sub streams', () => {
   test('delete$', () => {
     const p = SubX.create()
     const events = []
-    p.delete$$.subscribe(event => {
+    p.delete$.subscribe(event => {
       events.push(event)
     })
     p.a = 1
@@ -60,13 +60,13 @@ describe('sub streams', () => {
     const events1 = []
     const events2 = []
     const events3 = []
-    p.set$$.subscribe(event => {
+    p.set$.subscribe(event => {
       events1.push(event)
     })
-    p.delete$$.subscribe(event => {
+    p.delete$.subscribe(event => {
       events2.push(event)
     })
-    p.$$.subscribe(event => {
+    p.$.subscribe(event => {
       events3.push(event)
     })
     p.a = 1

@@ -5,7 +5,7 @@ describe('Michael cases', () => {
   test('int then object', () => {
     const p = SubX.create({ a: 1 })
     const events = []
-    p.$$.subscribe(event => events.push(event))
+    p.$.subscribe(event => events.push(event))
     p.a = {}
     p.a.b = 2
     expect(events).toEqual([
