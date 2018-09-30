@@ -485,6 +485,15 @@ It also supports tracking all kinds of operations against the data structures.
 Redux's state is immutable so there is no need to observe.
 
 
+### Browser support
+
+SubX is based on Proxy which cannot be polyfilled for ES5. So SubX can only run in browsers which support Proxy.
+
+Modern browsers all support Proxy. Microsft IE doesn't support Proxy. Microsfot Edge does support Proxy.
+
+Redux & MobX have better browser compatibility.
+
+
 ## Pitfalls
 
 - **Circular data**. If you create circular data structure with SubX, the behavior is undefined.
@@ -492,10 +501,6 @@ Redux's state is immutable so there is no need to observe.
 
 ## Todo
 
-- Get some inspiration from rxdb
-    - https://pubkey.github.io/rxdb/rx-schema.html
-    - It is not schemaless which I hate
-- Check immer
 - How to undo the changes according to events?
 - React render method is the computed property!
     - reduce the times of react render.
@@ -510,10 +515,5 @@ Redux's state is immutable so there is no need to observe.
     - Max: 'Current X'
     - Max: actuate
 - Get rid of `$$`. `$` is the recursive version. If user needs non-recursive version: `$.pipe(filter(event => event.path.length === 1))`
-- computed property emit event of type `COMPUTED`
-    - Otherwise it is a bug: considering when a computed property depends on another
-    - Should this be `SET` too? not a good idea. There is real set operation.
-    - Maybe `derivated`, or `cache_invalidated`
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
-- Issue: IE 11 doesn't support Proxy. And Proxy cannot be transcompiled or polyfilled
