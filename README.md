@@ -39,7 +39,7 @@ import SubX from 'subx'
 
 ```js
 const person = SubX.create()
-person.$$.subscribe(console.log)
+person.$.subscribe(console.log)
 person.firstName = 'Tyler'
 person.lastName = 'Long'
 ```
@@ -51,7 +51,7 @@ person.lastName = 'Long'
 { type: 'SET', path: ['lastName'], val: 'Long', oldVal: undefined }
 ```
 
-In the sample code above, `person` is a SubX object. `person.$` is a stream of events about changes to `person`'s direct properties.
+In the sample code above, `person` is a SubX object. `person.$` is a stream of events about changes to `person`'s properties.
 
 
 ## What is Reactive Subject?
@@ -71,11 +71,11 @@ If you are a big fan of OOP, here is another sample for you:
 const Person = new SubX({ firstName: '' })
 
 const person1 = new Person()
-person1.$$.subscribe(console.log)
+person1.$.subscribe(console.log)
 person1.firstName = 'Tyler'
 
 const person2 = new Person({ firstName: 'Peter' })
-person2.$$.subscribe(console.log)
+person2.$.subscribe(console.log)
 person2.firstName = 'David'
 ```
 
@@ -96,7 +96,7 @@ And newly added properties are also reactive:
 
 ```js
 const s = SubX.create({ prop1: 1 })
-s.$$.subscribe(console.log)
+s.$.subscribe(console.log)
 s.prop2 = 2
 ```
 
@@ -116,8 +116,8 @@ All nested objects in a SubX object are also SubX objects.
 
 ```js
 const rectangle = SubX.create({ position: { }, size: { } })
-rectangle.position.$$.subscribe(console.log)
-rectangle.size.$$.subscribe(console.log)
+rectangle.position.$.subscribe(console.log)
+rectangle.size.$.subscribe(console.log)
 rectangle.position.x = 0
 rectangle.position.y = 0
 rectangle.size.width = 200
@@ -140,15 +140,15 @@ That's why you can subscribe two theirs events.
 
 ## Types of events
 
-Currently there are five kinds of events: `SET`, `DELETE`, `GET`, `HAS` & `KEYS`.
+Currently there are 5 basic events: `SET`, `DELETE`, `GET`, `HAS` & `KEYS`.
+The corresponding event streams are `set$`, `delete$`, `get$`, `has$` & `keys$`
 
-The corresponding event streams are `set$`, `delete$`, `get$`, `has$` & `keys$`.
+There are 3 advanced events: `COMPUTE_BEGIN`, `COMPUTE_FINISH` & `STALE`.
+The corresponding event streams are `compute_begin$`, `compute_finish$` & `stale$`.
+
+### $
 
 `$` is the merge of `set$` & `delete$`. We provide it as sugar since it is mostly used.
-
-All the events mentioned above have their recursive counterpart: `set$$`, `delete$$`, `get$$`, `has$$`, `keys$$` & `$$`.
-
-If you only need stream of object's **direct** properties, use the `single-dollar` version, otherwise use the `double-dollar` version.
 
 ### SET
 
@@ -156,16 +156,17 @@ Most of the event mentioned in this page are `SET` events. `SET` means a propert
 
 ```js
 const person = SubX.create({ firstName: 'Tyler' })
-person.set$$.subscribe(console.log)
+person.set$.subscribe(console.log)
 person.firstName = 'Peter'
 ```
 
 ### DELETE
+
 `DELETE` events are triggered as well. We already see one of such event above in "Array events" section. Here is one more sample:
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.delete$$.subscribe(console.log)
+person.delete$.subscribe(console.log)
 delete person.firstName
 ```
 
@@ -175,7 +176,7 @@ delete person.firstName
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.get$$.subscribe(console.log)
+person.get$.subscribe(console.log)
 console.log(person.firstName)
 ```
 
@@ -185,7 +186,7 @@ console.log(person.firstName)
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.has$$.subscribe(console.log)
+person.has$.subscribe(console.log)
 console.log('firstName' in person)
 ```
 
@@ -195,9 +196,18 @@ console.log('firstName' in person)
 
 ```js
 const person = SubX.create({ firstName: '' })
-person.keys$$.subscribe(console.log)
+person.keys$.subscribe(console.log)
 console.log(Object.keys(person))
 ```
+
+### COMPUTE_BEGIN, COMPUTE_FINISH & STALE
+
+These 3 events are advanced. Most likely you don't need to know them.
+They are for computed properties(which is covered below).
+
+- `COMPUTE_BEGIN` is triggered when a computed property starts to compute.
+- `COMPUTE_FINISH` is triggered when a computed property finishes computing.
+- `STALE` is triggered when the computed property becomes "stale", which means a re-compute is necessary.
 
 
 ## Filter events
@@ -207,22 +217,32 @@ Let's say you only interested in 'SET' events, you can [filter](https://rxjs-dev
 ```js
 import { filter } from 'rxjs/operators'
 
-person.$$.pipe(
+const person = SubX.create()
+person.$.pipe(
     filter(event => event.type === 'SET')
 ).subscribe(console.log)
 ```
 
 Example above isn't useful in real project because there is already `person.set$` available. It just shows you how to filter events.
 
+Sometimes you might only want the changes to a SubX object's direct properties (no recursive events):
 
-## Use `$$` to track children's properties' events recursively
+```js
+const person = SubX.create()
+const directChangesToPerson$ = person.$.pipe(filter(event => event.path.length === 1))
+```
 
-`obj.$$` tracks all the events inside `obj`, be them its own events or its children's events.
+It's a convenstion to end an event stream with `$`, that's why we name the constant `directChangesToPerson$` instead of `directChangesToPerson`.
+
+
+## Recursive events
+
+`obj.$` tracks all the events inside `obj`, be them its own events or its children's events.
 Children could be direct children or indirect children (children's children).
 
 ```js
 const rectangle = SubX.create({ position: { }, size: { } })
-rectangle.$$.subscribe(console.log)
+rectangle.$.subscribe(console.log)
 rectangle.position.x = 0
 rectangle.position.y = 0
 rectangle.size.width = 200
@@ -253,8 +273,8 @@ rectangle.size.height = 100
     path: [ 'size', 'height' ] }
 ```
 
-Since nested objects are also SubX objects, they support `$$` too.
-For example you can `rectangle.size.$$.subscribe(...)` to track `rectangle.size` and its children's events.
+Since nested objects are also SubX objects, they support `$` too.
+For example you can `rectangle.size.$.subscribe(...)` to track `rectangle.size` and its children's events.
 
 
 ## Events with timestamp
@@ -265,7 +285,7 @@ Want events with timestamp? RxJS provides us with [such an operator](https://rxj
 import { timestamp } from 'rxjs/operators'
 
 const rectangle = SubX.create({ position: { } })
-rectangle.$$.pipe(timestamp()).subscribe(console.log)
+rectangle.$.pipe(timestamp()).subscribe(console.log)
 rectangle.position.x = 0
 ```
 
@@ -290,7 +310,7 @@ Want a flat event with timestamp instead? While, you can [map](https://rxjs-dev.
 import { timestamp, map } from 'rxjs/operators'
 
 const rectangle = SubX.create({ position: { } })
-rectangle.$$.pipe(
+rectangle.$.pipe(
     timestamp(),
     map(event => ({ ...event.value, timestamp: event.timestamp }))
 ).subscribe(console.log)
@@ -314,7 +334,7 @@ In JavaScript, array is also object (`typeof [] === 'object'`). This library wor
 
 ```js
 const list = SubX.create([1,2,3])
-list.$$.subscribe(console.log)
+list.$.subscribe(console.log)
 list.push(4)
 list.shift()
 ```
@@ -398,7 +418,7 @@ const Person = new SubX({
 })
 const person = new Person()
 
-person.$$.pipe(
+person.$.pipe(
     debounceTime(100),
     map(event => person.fullName)
 ).subscribe(val => {
@@ -514,6 +534,6 @@ Redux & MobX have better browser compatibility.
 - Rename it
     - Max: 'Current X'
     - Max: actuate
-- Get rid of `$$`. `$` is the recursive version. If user needs non-recursive version: `$.pipe(filter(event => event.path.length === 1))`
+- Get rid of `$`. `$` is the recursive version. If user needs non-recursive version: `$.pipe(filter(event => event.path.length === 1))`
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
