@@ -22,20 +22,20 @@ describe('preventExtensions', () => {
     p.a = 1
     expect(p.a).toBe(1)
   })
-  // test('SubX', () => {
-  //   const p = SubX.create({})
-  //   const f = () => Object.preventExtensions(p)
-  //   expect(f).toThrow(TypeError)
-  //   Reflect.preventExtensions(p)
-  //   p.a = 1
-  //   expect(p.a).toBe(1)
-  // })
-  test('SubX', () => { // We do nothing to preventExtensions. Because JS proxy doesn't support Object.freeze/seal
+  test('SubX', () => {
     const p = SubX.create({})
-    Object.preventExtensions(p) // or Reflect.preventExtensions(p)
-    expect(() => { p.a = 1 }).toThrow(TypeError)
-    expect(p.a).toBeUndefined()
+    const f = () => Object.preventExtensions(p)
+    expect(f).toThrow(TypeError)
+    Reflect.preventExtensions(p)
+    p.a = 1
+    expect(p.a).toBe(1)
   })
+  // test('SubX', () => { // We do nothing to preventExtensions. Because JS proxy doesn't support Object.freeze/seal
+  //   const p = SubX.create({})
+  //   Object.preventExtensions(p) // or Reflect.preventExtensions(p)
+  //   expect(() => { p.a = 1 }).toThrow(TypeError)
+  //   expect(p.a).toBeUndefined()
+  // })
   test('preventExtensions detailed count', () => {
     const a = { b: '' }
     const counts = { preventExtensions: 0, isExtensible: 0, defineProperty: 0, getOwnPropertyDescriptor: 0 }

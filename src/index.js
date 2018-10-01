@@ -94,6 +94,9 @@ const handler = {
   },
   defineProperty: (target, property, descriptor) => {
     return false // disallow defineProperty
+  },
+  preventExtensions: target => {
+    return false // diallow preventExtensions
   }
 }
 
