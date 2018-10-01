@@ -10,6 +10,8 @@ You can use SubX as a state container library like Redux & MobX.
 SubX is powered by [RxJS](https://github.com/ReactiveX/rxjs). It's better to have some RxJS knowledge.
 It's OK if you don't know RxJS, it doesn't prevent you from using this library.
 
+If you want to use SubX together with React, please check [react-subx](https://github.com/tylerlong/react-subx).
+
 
 ## Features (compared to Redux or MobX)
 
