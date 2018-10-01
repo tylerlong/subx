@@ -138,4 +138,5 @@ class SubX {
 const DefaultModel = new SubX({})
 SubX.create = (obj = {}) => new DefaultModel(obj)
 
+export * from './monitor'
 export default SubX

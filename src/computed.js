@@ -1,6 +1,6 @@
 import * as R from 'ramda'
 
-import monitor from './monitor'
+import { monitor } from './monitor'
 
 const computed = (subx, f) => {
   const functionName = R.last(f.name.split(' ')) // `get f` => `f`

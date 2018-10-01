@@ -78,6 +78,21 @@ const monitorkeyss = (subx, keyss) => {
   return stream
 }
 
-const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss))
+export const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss))
 
-export default monitor
+export const runAndMonitor = (subx, f) => {
+  const gets = []
+  const hass = []
+  const keyss = []
+  const subscriptions = []
+  let count = 0
+  subscriptions.push(subx.get$.subscribe(event => count === 0 && gets.push(event)))
+  subscriptions.push(subx.has$.subscribe(event => count === 0 && hass.push(event)))
+  subscriptions.push(subx.keys$.subscribe(event => count === 0 && keyss.push(event)))
+  subscriptions.push(subx.compute_begin$.subscribe(event => { count += 1 }))
+  subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
+  const result = f()
+  R.forEach(subscription => subscription.unsubscribe(), subscriptions)
+  const stream = monitor(subx, { gets, hass, keyss })
+  return { result, stream }
+}
