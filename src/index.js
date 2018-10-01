@@ -36,10 +36,9 @@ const handler = {
       target[prop] = val
     }
     target.set$.next({ type: 'SET', path: [prop], val, oldVal })
-    while (subscriptions.length > 0) {
-      const subscription = subscriptions.pop()
+    if (subscriptions.length > 0) {
       const temp = target.$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
-        subscription.unsubscribe()
+        R.forEach(subscription => subscription.unsubscribe(), subscriptions)
         temp.unsubscribe()
       })
     }
