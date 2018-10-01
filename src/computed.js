@@ -93,8 +93,8 @@ const computed = (subx, f) => {
       subscriptions.push(subx.has$.subscribe(event => count === 0 && hass.push(event)))
       subscriptions.push(subx.keys$.subscribe(event => count === 0 && keyss.push(event)))
       subx.compute_begin$.next({ type: 'COMPUTE_BEGIN', path: [functionName] })
-      subx.compute_begin$.subscribe(event => { count += 1 })
-      subx.compute_finish$.subscribe(event => { count -= 1 })
+      subscriptions.push(subx.compute_begin$.subscribe(event => { count += 1 }))
+      subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
       cache = f.bind(subx)()
       stale = false
       R.forEach(subscription => subscription.unsubscribe(), subscriptions)
