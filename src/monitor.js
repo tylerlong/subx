@@ -1,6 +1,6 @@
 import { empty, merge } from 'rxjs'
 import * as R from 'ramda'
-import { filter, merge as _merge } from 'rxjs/operators'
+import { filter, merge as _merge, publish } from 'rxjs/operators'
 
 const monitorGets = (subx, gets) => {
   const relevantGets = R.reduce((events, event) =>
@@ -93,6 +93,6 @@ export const runAndMonitor = (subx, f) => {
   subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
   const result = f()
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-  const stream = monitor(subx, { gets, hass, keyss })
+  const stream = monitor(subx, { gets, hass, keyss }).pipe(publish()).refCount()
   return { result, stream }
 }
