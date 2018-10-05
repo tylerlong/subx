@@ -524,15 +524,10 @@ Redux & MobX have better browser compatibility.
 ## Todo
 
 - How to undo the changes according to events?
-- React render method is the computed property!
-    - reduce the times of react render.
-    - SubX.create(this.props) ?
-    - How to handle nested react components?
 - As Michael found, `seal`, `freeze` & `preventExtensions`  all trigger `preventExtensions` and `defineProperty`.
     - should support defineProperty?
     - advanced feature, hold on
     - definedProperty doesn't support parameter receiver. But we can save the receiver in `handler.get` & `handler.set`
-- Create a todo mvc demo
 - Rename it
     - Max: 'Current X'
     - Max: actuate
