@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { filter, map, publish } from 'rxjs/operators'
+import { filter, map, publish, share } from 'rxjs/operators'
 import { Subject } from 'rxjs'
 
 import SubX from '../src/index'
@@ -75,6 +75,28 @@ describe('lazy stream', () => {
       map(event => {
         count += 1
         return event
+      })
+    )
+    expect(lazyStream).toBeDefined()
+    lazyStream.subscribe(event => {})
+    lazyStream.subscribe(event => {})
+    lazyStream.subscribe(event => {})
+    p.firstName = 'Tyler'
+    p.lastName = 'Liu'
+    expect(count).toBe(12) // this is bad!
+  })
+
+  test('mutiple subscribers publish & refCount', () => {
+    const p = SubX.create({})
+    let count = 0
+    const lazyStream = p.$.pipe(
+      filter(event => {
+        count += 1
+        return true
+      }),
+      map(event => {
+        count += 1
+        return event
       }),
       publish()
     ).refCount()
@@ -84,7 +106,70 @@ describe('lazy stream', () => {
     lazyStream.subscribe(event => {})
     p.firstName = 'Tyler'
     p.lastName = 'Liu'
-    expect(count).toBe(4) // this is weird!
+    expect(count).toBe(4)
+  })
+
+  test('no subscriber publish & refCount', () => {
+    const p = SubX.create({})
+    let count = 0
+    const lazyStream = p.$.pipe(
+      filter(event => {
+        count += 1
+        return true
+      }),
+      map(event => {
+        count += 1
+        return event
+      }),
+      publish()
+    ).refCount()
+    expect(lazyStream).toBeDefined()
+    p.firstName = 'Tyler'
+    p.lastName = 'Liu'
+    expect(count).toBe(0)
+  })
+
+  test('mutiple subscribers share', () => {
+    const p = SubX.create({})
+    let count = 0
+    const lazyStream = p.$.pipe(
+      filter(event => {
+        count += 1
+        return true
+      }),
+      map(event => {
+        count += 1
+        return event
+      }),
+      share()
+    )
+    expect(lazyStream).toBeDefined()
+    lazyStream.subscribe(event => {})
+    lazyStream.subscribe(event => {})
+    lazyStream.subscribe(event => {})
+    p.firstName = 'Tyler'
+    p.lastName = 'Liu'
+    expect(count).toBe(4)
+  })
+
+  test('no subscriber share', () => {
+    const p = SubX.create({})
+    let count = 0
+    const lazyStream = p.$.pipe(
+      filter(event => {
+        count += 1
+        return true
+      }),
+      map(event => {
+        count += 1
+        return event
+      }),
+      share()
+    )
+    expect(lazyStream).toBeDefined()
+    p.firstName = 'Tyler'
+    p.lastName = 'Liu'
+    expect(count).toBe(0)
   })
 
   test('rxjs subject', () => {
@@ -107,6 +192,6 @@ describe('lazy stream', () => {
     lazyStream.subscribe(event => {})
     p.next('Tyler')
     p.next('Liu')
-    expect(count).toBe(4) // this is weird!
+    expect(count).toBe(4)
   })
 })
