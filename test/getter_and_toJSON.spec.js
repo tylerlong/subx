@@ -80,4 +80,16 @@ describe('getter & toJSON', () => {
     expect(json).toContain('fullName')
     expect(json).not.toContain('fullName2')
   })
+
+  test('array json', () => {
+    const o = {
+      todos: [ {
+        title: '111',
+        completed: false,
+        editing: false
+      }]
+    }
+    const p = SubX.create(o)
+    expect(JSON.stringify(p)).toBe('{"todos":[{"title":"111","completed":false,"editing":false}]}')
+  })
 })
