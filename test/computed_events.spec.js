@@ -90,11 +90,13 @@ describe('computed events', () => {
     p.firstName = 'Peter'
     expect(computeBegin).toEqual([
       { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
+      { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
     ])
     expect(computeFinish).toEqual([
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
-      { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] }
+      { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] },
+      { type: 'COMPUTE_FINISH', path: [ 'fullName' ] }
     ])
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
@@ -109,8 +111,8 @@ describe('computed events', () => {
     expect(computeBegin).toEqual([
       { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] },
-      { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
-      { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
+      { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] },
+      { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] }
     ])
     expect(computeFinish).toEqual([
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
