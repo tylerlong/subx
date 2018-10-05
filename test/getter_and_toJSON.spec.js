@@ -64,4 +64,20 @@ describe('getter & toJSON', () => {
     )
     expect(count).toBe(0)
   })
+
+  test('subx getter', () => {
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: 'Liu',
+      get fullName () {
+        return `${this.firstName} ${this.lastName}`
+      },
+      fullName2 () {
+        return `${this.firstName} ${this.lastName}`
+      }
+    })
+    const json = JSON.stringify(p, null, 2)
+    expect(json).toContain('fullName')
+    expect(json).not.toContain('fullName2')
+  })
 })
