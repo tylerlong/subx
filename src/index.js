@@ -75,7 +75,9 @@ const handler = {
     }
     const val = target[prop]
     delete target[prop]
-    target.delete$.next({ type: 'DELETE', path: [prop], val })
+    if (!Array.isArray(target)) { // don't issue delete array[n] events
+      target.delete$.next({ type: 'DELETE', path: [prop], val })
+    }
     return true
   },
   has: (target, prop) => {
