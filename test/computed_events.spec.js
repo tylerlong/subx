@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src/index'
 
 describe('computed events', () => {
@@ -32,7 +34,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(stale).toEqual([
+    expect(R.map(R.dissoc('root'), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] }
     ])
 
@@ -49,7 +51,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(stale).toEqual([
+    expect(R.map(R.dissoc('root'), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] }
     ])
   })
@@ -101,7 +103,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(stale).toEqual([
+    expect(R.map(R.dissoc('root'), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] },
       { type: 'STALE', path: [ 'longFullName' ] }
     ])
@@ -123,7 +125,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(stale).toEqual([
+    expect(R.map(R.dissoc('root'), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] },
       { type: 'STALE', path: [ 'longFullName' ] }
     ])

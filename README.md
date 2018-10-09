@@ -533,3 +533,6 @@ Redux & MobX have better browser compatibility.
     - Max: actuate
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
+- Must suppport grouping of events.
+    - Unshifting a value to large array triggers thousands of events, should handle them in batch
+    - forkJoin ?

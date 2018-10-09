@@ -27,7 +27,7 @@ const computed = (subx, f) => {
       const subscription = stream.subscribe(event => {
         stale = true
         subscription.unsubscribe()
-        subx.stale$.next({ type: 'STALE', path: [functionName] })
+        subx.stale$.next({ type: 'STALE', path: [functionName], root: event })
       })
     }
     return cache
