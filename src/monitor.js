@@ -83,18 +83,25 @@ const monitorkeyss = (subx, keyss) => {
 export const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss))
 
 export const runAndMonitor = (subx, f) => {
-  const gets = []
-  const hass = []
-  const keyss = []
+  const obj = subx.__isSubX__ ? { subx } : subx
+  const kvs = R.pipe(R.toPairs, R.filter(([k, v]) => v.__isSubX__))(obj)
+  const cache = {}
   const subscriptions = []
-  let count = 0
-  subscriptions.push(subx.get$.subscribe(event => count === 0 && gets.push(event)))
-  subscriptions.push(subx.has$.subscribe(event => count === 0 && hass.push(event)))
-  subscriptions.push(subx.keys$.subscribe(event => count === 0 && keyss.push(event)))
-  subscriptions.push(subx.compute_begin$.subscribe(event => { count += 1 }))
-  subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
+  R.forEach(([k, v]) => {
+    cache[k] = { gets: [], hass: [], keyss: [] }
+    let count = 0
+    subscriptions.push(v.get$.subscribe(event => count === 0 && cache[k].gets.push(event)))
+    subscriptions.push(v.has$.subscribe(event => count === 0 && cache[k].hass.push(event)))
+    subscriptions.push(v.keys$.subscribe(event => count === 0 && cache[k].keyss.push(event)))
+    subscriptions.push(v.compute_begin$.subscribe(event => { count += 1 }))
+    subscriptions.push(v.compute_finish$.subscribe(event => { count -= 1 }))
+  })(kvs)
   const result = f()
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-  const stream = monitor(subx, { gets, hass, keyss }).pipe(publish()).refCount()
+  let stream = empty()
+  R.map(([k, v]) => {
+    stream = merge(stream, monitor(v, { gets: cache[k].gets, hass: cache[k].hass, keyss: cache[k].keyss }))
+  }, kvs)
+  stream = stream.pipe(publish()).refCount()
   return { result, stream }
 }
