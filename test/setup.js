@@ -6,5 +6,5 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  expect(new Date() - start).toBeLessThanOrEqual(parseInt(process.env.BENCHMARK_THRESHOLD) || 20)
+  expect(new Date() - start).toBeLessThanOrEqual(parseInt(process.env.BENCHMARK_THRESHOLD) || 30)
 })
