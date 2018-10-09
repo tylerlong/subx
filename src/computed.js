@@ -8,6 +8,7 @@ const computed = (subx, f) => {
   let stale = true
   const wrapped = () => {
     if (stale) {
+      subx.compute_begin$.next({ type: 'COMPUTE_BEGIN', path: [functionName] })
       const gets = []
       const hass = []
       const keyss = []
@@ -18,9 +19,9 @@ const computed = (subx, f) => {
       subscriptions.push(subx.keys$.subscribe(event => count === 1 && keyss.push(event)))
       subscriptions.push(subx.compute_begin$.subscribe(event => { count += 1 }))
       subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
-      subx.compute_begin$.next({ type: 'COMPUTE_BEGIN', path: [functionName] })
+      count += 1
       cache = f.bind(subx)()
-      subx.compute_finish$.next({ type: 'COMPUTE_FINISH', path: [functionName] })
+      count -= 1
       stale = false
       R.forEach(subscription => subscription.unsubscribe(), subscriptions)
       const stream = monitor(subx, { gets, hass, keyss })
@@ -29,6 +30,7 @@ const computed = (subx, f) => {
         subscription.unsubscribe()
         subx.stale$.next({ type: 'STALE', path: [functionName], root: event })
       })
+      subx.compute_finish$.next({ type: 'COMPUTE_FINISH', path: [functionName] })
     }
     return cache
   }
