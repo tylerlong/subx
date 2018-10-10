@@ -1,7 +1,6 @@
 import { empty, merge } from 'rxjs'
 import * as R from 'ramda'
 import { filter, merge as _merge, publish, distinct } from 'rxjs/operators'
-import isEqual from 'react-fast-compare'
 
 const monitorGets = (subx, gets) => {
   const relevantGets = R.reduce((events, event) =>
@@ -13,9 +12,9 @@ const monitorGets = (subx, gets) => {
   R.forEach(get => {
     stream = merge(stream, subx.delete$.pipe(filter(event =>
       (get.path.length > event.path.length && R.startsWith(event.path, get.path)) ||
-      (event.val !== undefined && isEqual(event.path, get.path))
+      (event.val !== undefined && R.equals(event.path, get.path))
     )))
-    stream = merge(stream, subx.stale$.pipe(filter(event => isEqual(event.path, get.path))))
+    stream = merge(stream, subx.stale$.pipe(filter(event => R.equals(event.path, get.path))))
     const val = R.path(get.path, subx)
     stream = merge(stream, subx.set$.pipe(
       filter(event => R.startsWith(event.path, get.path)),
@@ -39,7 +38,7 @@ const monitorHass = (subx, hass) => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx)
     stream = merge(stream, subx.delete$.pipe(filter(event =>
       (event.path.length < has.path.length && R.startsWith(event.path, has.path)) ||
-      (val === true && isEqual(event.path, has.path))
+      (val === true && R.equals(event.path, has.path))
     )))
     stream = merge(stream, subx.set$.pipe(
       filter(event => R.startsWith(event.path, has.path)),
@@ -69,7 +68,7 @@ const monitorkeyss = (subx, keyss) => {
       filter(event => {
         const parentVal = R.path(keys.path, subx)
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return !isEqual(Object.keys(parentVal), val)
+          return !R.equals(Object.keys(parentVal), val)
         } else {
           return true
         }
