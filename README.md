@@ -23,7 +23,7 @@ If you want to use SubX together with React, please check [react-subx](https://g
 - Very few new concepts/terminology: you only need to know what is events stream and you are good to go.
 - Able to monitor dynamic and nested data structure
 - Allow you to focus on dynamic data stream instead of static data
-- Small. fewer than 300 lines of code. (Unbelievable, huh?)
+- Small. 300 lines of code. (Unbelievable, huh?)
 
 
 ## Installation
@@ -464,7 +464,7 @@ Redux "is schemaless", but most of the time you need to keep you state "flat", o
 ### Mutability
 
 Redux's state is immutable. For example, `state.a = 1` is not allowed. You have to `state = { ...state, a: 1 }`.
-This could become combersome when you need to achieve `state.a.b.c.d.e = 1`:
+This could become cumbersome when you need to achieve `state.a.b.c.d.e = 1`:
 
 ```js
 state = {
