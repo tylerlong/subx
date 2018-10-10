@@ -43,9 +43,9 @@ const monitorHass = (subx, hass) => {
       filter(event => {
         const parentVal = R.path(R.init(has.path), subx)
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return R.last(has.path) in parentVal !== val
+          return (R.last(has.path) in parentVal) !== val
         } else {
-          return true
+          return false // won't trigger stale when parent cannot have props
         }
       })
     ))
