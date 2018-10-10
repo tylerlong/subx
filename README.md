@@ -536,3 +536,4 @@ Redux & MobX have better browser compatibility.
 - Must suppport grouping of events.
     - Unshifting a value to large array triggers thousands of events, should handle them in batch
     - forkJoin ?
+- should delete parent trigger monitorGets ? should not cause render because parent has been removed

@@ -28,32 +28,37 @@ describe('stale deep equal', () => {
     expect(p.render.length).toBe(3)
 
     p.visibility = 'active'
-    expect(events).toEqual([{
-      type: 'STALE',
-      path: [ 'visibleTodos' ],
-      root: { type: 'SET',
-        path: [ 'visibility' ],
-        val: 'active',
-        oldVal: 'all'
+    expect(events).toEqual([
+      {
+        type: 'STALE',
+        path: [ 'visibleTodos' ],
+        root: { type: 'SET',
+          path: [ 'visibility' ],
+          val: 'active',
+          oldVal: 'all'
+        }
+      },
+      {
+        type: 'STALE',
+        path: [ 'render' ],
+        root: {
+          type: 'STALE',
+          path: [ 'visibleTodos' ],
+          root: { type: 'SET',
+            path: [ 'visibility' ],
+            val: 'active',
+            oldVal: 'all'
+          }
+        }
       }
-    }])
+    ])
 
     events = []
     p.visibility = 'active' // same value
     expect(events).toEqual([])
 
     p.visibility = 'completed'
-    expect(events).toEqual([
-      { 'path': ['visibleTodos'],
-        'root': { 'oldVal': 'active', 'path': ['visibility'], 'type': 'SET', 'val': 'completed' },
-        'type': 'STALE'
-      },
-      { 'path': ['render'],
-        'root': { 'path': ['visibleTodos'],
-          'root': { 'oldVal': 'active', 'path': ['visibility'], 'type': 'SET', 'val': 'completed' },
-          'type': 'STALE' },
-        'type': 'STALE' }
-    ])
+    expect(events).toEqual([]) // because we didn't invoke computed, won't trigger stale again
     expect(p.render.length).toBe(0)
 
     events = []

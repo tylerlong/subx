@@ -15,10 +15,8 @@ const monitorGets = (subx, gets) => {
       (get.path.length > event.path.length && R.startsWith(event.path, get.path)) ||
       (event.val !== undefined && isEqual(event.path, get.path))
     )))
+    stream = merge(stream, subx.stale$.pipe(filter(event => isEqual(event.path, get.path))))
     const val = R.path(get.path, subx)
-    stream = merge(stream, subx.stale$.pipe(filter(event =>
-      isEqual(event.path, get.path) && !isEqual(val, R.path(get.path, subx))) // todo: do smart equal
-    ))
     stream = merge(stream, subx.set$.pipe(
       filter(event => R.startsWith(event.path, get.path)),
       filter(event => {
