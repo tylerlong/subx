@@ -55,8 +55,8 @@ describe('array glitch', () => {
     ).subscribe(e => events.push(e))
     p.splice(1, 1)
     await delay(17)
-    expect(events.length).toBe(1) // one bufferred event only
-    expect(events[0].length).toBeGreaterThan(1) // event is a bufferred event
+    expect(events.length).toBe(1) // one buffered event only
+    expect(events[0].length).toBeGreaterThan(1) // event is a buffered event
   })
 
   test('buffer', async () => {
@@ -67,7 +67,7 @@ describe('array glitch', () => {
     ).subscribe(e => events.push(e))
     p.splice(1, 1)
     await delay(10)
-    expect(events.length).toBe(1) // one bufferred event only
-    expect(events[0].length).toBeGreaterThan(1) // event is a bufferred event
+    expect(events.length).toBe(1) // one buffered event only
+    expect(events[0].length).toBeGreaterThan(1) // event is a buffered event
   })
 })
