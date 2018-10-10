@@ -67,7 +67,7 @@ const monitorkeyss = (subx, keyss) => {
         if (typeof parentVal === 'object' && parentVal !== null) {
           return !R.equals(Object.keys(parentVal), val)
         } else {
-          return true
+          return false // won't trigger stale when parent cannot have props
         }
       })
     ))
