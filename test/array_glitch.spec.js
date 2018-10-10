@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { bufferTime, windowTime, throttleTime, bufferToggle } from 'rxjs/operators'
+import { bufferTime, windowTime, throttleTime, bufferToggle, buffer, debounceTime } from 'rxjs/operators'
 import { timer } from 'rxjs'
 import delay from 'timeout-as-promise'
 
@@ -55,7 +55,19 @@ describe('array glitch', () => {
     ).subscribe(e => events.push(e))
     p.splice(1, 1)
     await delay(17)
-    expect(events.length).toBe(1) // one batch event only
+    expect(events.length).toBe(1) // one bufferred event only
+    expect(events[0].length).toBeGreaterThan(1) // event is a bufferred event
+  })
+
+  test('buffer', async () => {
+    const p = SubX.create([1, 2, 3])
+    const events = []
+    p.$.pipe(
+      buffer(p.$.pipe(debounceTime(5)))
+    ).subscribe(e => events.push(e))
+    p.splice(1, 1)
+    await delay(10)
+    expect(events.length).toBe(1) // one bufferred event only
     expect(events[0].length).toBeGreaterThan(1) // event is a bufferred event
   })
 })
