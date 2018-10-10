@@ -31,10 +31,6 @@ describe('monitor delete', () => {
     const events = []
     stream.subscribe(e => events.push(e))
     store.todos.splice(2, 1)
-    expect(events).toEqual([ // one and only one event, although todo's props were accessed 3 times in render method
-      { type: 'DELETE', // it is because we applied distinct operator in runAndMonitor method.
-        path: [ 'todos', '2' ],
-        val: { title: '333', completed: false } }
-    ])
+    expect(events).toEqual([]) // delete parent path won't trigger stale
   })
 })
