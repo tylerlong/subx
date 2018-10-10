@@ -31,18 +31,10 @@ describe('monitor delete', () => {
     const events = []
     stream.subscribe(e => events.push(e))
     store.todos.splice(2, 1)
-    expect(events).toEqual([ // because todo's props were accessed 3 times in render method
-      { type: 'DELETE',
-        path: [ 'todos', '2' ],
-        val: { title: '333', completed: false } },
-      { type: 'DELETE',
-        path: [ 'todos', '2' ],
-        val: { title: '333', completed: false } },
-      { type: 'DELETE',
+    expect(events).toEqual([ // one and only one event, although todo's props were accessed 3 times in render method
+      { type: 'DELETE', // it is because we applied distinct operator in runAndMonitor method.
         path: [ 'todos', '2' ],
         val: { title: '333', completed: false } }
     ])
-    expect(events[0]).toBe(events[1])
-    expect(events[1]).toBe(events[2]) // the same event received 3 times
   })
 })

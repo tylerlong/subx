@@ -1,6 +1,6 @@
 import { empty, merge } from 'rxjs'
 import * as R from 'ramda'
-import { filter, merge as _merge, publish } from 'rxjs/operators'
+import { filter, merge as _merge, publish, distinct } from 'rxjs/operators'
 import isEqual from 'react-fast-compare'
 
 const monitorGets = (subx, gets) => {
@@ -81,7 +81,7 @@ const monitorkeyss = (subx, keyss) => {
   return stream
 }
 
-export const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss))
+export const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss)).pipe(distinct())
 
 export const runAndMonitor = (subx, f) => {
   const obj = subx.__isSubX__ ? { subx } : subx
@@ -103,6 +103,6 @@ export const runAndMonitor = (subx, f) => {
   R.map(([k, v]) => {
     stream = merge(stream, monitor(v, { gets: cache[k].gets, hass: cache[k].hass, keyss: cache[k].keyss }))
   }, kvs)
-  stream = stream.pipe(publish()).refCount()
+  stream = stream.pipe(distinct(), publish()).refCount()
   return { result, stream }
 }
