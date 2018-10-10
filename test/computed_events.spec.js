@@ -34,7 +34,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.dissoc('root'), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] }
     ])
 
@@ -51,7 +51,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.dissoc('root'), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] }
     ])
   })
@@ -101,7 +101,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.dissoc('root'), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] },
       { type: 'STALE', path: [ 'longFullName' ] }
     ])
@@ -123,7 +123,7 @@ describe('computed events', () => {
     expect(events).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.dissoc('root'), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] },
       { type: 'STALE', path: [ 'longFullName' ] }
     ])

@@ -36,7 +36,12 @@ describe('stale deep equal', () => {
           path: [ 'visibility' ],
           val: 'active',
           oldVal: 'all'
-        }
+        },
+        cache: [
+          { completed: false },
+          { completed: false },
+          { completed: false }
+        ]
       },
       {
         type: 'STALE',
@@ -48,8 +53,18 @@ describe('stale deep equal', () => {
             path: [ 'visibility' ],
             val: 'active',
             oldVal: 'all'
-          }
-        }
+          },
+          cache: [
+            { completed: false },
+            { completed: false },
+            { completed: false }
+          ]
+        },
+        cache: [
+          { completed: false },
+          { completed: false },
+          { completed: false }
+        ]
       }
     ])
 
@@ -67,12 +82,18 @@ describe('stale deep equal', () => {
     expect(events).toEqual([
       { type: 'STALE',
         path: [ 'visibleTodos' ],
-        root: { type: 'SET', path: ['todos', '1', 'completed'], val: true, oldVal: false } },
+        root: { type: 'SET', path: ['todos', '1', 'completed'], val: true, oldVal: false },
+        cache: []
+      },
       { type: 'STALE',
         path: [ 'render' ],
-        root: { type: 'STALE',
+        root: {
+          type: 'STALE',
           path: [ 'visibleTodos' ],
-          root: { type: 'SET', path: ['todos', '1', 'completed'], val: true, oldVal: false } }
+          root: { type: 'SET', path: ['todos', '1', 'completed'], val: true, oldVal: false },
+          cache: []
+        },
+        cache: []
       }
     ])
   })
