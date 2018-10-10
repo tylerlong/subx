@@ -48,8 +48,6 @@ describe('React', () => {
     expect(count).toBe(1) // because of debounce
     store.todos.push({ title: '222', completed: false })
     expect(count).toBe(1) // because of debounce
-    store.todos.push({ title: '333', completed: false })
-    expect(count).toBe(1) // because of debounce
     await delay(5)
     expect(count).toBe(2)
   })

@@ -20,7 +20,7 @@ const monitorGets = (subx, gets) => {
         if (typeof parentVal === 'object' && parentVal !== null) {
           return val !== parentVal[R.last(get.path)]
         } else {
-          return true
+          return false // won't trigger stale when parent cannot have props
         }
       })
     ))
