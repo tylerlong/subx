@@ -57,7 +57,6 @@ const monitorkeyss = (subx, keyss) => {
   const uniqKeyss = R.uniqBy(keys => keys.path, keyss)
   let stream = empty()
   R.forEach(keys => {
-    stream = merge(stream, subx.delete$.pipe(filter(event => R.startsWith(event.path, keys.path))))
     const val = Object.keys(R.path(keys.path, subx))
     stream = merge(stream, subx.delete$.pipe(
       filter(event => keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path)),
