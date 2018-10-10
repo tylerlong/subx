@@ -10,9 +10,11 @@ const monitorGets = (subx, gets) => {
   const uniqGets = R.uniqBy(event => event.path, relevantGets)
   let stream = empty()
   R.forEach(get => {
-    stream = merge(stream, subx.delete$.pipe(filter(event => event.val !== undefined && R.equals(event.path, get.path))))
     stream = merge(stream, subx.stale$.pipe(filter(event => R.equals(event.path, get.path))))
     const val = R.path(get.path, subx)
+    if (val !== undefined) {
+      stream = merge(stream, subx.delete$.pipe(filter(event => R.equals(event.path, get.path))))
+    }
     stream = merge(stream, subx.set$.pipe(
       filter(event => R.startsWith(event.path, get.path)),
       filter(event => {
@@ -33,7 +35,9 @@ const monitorHass = (subx, hass) => {
   let stream = empty()
   R.forEach(has => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx)
-    stream = merge(stream, subx.delete$.pipe(filter(event => val === true && R.equals(event.path, has.path))))
+    if (val === true) {
+      stream = merge(stream, subx.delete$.pipe(filter(event => R.equals(event.path, has.path))))
+    }
     stream = merge(stream, subx.set$.pipe(
       filter(event => R.startsWith(event.path, has.path)),
       filter(event => {
