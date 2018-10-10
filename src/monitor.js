@@ -4,8 +4,8 @@ import { filter, merge as _merge, publish, distinct } from 'rxjs/operators'
 
 const monitorGets = (subx, gets) => {
   const relevantGets = R.reduce((events, event) =>
-    (events.length > 0 && R.startsWith(events[0].path, event.path))
-      ? R.update(0, event, events) : R.prepend(event, events)
+    (events.length > 0 && R.startsWith(R.last(events).path, event.path))
+      ? R.update(events.length - 1, event, events) : R.append(event, events)
   )([], gets)
   const uniqGets = R.uniqBy(event => event.path, relevantGets)
   let stream = empty()
