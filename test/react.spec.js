@@ -1,6 +1,8 @@
 /* eslint-env jest */
 import React from 'react'
 import TestRenderer from 'react-test-renderer'
+import { buffer, debounceTime } from 'rxjs/operators'
+import delay from 'timeout-as-promise'
 
 import SubX, { runAndMonitor } from '../src/index'
 
@@ -10,7 +12,8 @@ class Component extends React.Component {
     const render = this.render.bind(this)
     this.render = () => {
       const stream = runAndMonitor(props, render).stream
-      const sub = stream.subscribe(event => {
+      const bufferedStream = stream.pipe(buffer(stream.pipe(debounceTime(3))))
+      const sub = bufferedStream.subscribe(event => {
         sub.unsubscribe()
         this.forceUpdate()
       })
@@ -38,16 +41,16 @@ class Footer extends Component {
 }
 
 describe('React', () => {
-  test('default', () => {
+  test('default', async () => {
     TestRenderer.create(<Footer store={store} />)
     expect(count).toBe(1)
     store.todos.push({ title: '111', completed: false })
-    expect(count).toBe(2)
+    expect(count).toBe(1) // because of debounce
     store.todos.push({ title: '222', completed: false })
-    expect(count).toBe(3)
+    expect(count).toBe(1) // because of debounce
     store.todos.push({ title: '333', completed: false })
-    expect(count).toBe(4)
-    store.todos.push({ title: '444', completed: false })
-    expect(count).toBe(5)
+    expect(count).toBe(1) // because of debounce
+    await delay(5)
+    expect(count).toBe(2)
   })
 })
