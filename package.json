@@ -10,7 +10,7 @@
   "scripts": {
     "test": "standard && jest -w 1",
     "release": "webpack --progress --colors",
-    "upgrade": "yarn-upgrade-all && yarn remove babel-core && yarn add --dev babel-core@7.0.0-bridge.0"
+    "prepublishOnly": "yarn release"
   },
   "dependencies": {
     "ramda": "^0.25.0",
@@ -42,5 +42,10 @@
   ],
   "jest": {
     "setupTestFrameworkScriptFile": "./test/setup.js"
+  },
+  "yarn-upgrade-all": {
+    "ignore": [
+      "babel-core"
+    ]
   }
 }
