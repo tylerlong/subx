@@ -37,7 +37,10 @@ describe('array splice', () => {
     const events = []
     store.$.subscribe(event => events.push(event))
     store.todos.pop()
-    expect(events).toEqual([{ type: 'SET', path: [ 'todos', 'length' ], val: 2, oldVal: 3 }])
+    expect(events).toEqual([
+      { 'path': ['todos', '2'], 'type': 'DELETE', 'val': 3 },
+      { 'oldVal': 3, 'path': ['todos', 'length'], 'type': 'SET', 'val': 2 }
+    ])
   })
   test('shift', () => {
     const store = SubX.create({
