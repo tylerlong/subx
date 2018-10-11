@@ -1,6 +1,6 @@
 import { empty, merge } from 'rxjs'
+import { filter, merge as _merge, publish, distinct, map } from 'rxjs/operators'
 import * as R from 'ramda'
-import { filter, merge as _merge, publish, distinct } from 'rxjs/operators'
 
 const monitorGets = (subx, gets) => {
   const relevantGets = R.reduce((events, event) =>
@@ -77,9 +77,14 @@ const monitorkeyss = (subx, keyss) => {
 
 export const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss)).pipe(distinct())
 
+// todo: maybe we can simply make SubX.create(subx) now
 export const runAndMonitor = (subx, f) => {
-  const obj = subx.__isSubX__ ? { subx } : subx
-  const kvs = R.pipe(R.toPairs, R.filter(([k, v]) => v.__isSubX__))(obj)
+  let kvs
+  if (subx.__isSubX__) {
+    kvs = [['__root__', subx]]
+  } else {
+    kvs = R.pipe(R.toPairs, R.filter(([k, v]) => v.__isSubX__))(subx)
+  }
   const cache = {}
   const subscriptions = []
   R.forEach(([k, v]) => {
@@ -95,7 +100,11 @@ export const runAndMonitor = (subx, f) => {
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
   let stream = empty()
   R.map(([k, v]) => {
-    stream = merge(stream, monitor(v, { gets: cache[k].gets, hass: cache[k].hass, keyss: cache[k].keyss }))
+    let tempStream = monitor(v, { gets: cache[k].gets, hass: cache[k].hass, keyss: cache[k].keyss })
+    if (k !== '__root__') {
+      tempStream = tempStream.pipe(map(event => R.assoc('path', [k, ...event.path], event)))
+    }
+    stream = merge(stream, tempStream)
   }, kvs)
   stream = stream.pipe(distinct(), publish()).refCount()
   return { result, stream }
