@@ -450,6 +450,18 @@ expensive computation
 You can see that `expensive computation` was only printed once although we changed `firstName` & `lastName` four times in total.
 
 
+## Grouping of events
+
+More often than not, you want to process event in batch. Thus you need to group them.
+A good way to group event over time is by "burst".
+
+Here you go:
+
+```js
+const bufferedStream = stream.pipe(buffer(stream.pipe(debounceTime(2))))
+```
+
+
 ## Compare with MobX and Redux
 
 ### Schemaless
@@ -533,7 +545,3 @@ Redux & MobX have better browser compatibility.
     - Max: actuate
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
-- Must suppport grouping of events.
-    - Unshifting a value to large array triggers thousands of events, should handle them in batch
-    - current solution is `stream.pipe(buffer(stream.pipe(debounceTime(2))))`
-        - should document the soltuion
