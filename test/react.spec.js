@@ -12,7 +12,7 @@ class Component extends React.Component {
     const render = this.render.bind(this)
     this.render = () => {
       const stream = runAndMonitor(SubX.create(props), render).stream
-      const bufferedStream = stream.pipe(buffer(stream.pipe(debounceTime(3))))
+      const bufferedStream = stream.pipe(buffer(stream.pipe(debounceTime(2))))
       const sub = bufferedStream.subscribe(event => {
         sub.unsubscribe()
         this.forceUpdate()
