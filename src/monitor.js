@@ -75,8 +75,28 @@ const monitorkeyss = (subx, keyss) => {
   return stream
 }
 
+export const removeDuplicateEvents = events => {
+  return R.reduce((result, event) => {
+    if (result.length === 1 && result[0].id === event.id) {
+      return [event]
+    }
+    if (result.length >= 2 && event.id === R.last(result).id) {
+      if (R.startsWith(R.last(R.init(result)).path, R.last(result).path)) {
+        return result
+      } else {
+        return R.update(result.length - 1, event, result)
+      }
+    }
+    return R.append(event, result)
+  })([], events)
+}
+
 export const monitor = (subx, { gets, hass, keyss }) => {
-  return merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss)).pipe(distinct())
+  return merge(
+    monitorGets(subx, removeDuplicateEvents(gets)),
+    monitorHass(subx, removeDuplicateEvents(hass)),
+    monitorkeyss(subx, removeDuplicateEvents(keyss))
+  ).pipe(distinct())
 }
 
 // TODO: maybe we can simply make SubX.create(subx) now
