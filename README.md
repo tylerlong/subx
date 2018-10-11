@@ -166,14 +166,6 @@ Computed properties / getters are supposed to be "pure". We should not update da
 
 If we create circular data structure with SubX, the behavior is undefined. Please don't do that.
 
-### Data must be JSON compliant
-
-The data we create must be JSON compliant. "Compliant" means we convert our data to JSON followed by coverting back, there should not be data loss.
-
-We could have JSON incompliant data, but those data won't be tracked by SubX. SubX won't notice us of changes to those data.
-
-Example of JSON incompliant data: Map & Set.
-
 
 ## More info
 
