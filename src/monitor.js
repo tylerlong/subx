@@ -1,5 +1,5 @@
 import { empty, merge } from 'rxjs'
-import { filter, merge as _merge, publish, distinct, map } from 'rxjs/operators'
+import { filter, merge as _merge, publish, distinct } from 'rxjs/operators'
 import * as R from 'ramda'
 
 const monitorGets = (subx, gets) => {
@@ -99,35 +99,19 @@ export const monitor = (subx, { gets, hass, keyss }) => {
   ).pipe(distinct())
 }
 
-// TODO: maybe we can simply make SubX.create(subx) now
 export const runAndMonitor = (subx, f) => {
-  let kvs
-  if (subx.__isSubX__) {
-    kvs = [['__root__', subx]]
-  } else {
-    kvs = R.pipe(R.toPairs, R.filter(([k, v]) => v.__isSubX__))(subx)
-  }
-  const cache = {}
+  const gets = []
+  const hass = []
+  const keyss = []
+  let count = 0
   const subscriptions = []
-  R.forEach(([k, v]) => {
-    cache[k] = { gets: [], hass: [], keyss: [] }
-    let count = 0
-    subscriptions.push(v.get$.subscribe(event => count === 0 && cache[k].gets.push(event)))
-    subscriptions.push(v.has$.subscribe(event => count === 0 && cache[k].hass.push(event)))
-    subscriptions.push(v.keys$.subscribe(event => count === 0 && cache[k].keyss.push(event)))
-    subscriptions.push(v.compute_begin$.subscribe(event => { count += 1 }))
-    subscriptions.push(v.compute_finish$.subscribe(event => { count -= 1 }))
-  })(kvs)
+  subscriptions.push(subx.get$.subscribe(event => count === 0 && gets.push(event)))
+  subscriptions.push(subx.has$.subscribe(event => count === 0 && hass.push(event)))
+  subscriptions.push(subx.keys$.subscribe(event => count === 0 && keyss.push(event)))
+  subscriptions.push(subx.compute_begin$.subscribe(event => { count += 1 }))
+  subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
   const result = f()
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-  let stream = empty()
-  R.map(([k, v]) => {
-    let tempStream = monitor(v, { gets: cache[k].gets, hass: cache[k].hass, keyss: cache[k].keyss })
-    if (k !== '__root__') {
-      tempStream = tempStream.pipe(map(event => R.assoc('path', [k, ...event.path], event)))
-    }
-    stream = merge(stream, tempStream)
-  }, kvs)
-  stream = stream.pipe(distinct(), publish()).refCount()
+  const stream = monitor(subx, { gets, hass, keyss }).pipe(distinct(), publish()).refCount()
   return { result, stream }
 }

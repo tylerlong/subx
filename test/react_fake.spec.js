@@ -15,7 +15,7 @@ const render = () => {
 }
 const newRender = () => {
   const props = { store }
-  const stream = runAndMonitor(props, render).stream
+  const stream = runAndMonitor(SubX.create(props), render).stream
   const sub = stream.subscribe(event => {
     sub.unsubscribe()
     newRender()
