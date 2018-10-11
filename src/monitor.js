@@ -75,7 +75,9 @@ const monitorkeyss = (subx, keyss) => {
   return stream
 }
 
-export const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss)).pipe(distinct())
+export const monitor = (subx, { gets, hass, keyss }) => {
+  return merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss)).pipe(distinct())
+}
 
 // TODO: maybe we can simply make SubX.create(subx) now
 export const runAndMonitor = (subx, f) => {
