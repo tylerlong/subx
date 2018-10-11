@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src/index'
 
 describe('stale deep equal', () => {
@@ -28,7 +30,7 @@ describe('stale deep equal', () => {
     expect(p.render.length).toBe(3)
 
     p.visibility = 'active'
-    expect(events).toEqual([
+    expect(R.map(R.pipe(R.dissoc('id'), R.dissocPath(['root', 'id']), R.dissocPath(['root', 'root', 'id'])))(events)).toEqual([
       {
         type: 'STALE',
         path: [ 'visibleTodos' ],
@@ -79,7 +81,7 @@ describe('stale deep equal', () => {
     events = []
     p.todos[1].completed = true
     expect(p.render.length).toBe(1)
-    expect(events).toEqual([
+    expect(R.map(R.pipe(R.dissoc('id'), R.dissocPath(['root', 'id']), R.dissocPath(['root', 'root', 'id'])))(events)).toEqual([
       { type: 'STALE',
         path: [ 'visibleTodos' ],
         root: { type: 'SET', path: ['todos', '1', 'completed'], val: true, oldVal: false },

@@ -14,7 +14,7 @@ describe('sub streams', () => {
     p.b = 2
     p.a = 3
     delete p.b
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['a'],
@@ -46,7 +46,7 @@ describe('sub streams', () => {
     p.b = 2
     p.a = 3
     delete p.b
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'DELETE',
         path: ['b'],
@@ -73,6 +73,6 @@ describe('sub streams', () => {
     p.b = 2
     p.a = 3
     delete p.b
-    expect(events3).toEqual(R.concat(events1, events2))
+    expect(R.map(R.dissoc('id'), events3)).toEqual(R.concat(R.map(R.dissoc('id'), events1), R.map(R.dissoc('id'), events2)))
   })
 })

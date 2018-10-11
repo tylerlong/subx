@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import { filter } from 'rxjs/operators'
+import * as R from 'ramda'
 
 import SubX from '../src/index'
 
@@ -11,7 +12,7 @@ describe('get stream', () => {
       events.push(event)
     })
     p.b = p.a
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'GET',
         path: ['a']
@@ -30,7 +31,7 @@ describe('get stream', () => {
       events2.push(event)
     })
     p.a.b.d = p.a.b.c
-    expect(events1).toEqual([
+    expect(R.map(R.dissoc('id'), events1)).toEqual([
       {
         type: 'GET',
         path: ['a']
@@ -40,7 +41,7 @@ describe('get stream', () => {
         path: ['a']
       }
     ])
-    expect(events2).toEqual([
+    expect(R.map(R.dissoc('id'), events2)).toEqual([
       {
         type: 'GET',
         path: ['a']

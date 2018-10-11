@@ -28,7 +28,7 @@ describe('array splice', () => {
     const events = []
     store.$.subscribe(event => events.push(event))
     store.todos.splice(1, 1)
-    expect(events[events.length - 1]).toEqual({ type: 'SET', path: [ 'todos', 'length' ], val: 2, oldVal: 3 })
+    expect(R.dissoc('id', events[events.length - 1])).toEqual({ type: 'SET', path: [ 'todos', 'length' ], val: 2, oldVal: 3 })
   })
   test('pop', () => {
     const store = SubX.create({
@@ -37,7 +37,7 @@ describe('array splice', () => {
     const events = []
     store.$.subscribe(event => events.push(event))
     store.todos.pop()
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { 'path': ['todos', '2'], 'type': 'DELETE', 'val': 3 },
       { 'oldVal': 3, 'path': ['todos', 'length'], 'type': 'SET', 'val': 2 }
     ])
@@ -49,7 +49,7 @@ describe('array splice', () => {
     const events = []
     store.$.subscribe(event => events.push(event))
     store.todos.shift(0)
-    expect(events[events.length - 1]).toEqual({ type: 'SET', path: [ 'todos', 'length' ], val: 2, oldVal: 3 })
+    expect(R.dissoc('id', events[events.length - 1])).toEqual({ type: 'SET', path: [ 'todos', 'length' ], val: 2, oldVal: 3 })
   })
   test('map and get events', () => {
     const store = SubX.create({
@@ -58,6 +58,6 @@ describe('array splice', () => {
     const events = []
     store.get$.subscribe(event => events.push(event))
     expect(store.todos.map(todo => todo)).toBeDefined()
-    expect(R.any(event => R.equals(event, { type: 'GET', path: [ 'todos', 'length' ] }), events)).toBeTruthy()
+    expect(R.any(event => R.equals(R.dissoc('id', event), { type: 'GET', path: [ 'todos', 'length' ] }), events)).toBeTruthy()
   })
 })

@@ -1,4 +1,5 @@
 import * as R from 'ramda'
+import uuid from 'uuid/v4'
 
 import { monitor } from './monitor'
 
@@ -8,7 +9,7 @@ const computed = (subx, f) => {
   let stale = true
   const wrapped = () => {
     if (stale) {
-      subx.compute_begin$.next({ type: 'COMPUTE_BEGIN', path: [functionName] })
+      subx.compute_begin$.next({ type: 'COMPUTE_BEGIN', path: [functionName], id: uuid() })
       const gets = []
       const hass = []
       const keyss = []
@@ -28,9 +29,9 @@ const computed = (subx, f) => {
       const subscription = stream.subscribe(event => {
         stale = true
         subscription.unsubscribe()
-        subx.stale$.next({ type: 'STALE', path: [functionName], root: event, cache })
+        subx.stale$.next({ type: 'STALE', path: [functionName], root: event, cache, id: uuid() })
       })
-      subx.compute_finish$.next({ type: 'COMPUTE_FINISH', path: [functionName] })
+      subx.compute_finish$.next({ type: 'COMPUTE_FINISH', path: [functionName], id: uuid() })
     }
     return cache
   }

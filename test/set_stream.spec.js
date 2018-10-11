@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src'
 
 describe('set stream', () => {
@@ -10,7 +12,7 @@ describe('set stream', () => {
     })
     p.a = 'hello'
     p.b = 'world'
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['a'],
@@ -33,7 +35,7 @@ describe('set stream', () => {
     })
     p.a.c = 'hello'
     p.b.d = 'world'
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['a', 'c'],

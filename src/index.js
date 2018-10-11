@@ -2,6 +2,7 @@ import { Subject, merge } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 import util from 'util'
+import uuid from 'uuid/v4'
 
 import computed from './computed'
 
@@ -35,7 +36,7 @@ const handler = {
     } else {
       target[prop] = val
     }
-    target.set$.next({ type: 'SET', path: [prop], val, oldVal })
+    target.set$.next({ type: 'SET', path: [prop], val, oldVal, id: uuid() })
     if (subscriptions.length > 0) {
       const temp = target.$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
         R.forEach(subscription => subscription.unsubscribe(), subscriptions)
@@ -46,7 +47,7 @@ const handler = {
   },
   get: (target, prop, receiver) => {
     if (!R.contains(prop, RESERVED_PROPERTIES)) {
-      target.get$.next({ type: 'GET', path: [prop] })
+      target.get$.next({ type: 'GET', path: [prop], id: uuid() })
     }
     switch (prop) {
       case '__isSubX__':
@@ -75,17 +76,17 @@ const handler = {
     }
     const val = target[prop]
     delete target[prop]
-    target.delete$.next({ type: 'DELETE', path: [prop], val })
+    target.delete$.next({ type: 'DELETE', path: [prop], val, id: uuid() })
     return true
   },
   has: (target, prop) => {
     const val = prop in target
-    target.has$.next({ type: 'HAS', path: [prop], val })
+    target.has$.next({ type: 'HAS', path: [prop], val, id: uuid() })
     return val
   },
   ownKeys: target => {
     const val = R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
-    target.keys$.next({ type: 'KEYS', path: [], val })
+    target.keys$.next({ type: 'KEYS', path: [], val, id: uuid() })
     return val
   },
   setPrototypeOf: (target, prototype) => {

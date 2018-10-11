@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src'
 
 describe('keys stream', () => {
@@ -10,7 +12,7 @@ describe('keys stream', () => {
     })
     p.a = Object.keys(p)
     p.c = Object.keys(p)
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'KEYS',
         path: [],
@@ -31,7 +33,7 @@ describe('keys stream', () => {
     })
     p.a.c = Object.keys(p.a)
     p.b.d = Object.keys(p.a)
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'KEYS',
         path: ['a'],

@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src/index'
 
 describe('double dollar', () => {
@@ -13,7 +15,7 @@ describe('double dollar', () => {
     rectangle.size.width = 200
     rectangle.size.height = 100
 
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET',
         val: 0,
         oldVal: undefined,
@@ -48,7 +50,7 @@ describe('double dollar', () => {
     rectangle.size.width = 200
     rectangle.size.height = 100
 
-    expect(events1).toEqual([
+    expect(R.map(R.dissoc('id'), events1)).toEqual([
       { type: 'SET',
         val: 0,
         oldVal: undefined,
@@ -58,7 +60,7 @@ describe('double dollar', () => {
         oldVal: undefined,
         path: [ 'y' ] }
     ])
-    expect(events2).toEqual([
+    expect(R.map(R.dissoc('id'), events2)).toEqual([
       { type: 'SET',
         val: 200,
         oldVal: undefined,

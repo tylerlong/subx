@@ -40,7 +40,7 @@ describe('array', () => {
     })
     a.push(4)
     expect(a).toEqual([1, 2, 3, 4])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['3'],
@@ -63,7 +63,7 @@ describe('array', () => {
     })
     a[1] = 4
     expect(a).toEqual([1, 4, 3])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['1'],
@@ -80,7 +80,7 @@ describe('array', () => {
     })
     a.unshift(0)
     expect(a).toEqual([0, 1, 2, 3])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['3'],
@@ -137,7 +137,7 @@ describe('array', () => {
     // push
     o.b.a.push(4)
     expect(o.b.a).toEqual([1, 2, 3, 4])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['b', 'a', '3'],
@@ -157,7 +157,7 @@ describe('array', () => {
     events = []
     o.b.a[1] = 4
     expect(o.b.a).toEqual([1, 4, 3])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['b', 'a', '1'],
@@ -171,7 +171,7 @@ describe('array', () => {
     events = []
     o.b.a.unshift(0)
     expect(o.b.a).toEqual([0, 1, 2, 3])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['b', 'a', '3'],

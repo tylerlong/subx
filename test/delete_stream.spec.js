@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src'
 
 describe('delete stream', () => {
@@ -10,7 +12,7 @@ describe('delete stream', () => {
     })
     delete p.a
     delete p.b
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'DELETE',
         path: ['a'],
@@ -31,7 +33,7 @@ describe('delete stream', () => {
     })
     delete p.a.c
     delete p.b.d
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'DELETE',
         path: ['a', 'c'],

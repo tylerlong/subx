@@ -23,35 +23,35 @@ describe('computed events', () => {
 
     expect(p.fullName).toBe('Tyler Liu')
     expect(p.fullName).toBe('Tyler Liu')
-    expect(computeBegin).toEqual([{ type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }])
-    expect(computeFinish).toEqual([{ type: 'COMPUTE_FINISH', path: [ 'fullName' ] }])
+    expect(R.map(R.dissoc('id'), computeBegin)).toEqual([{ type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }])
+    expect(R.map(R.dissoc('id'), computeFinish)).toEqual([{ type: 'COMPUTE_FINISH', path: [ 'fullName' ] }])
     expect(events).toEqual([])
     expect(stale).toEqual([])
 
     p.firstName = 'Peter'
-    expect(computeBegin).toEqual([{ type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }])
-    expect(computeFinish).toEqual([{ type: 'COMPUTE_FINISH', path: [ 'fullName' ] }])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), computeBegin)).toEqual([{ type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }])
+    expect(R.map(R.dissoc('id'), computeFinish)).toEqual([{ type: 'COMPUTE_FINISH', path: [ 'fullName' ] }])
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache'), R.dissoc('id')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] }
     ])
 
     expect(p.fullName).toBe('Peter Liu')
     expect(p.fullName).toBe('Peter Liu')
-    expect(computeBegin).toEqual([
+    expect(R.map(R.dissoc('id'), computeBegin)).toEqual([
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
     ])
-    expect(computeFinish).toEqual([
+    expect(R.map(R.dissoc('id'), computeFinish)).toEqual([
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] }
     ])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache'), R.dissoc('id')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] }
     ])
   })
@@ -78,11 +78,11 @@ describe('computed events', () => {
 
     expect(p.longFullName).toBe('Tyler Liu')
     expect(p.longFullName).toBe('Tyler Liu')
-    expect(computeBegin).toEqual([
+    expect(R.map(R.dissoc('id'), computeBegin)).toEqual([
       { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
     ])
-    expect(computeFinish).toEqual([
+    expect(R.map(R.dissoc('id'), computeFinish)).toEqual([
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
       { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] }
     ])
@@ -90,40 +90,40 @@ describe('computed events', () => {
     expect(stale).toEqual([])
 
     p.firstName = 'Peter'
-    expect(computeBegin).toEqual([
+    expect(R.map(R.dissoc('id'), computeBegin)).toEqual([
       { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
     ])
-    expect(computeFinish).toEqual([
+    expect(R.map(R.dissoc('id'), computeFinish)).toEqual([
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
       { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] }
     ])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache'), R.dissoc('id')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] },
       { type: 'STALE', path: [ 'longFullName' ] }
     ])
 
     expect(p.longFullName).toBe('Peter Liu')
     expect(p.longFullName).toBe('Peter Liu')
-    expect(computeBegin).toEqual([
+    expect(R.map(R.dissoc('id'), computeBegin)).toEqual([
       { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'longFullName' ] },
       { type: 'COMPUTE_BEGIN', path: [ 'fullName' ] }
     ])
-    expect(computeFinish).toEqual([
+    expect(R.map(R.dissoc('id'), computeFinish)).toEqual([
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
       { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] },
       { type: 'COMPUTE_FINISH', path: [ 'fullName' ] },
       { type: 'COMPUTE_FINISH', path: [ 'longFullName' ] }
     ])
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET', path: [ 'firstName' ], val: 'Peter', oldVal: 'Tyler' }
     ])
-    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache')), stale)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('root'), R.dissoc('cache'), R.dissoc('id')), stale)).toEqual([
       { type: 'STALE', path: [ 'fullName' ] },
       { type: 'STALE', path: [ 'longFullName' ] }
     ])

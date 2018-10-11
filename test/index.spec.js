@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src/index'
 
 describe('index', () => {
@@ -20,7 +22,7 @@ describe('index', () => {
     model.a = '111'
     model.b = '222'
     expect(count).toBe(2)
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET', path: ['a'], val: '111', oldVal: 'hello' },
       { type: 'SET', path: ['b'], val: '222', oldVal: 'world' }
     ])
@@ -36,7 +38,7 @@ describe('index', () => {
       events.push(val)
     })
     model.a = 'world'
-    expect(events).toEqual([{ type: 'SET', path: ['a'], val: 'world', oldVal: 'hello' }])
+    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: ['a'], val: 'world', oldVal: 'hello' }])
   })
 
   test('different ways to trigger event', () => {
@@ -50,7 +52,7 @@ describe('index', () => {
     })
     model.a = '222'
     model['a'] = '333'
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET', path: ['a'], val: '222', oldVal: '111' },
       { type: 'SET', path: ['a'], val: '333', oldVal: '222' }
     ])

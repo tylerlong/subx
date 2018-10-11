@@ -1,6 +1,7 @@
 /* eslint-env jest */
 import { combineLatest } from 'rxjs'
 import { filter, map, startWith } from 'rxjs/operators'
+import * as R from 'ramda'
 
 import SubX from '../src/index'
 
@@ -53,7 +54,7 @@ describe('new design', () => {
     n.a.b.c.d = {}
     n.a.b.c.d.e = {}
 
-    expect(events1).toEqual([
+    expect(R.map(R.dissoc('id'), events1)).toEqual([
       {
         type: 'SET',
         path: ['a', 'b'],
@@ -80,7 +81,7 @@ describe('new design', () => {
       }
     ])
 
-    expect(events2).toEqual([
+    expect(R.map(R.dissoc('id'), events2)).toEqual([
       {
         type: 'SET',
         path: ['d'],
@@ -150,7 +151,7 @@ describe('new design', () => {
     delete p.firstName
     delete p.lastName
     expect(events.length).toBe(2)
-    expect(events).toEqual([{
+    expect(R.map(R.dissoc('id'), events)).toEqual([{
       type: 'DELETE',
       path: ['firstName'],
       val: 'Chuntao'

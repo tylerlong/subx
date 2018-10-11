@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src/index'
 
 describe('null value', () => {
@@ -13,7 +15,7 @@ describe('null value', () => {
     person.name = 'hello'
     person.name = null
 
-    expect(events).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
         path: ['name'],
