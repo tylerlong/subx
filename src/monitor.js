@@ -77,7 +77,7 @@ const monitorkeyss = (subx, keyss) => {
 
 export const monitor = (subx, { gets, hass, keyss }) => merge(monitorGets(subx, gets), monitorHass(subx, hass), monitorkeyss(subx, keyss)).pipe(distinct())
 
-// todo: maybe we can simply make SubX.create(subx) now
+// TODO: maybe we can simply make SubX.create(subx) now
 export const runAndMonitor = (subx, f) => {
   let kvs
   if (subx.__isSubX__) {
