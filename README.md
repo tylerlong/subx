@@ -7,6 +7,9 @@ SubX is next generation state container. It could replace Redux and MobX in our 
 
 Subject X, Reactive Subject. Pronunciation: [Sub X]
 
+
+## For React users
+
 If you want to use SubX together with React, please check [react-subx](https://github.com/tylerlong/react-subx).
 
 
