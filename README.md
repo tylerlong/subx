@@ -16,11 +16,11 @@ If you want to use SubX together with React, please check [react-subx](https://g
 ## Features (compared to Redux or MobX)
 
 - Schemaless, we don't need specify all our data fields at the beginning. We can add them gradually and dynamically.
-- Intuitive, just follow common sense. No annotation or weird configurations/syntax
-- Performant, it helps us to minimize backend computation and frontend rendering
+- Intuitive, just follow common sense. No annotation or weird configurations/syntax.
+- Performant, it helps us to minimize backend computation and frontend rendering.
 - Developer friendly: forget actions, reducers, dispatchers, containers...etc. We only need to know what is events stream and we are good to go.
-- Based on RxJS, we can use [ALL the RxJS operators](https://www.learnrxjs.io/operators/)
-- Small. 300 lines of code. (Unbelievable, huh?) We've written 5000+ lines of testing code to test the tiny core.
+- Based on RxJS, we can use [ALL the RxJS operators](https://www.learnrxjs.io/operators/).
+- Small. 300 lines of code. (Unbelievable, huh?) We've written 5000+ lines of testing code to cover the tiny core.
 
 
 ## Installation
@@ -46,8 +46,8 @@ person.lastName = 'Long'
 #### Console output
 
 ```
-{ type: 'SET', path: ['firstName'], val: 'Tyler', oldVal: undefined, id: 'xxxxxx' }
-{ type: 'SET', path: ['lastName'], val: 'Long', oldVal: undefined, id: 'yyyyyy' }
+{ type: 'SET', path: ['firstName'], val: 'Tyler', oldVal: undefined, id: 'uuid-1' }
+{ type: 'SET', path: ['lastName'], val: 'Long', oldVal: undefined, id: 'uuid-2' }
 ```
 
 In the sample code above, `person` is a SubX object. `person.$` is a stream of events about changes to `person`'s properties.
@@ -55,7 +55,7 @@ In the sample code above, `person` is a SubX object. `person.$` is a stream of e
 If you know `RxJS`, I would like to mention that `person.$` is an [Observable](http://reactivex.io/documentation/observable.html).
 
 
-## What is Reactive Subject?
+## What is a SubX Object / Reactive Subject?
 
 Subject is the similar concept as the subject in [observer pattern](https://en.wikipedia.org/wiki/Observer_pattern).
 

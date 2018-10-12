@@ -8,5 +8,6 @@
 - Rename it
     - Max: 'Current X'
     - Max: actuate
+    - RxObject
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
