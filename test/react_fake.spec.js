@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SubX, { runAndMonitor } from '../src'
+import SubX from '../src'
 
 const store = SubX.create({
   todos: [],
@@ -15,7 +15,7 @@ const render = () => {
 }
 const newRender = () => {
   const props = { store }
-  const stream = runAndMonitor(SubX.create(props), render).stream
+  const stream = SubX.runAndMonitor(SubX.create(props), render).stream
   const sub = stream.subscribe(event => {
     sub.unsubscribe()
     newRender()

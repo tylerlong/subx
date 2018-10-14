@@ -1,14 +1,14 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
-import SubX, { runAndMonitor } from '../src/index'
+import SubX from '../src/index'
 
 describe('runAndMonitor path', () => {
   test('root is subx', () => {
     const p = SubX.create({
       number: 1
     })
-    const stream = runAndMonitor(p, () => p.number).stream
+    const stream = SubX.runAndMonitor(p, () => p.number).stream
     let events = []
     stream.subscribe(e => events.push(e))
     p.number = 2
@@ -18,7 +18,7 @@ describe('runAndMonitor path', () => {
     const p = SubX.create({
       number: 1
     })
-    const stream = runAndMonitor(SubX.create({ child: p }), () => p.number).stream
+    const stream = SubX.runAndMonitor(SubX.create({ child: p }), () => p.number).stream
     let events = []
     stream.subscribe(e => events.push(e))
     p.number = 2

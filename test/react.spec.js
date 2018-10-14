@@ -4,14 +4,14 @@ import TestRenderer from 'react-test-renderer'
 import { buffer, debounceTime } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
 
-import SubX, { runAndMonitor } from '../src/index'
+import SubX from '../src/index'
 
 class Component extends React.Component {
   constructor (props) {
     super(props)
     const render = this.render.bind(this)
     this.render = () => {
-      const stream = runAndMonitor(SubX.create(props), render).stream
+      const stream = SubX.runAndMonitor(SubX.create(props), render).stream
       const bufferedStream = stream.pipe(buffer(stream.pipe(debounceTime(2))))
       const sub = bufferedStream.subscribe(event => {
         sub.unsubscribe()

@@ -1,7 +1,8 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
-import SubX, { removeDuplicateEvents } from '../src/index'
+import SubX from '../src/index'
+import { removeDuplicateEvents } from '../src/monitor'
 
 describe('duplicate events', () => {
   test('get$', () => {

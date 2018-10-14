@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SubX, { runAndMonitor } from '../src/index'
+import SubX from '../src/index'
 
 describe('monitor delete', () => {
   test('default', () => {
@@ -26,7 +26,7 @@ describe('monitor delete', () => {
       expect(todo.title).toBe('333')
     }
     const props = { store, todo: store.todos[2] }
-    const { result, stream } = runAndMonitor(SubX.create(props), () => render(props))
+    const { result, stream } = SubX.runAndMonitor(SubX.create(props), () => render(props))
     expect(result).toBeUndefined()
     const events = []
     stream.subscribe(e => events.push(e))

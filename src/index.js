@@ -5,6 +5,7 @@ import util from 'util'
 import uuid from 'uuid/v4'
 
 import computed from './computed'
+import { runAndMonitor } from './monitor'
 
 const RESERVED_PROPERTIES = [
   '$', 'set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$'
@@ -100,7 +101,7 @@ const handler = {
   }
 }
 
-class SubX {
+export class SubX {
   constructor (modelObj = {}) {
     class Model {
       constructor (obj = {}) {
@@ -139,5 +140,5 @@ class SubX {
 const DefaultModel = new SubX({})
 SubX.create = (obj = {}) => new DefaultModel(obj)
 
-export * from './monitor'
+SubX.runAndMonitor = runAndMonitor
 export default SubX
