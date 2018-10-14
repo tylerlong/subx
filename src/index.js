@@ -101,7 +101,7 @@ const handler = {
   }
 }
 
-export class SubX {
+class SubX {
   constructor (modelObj = {}) {
     class Model {
       constructor (obj = {}) {

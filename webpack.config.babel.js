@@ -5,6 +5,7 @@ export default {
   output: {
     library: 'SubX',
     libraryTarget: 'umd',
+    libraryExport: 'default',
     globalObject: 'this' // fix window undefined issue in node
   }
 }
