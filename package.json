@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "dist/main.js",
   "module": "src/index.js",
-  "keywords": ["SubX", "Sub X", "Reactive Subject"],
+  "keywords": ["SubX", "Sub X", "Reactive Subject", "State Container"],
   "scripts": {
     "test": "standard && jest -w 1",
     "release": "webpack --progress --colors",
