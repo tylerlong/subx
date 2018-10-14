@@ -6,13 +6,5 @@ export default {
     library: 'SubX',
     libraryTarget: 'umd',
     globalObject: 'this' // fix window undefined issue in node
-  },
-  externals: {
-    rxjs: {
-      commonjs: 'rxjs',
-      commonjs2: 'rxjs',
-      amd: 'rxjs',
-      root: 'rxjs'
-    }
   }
 }
