@@ -18,7 +18,7 @@ If you want to use SubX together with React, please check [react-subx](https://g
 - Schemaless, we don't need specify all our data fields at the beginning. We can add them gradually and dynamically.
 - Intuitive, just follow common sense. No annotation or weird configurations/syntax.
 - Performant, it helps us to minimize backend computation and frontend rendering.
-- Developer friendly: forget actions, reducers, dispatchers, containers...etc. We only need to know what is events stream and we are good to go.
+- Developer-friendly: forget actions, reducers, dispatchers, containers...etc. We only need to know what is events stream and we are good to go.
 - Based on RxJS, we can use [ALL the RxJS operators](https://www.learnrxjs.io/operators/).
 - Small. 300 lines of code. (Unbelievable, huh?) We've written 5000+ lines of testing code to cover the tiny core.
 
