@@ -75,7 +75,7 @@ const monitorkeyss = (subx, keyss) => {
   return stream
 }
 
-export const removeDuplicateEvents = events => {
+export const removeDuplicateEvents = events => { // a subx obj and one of its children attached to the same this.props
   return R.reduce((result, event) => {
     if (result.length === 1 && result[0].id === event.id) {
       return [event]
