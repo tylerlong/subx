@@ -15,7 +15,7 @@ If you want to use SubX together with React, please check [react-subx](https://g
 
 ## Features (compared to Redux or MobX)
 
-- Schemaless, we don't need specify all our data fields at the beginning. We can add them gradually and dynamically.
+- Schemaless, we don't need to specify all our data fields at the beginning. We can add them gradually and dynamically.
 - Intuitive, just follow common sense. No annotation or weird configurations/syntax.
 - Performant, it helps us to minimize backend computation and frontend rendering.
 - Developer-friendly: forget actions, reducers, dispatchers, containers...etc. We only need to know what is events stream and we are good to go.
