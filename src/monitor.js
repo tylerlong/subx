@@ -1,4 +1,4 @@
-import { empty, merge } from 'rxjs'
+import { empty, merge, BehaviorSubject } from 'rxjs'
 import { filter, merge as _merge, publish, distinct } from 'rxjs/operators'
 import * as R from 'ramda'
 
@@ -114,4 +114,26 @@ export const runAndMonitor = (subx, f) => {
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
   const stream = monitor(subx, { gets, hass, keyss }).pipe(publish()).refCount()
   return { result, stream }
+}
+
+export const autoRun = (subx, f, ...operators) => {
+  let results$
+  let subscription
+  const run = () => {
+    const { result, stream } = runAndMonitor(subx, f)
+    if (!results$) {
+      results$ = new BehaviorSubject(result)
+    } else {
+      results$.next(result)
+    }
+    subscription = stream.pipe(...operators).subscribe(event => {
+      subscription.unsubscribe()
+      run()
+    })
+  }
+  run()
+  results$.subscribe(undefined, undefined, () => { // complete
+    subscription.unsubscribe()
+  })
+  return results$
 }
