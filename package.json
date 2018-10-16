@@ -7,7 +7,12 @@
   "license": "MIT",
   "main": "dist/main.js",
   "module": "src/index.js",
-  "keywords": ["SubX", "Sub X", "Reactive Subject", "State Container"],
+  "keywords": [
+    "SubX",
+    "Sub X",
+    "Reactive Subject",
+    "State Container"
+  ],
   "scripts": {
     "test": "standard && jest -w 1",
     "release": "webpack --progress --colors",
@@ -32,7 +37,7 @@
     "uuid": "^3.3.2",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
-    "yarn-upgrade-all": "^0.3.0"
+    "yarn-upgrade-all": "^0.5.0"
   },
   "files": [
     "dist/*",
