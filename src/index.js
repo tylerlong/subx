@@ -6,8 +6,8 @@ import uuid from 'uuid/v4'
 
 import { computed, runAndMonitor, autoRun } from './monitor'
 
-const EVENT_TYPES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$']
-const RESERVED_PROPERTIES = ['$', ...EVENT_TYPES]
+const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$']
+const RESERVED_PROPERTIES = ['$', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -15,21 +15,15 @@ const handler = {
       prop = `_${prop}` // prefix reserved keywords with underscore
     }
     const oldVal = target[prop]
-    if (val === null || typeof val !== 'object') {
+    if (val === null || typeof val !== 'object') { // simple value such as integer
       target[prop] = val
       target.set$.next({ type: 'SET', path: [prop], val, oldVal, id: uuid() })
       return true
     }
     const proxy = val.__isSubX__ ? val : SubX.create(val)
-    const subscriptions = []
-    subscriptions.push(proxy.set$.subscribe(event => target.set$.next(R.assoc('path', [prop, ...event.path], event))))
-    subscriptions.push(proxy.delete$.subscribe(event => target.delete$.next(R.assoc('path', [prop, ...event.path], event))))
-    subscriptions.push(proxy.get$.subscribe(event => target.get$.next(R.assoc('path', [prop, ...event.path], event))))
-    subscriptions.push(proxy.has$.subscribe(event => target.has$.next(R.assoc('path', [prop, ...event.path], event))))
-    subscriptions.push(proxy.keys$.subscribe(event => target.keys$.next(R.assoc('path', [prop, ...event.path], event))))
-    subscriptions.push(proxy.compute_begin$.subscribe(event => target.compute_begin$.next(R.assoc('path', [prop, ...event.path], event))))
-    subscriptions.push(proxy.compute_finish$.subscribe(event => target.compute_finish$.next(R.assoc('path', [prop, ...event.path], event))))
-    subscriptions.push(proxy.stale$.subscribe(event => target.stale$.next(R.assoc('path', [prop, ...event.path], event))))
+    const subscriptions = EVENT_NAMES.map(name => { // pass event to parent
+      return proxy[name].subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
+    })
     target[prop] = proxy
     target.set$.next({ type: 'SET', path: [prop], val, oldVal, id: uuid() })
     const temp = target.$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
