@@ -16,7 +16,7 @@
   "scripts": {
     "test": "standard && jest -w 1",
     "release": "webpack --progress --colors",
-    "prepublishOnly": "yarn release"
+    "prepublishOnly": "yarn test && yarn release"
   },
   "dependencies": {
     "ramda": "^0.25.0",
