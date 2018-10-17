@@ -76,28 +76,27 @@ const monitorkeyss = (subx, keyss) => {
   return streams
 }
 
-export const removeDuplicateEvents = events => { // a subx obj and one of its children attached to the same this.props
-  return R.reduce((result, event) => {
-    if (result.length === 1 && result[0].id === event.id) {
-      return [event]
+// a subx obj and one of its children attached to the same parent (props of React)
+export const removeDuplicateEvents = events => R.reduce((result, event) => {
+  if (result.length === 1 && result[0].id === event.id) {
+    return [event]
+  }
+  if (result.length >= 2 && event.id === R.last(result).id) {
+    if (R.startsWith(R.last(R.init(result)).path, R.last(result).path)) {
+      return result
+    } else {
+      return R.update(result.length - 1, event, result)
     }
-    if (result.length >= 2 && event.id === R.last(result).id) {
-      if (R.startsWith(R.last(R.init(result)).path, R.last(result).path)) {
-        return result
-      } else {
-        return R.update(result.length - 1, event, result)
-      }
-    }
-    return R.append(event, result)
-  })([], events)
-}
+  }
+  return R.append(event, result)
+})([], events)
 
-export const monitor = (subx, { gets, hass, keyss }) => {
+const monitor = (subx, { gets, hass, keyss }) => {
   return merge(
     ...monitorGets(subx, removeDuplicateEvents(gets)),
     ...monitorHass(subx, removeDuplicateEvents(hass)),
     ...monitorkeyss(subx, removeDuplicateEvents(keyss))
-  ).pipe(distinct())
+  ).pipe(distinct(), publish()).refCount()
 }
 
 export const runAndMonitor = (subx, f) => {
@@ -115,7 +114,7 @@ export const runAndMonitor = (subx, f) => {
   const result = f()
   count -= 1
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-  const stream = monitor(subx, { gets, hass, keyss }).pipe(publish()).refCount()
+  const stream = monitor(subx, { gets, hass, keyss })
   return { result, stream }
 }
 
