@@ -25,11 +25,12 @@ const handler = {
       return proxy[name].subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
     })
     target[prop] = proxy
-    target.set$.next({ type: 'SET', path: [prop], val, oldVal, id: uuid() })
-    const temp = target.$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
+    const id = uuid()
+    const temp = target.$.pipe(filter(event => event.id !== id && R.equals(event.path, [prop]))).subscribe(event => {
       R.forEach(subscription => subscription.unsubscribe(), subscriptions)
       temp.unsubscribe()
     })
+    target.set$.next({ type: 'SET', path: [prop], val, oldVal, id })
     return true
   },
   get: (target, prop, receiver) => {
