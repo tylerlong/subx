@@ -93,7 +93,7 @@ class SubX {
         newObj.$ = merge(newObj.set$, newObj.delete$)
         const proxy = new Proxy(newObj, handler)
         R.pipe(
-          R.concat,
+          R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
           R.forEach(([target, prop]) => {
             const descriptor = Object.getOwnPropertyDescriptor(target, prop)
             if ('value' in descriptor) {
@@ -103,7 +103,7 @@ class SubX {
               Object.defineProperty(newObj, prop, descriptor)
             }
           })
-        )(R.map(key => [modelObj, key], R.keys(modelObj)), R.map(key => [obj, key], R.keys(obj)))
+        )(R.map(key => [obj, key], R.keys(obj)))
         return proxy
       }
     }
@@ -113,7 +113,7 @@ class SubX {
 
 const DefaultModel = new SubX({})
 SubX.create = (obj = {}) => new DefaultModel(obj)
-
 SubX.runAndMonitor = runAndMonitor
 SubX.autoRun = autoRun
+
 export default SubX
