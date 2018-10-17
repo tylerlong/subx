@@ -58,15 +58,12 @@ const handler = {
       case 'toString':
         return () => '[object SubX]'
       case util.inspect.custom:
-        return () => {
-          const temp = {}
-          R.pipe(
+        return () => Array.isArray(target) ? receiver
+          : R.pipe(
             R.keys,
             R.reject(k => R.contains(k, RESERVED_PROPERTIES)),
-            R.forEach(k => Object.defineProperty(temp, k, Object.getOwnPropertyDescriptor(receiver, k)))
+            R.reduce((obj, k) => Object.defineProperty(obj, k, Object.getOwnPropertyDescriptor(receiver, k)))({})
           )(receiver)
-          return temp
-        }
       default:
         return target[prop]
     }
