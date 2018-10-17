@@ -105,12 +105,14 @@ export const runAndMonitor = (subx, f) => {
   const keyss = []
   let count = 0
   const subscriptions = []
-  subscriptions.push(subx.get$.subscribe(event => count === 0 && gets.push(event)))
-  subscriptions.push(subx.has$.subscribe(event => count === 0 && hass.push(event)))
-  subscriptions.push(subx.keys$.subscribe(event => count === 0 && keyss.push(event)))
+  subscriptions.push(subx.get$.subscribe(event => count === 1 && gets.push(event)))
+  subscriptions.push(subx.has$.subscribe(event => count === 1 && hass.push(event)))
+  subscriptions.push(subx.keys$.subscribe(event => count === 1 && keyss.push(event)))
   subscriptions.push(subx.compute_begin$.subscribe(event => { count += 1 }))
   subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
+  count += 1
   const result = f()
+  count -= 1
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
   const stream = monitor(subx, { gets, hass, keyss }).pipe(publish()).refCount()
   return { result, stream }
