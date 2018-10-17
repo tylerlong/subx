@@ -1,5 +1,5 @@
 import { Subject, merge } from 'rxjs'
-import { filter } from 'rxjs/operators'
+import { filter, take } from 'rxjs/operators'
 import * as R from 'ramda'
 import util from 'util'
 import uuid from 'uuid/v4'
@@ -26,9 +26,8 @@ const handler = {
     })
     target[prop] = proxy
     const id = uuid()
-    const temp = target.$.pipe(filter(event => event.id !== id && R.equals(event.path, [prop]))).subscribe(event => {
+    target.$.pipe(filter(event => event.id !== id && R.equals(event.path, [prop])), take(1)).subscribe(event => {
       R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-      temp.unsubscribe()
     })
     target.set$.next({ type: 'SET', path: [prop], val, oldVal, id })
     return true
