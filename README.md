@@ -15,11 +15,11 @@ If you want to use SubX together with React, please check [react-subx](https://g
 
 ## Features (compared to Redux or MobX)
 
-- Schemaless, we don't need to specify all our data fields at the beginning. We can add them gradually and dynamically.
-- Intuitive, just follow common sense. No annotation or weird configurations/syntax.
+- [Developer-friendly](https://gist.github.com/tylerlong/a5d7d179fb75415e9971f9a720f5c907): fewer lines of code to write, fewer new concepts to learn & master.
+- Intuitive, just follow common sense. No annotation or weird configuration / syntax.
 - Performant, it helps us to minimize backend computation and frontend rendering.
-- Developer-friendly: forget actions, reducers, dispatchers, containers...etc. We only need to know what is events stream and we are good to go.
 - Based on RxJS, we can use [ALL the RxJS operators](https://www.learnrxjs.io/operators/).
+- Schemaless, we don't need to specify all our data fields at the beginning. We can add them gradually and dynamically.
 - Small. 300 lines of code. (Unbelievable, huh?) We've written 5000+ lines of testing code to cover the tiny core.
 
 
@@ -136,7 +136,7 @@ They are for computed properties(which is covered below).
 - `STALE` is triggered when the computed property becomes "stale", which means a re-compute is necessary.
 
 
-## Computed properties / getters
+## Getters / Computed properties
 
 We use "convention over configuration" here: getter functions are computed properties. If we don't need it to be computed property, just don't make it a getter function.
 
@@ -161,6 +161,70 @@ So in the example above, we can call `person.fullName` multiple times but it wil
 I would recommend using as many getters as we can if our data don't change much. Because they can cache data to improve performance dramatically.
 
 Computed properties / getters are supposed to be "pure". We should not update data in them. If we want to update data, define a normal function instead of a getter function.
+
+
+## `autoRun`
+
+The signature of `autoRun` is
+
+```js
+// autoRun :: (subx, f, ...operators) -> stream$
+```
+
+Method signature explained:
+
+- First agument `subx` is a SubX object
+- Second arugment `f` is an action/function
+- Remaining arguments `...operators` are RxJS operators
+- Return type `stream$` is a stream (RxJS Subject)
+
+#### How does `autoRun` work:
+
+1. When we invoke `autoRun`, the second argument `f` is invoked immediately.
+1. Then the the first argument `subx` is monitored.
+1. Whenever `subx` changes which might affect the result of `f`, `f` is invoked again.
+1. The invocation of `f` is further controller by `...operators`.
+1. The result of `f()` are directed to the returned `stream$`
+1. We can `stream$.subscribe(...)` to consume the results of `f()`
+1. We can `stream$.complete()` to stop the whole monitor & autoRun process described above.
+
+
+#### [Sample code using `autoRun`](./test/autoRun.spec.js)
+
+
+## `runAndMonitor`
+
+`runAndMonitor` is low level API which powers `autoRun`. If for some reason `autoRun` is not flexible enough to meet your requirements, you can give `runAndMonitor` a try.
+
+The signature of `runAndMonitor` is:
+
+```js
+// runAndMonitor :: subx, f -> { result, stream$ }
+```
+
+Method signature explained:
+
+- First agument `subx` is a SubX object
+- Second arugment `f` is an action/function
+- Return type is an object which containers two properties:
+    - result is the result of `f()`
+    - `stream$` is a stream (RxJS Subject)
+
+#### How does `runAndMonitor` work:
+
+1. When we invoke `runAndMonitor`, the second argument `f` is invoked immediately.
+1. Result of `f()` is saved into `result`
+1. Then the the first argument `subx` is monitored.
+1. Changes to `subx` which might affect the result of next invocation of `f` are redirected to `stream$`
+1. `{ result, stream$ }` is returned
+1. We can `stream$.pipe(...operators).subscribe(...)` to react to the stream events (possibly invoke `f` again)
+
+#### Sample code using `runAndMonitor`
+
+- [test/react_fake.spec.js](test/react_fake.spec.js)
+- [test/monitor_delete.spec.js](test/monitor_delete.spec.js)
+- [test/react.spec.js](test/react.spec.js)
+- [test/runAndMonitor_path.spec.js](test/runAndMonitor_path.spec.js)
 
 
 ## Pitfalls
