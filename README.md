@@ -207,7 +207,7 @@ Method signature explained:
 - First agument `subx` is a SubX object
 - Second arugment `f` is an action/function
 - Return type is an object which containers two properties:
-    - result is the result of `f()`
+    - `result` is the result of `f()`
     - `stream$` is a stream (RxJS Subject)
 
 #### How does `runAndMonitor` work:
