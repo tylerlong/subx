@@ -1,4 +1,4 @@
-import { empty, merge, BehaviorSubject } from 'rxjs'
+import { merge, BehaviorSubject } from 'rxjs'
 import { filter, merge as _merge, publish, distinct } from 'rxjs/operators'
 import * as R from 'ramda'
 import uuid from 'uuid/v4'
@@ -9,14 +9,14 @@ const monitorGets = (subx, gets) => {
       ? R.update(events.length - 1, event, events) : R.append(event, events)
   )([], gets)
   const uniqGets = R.uniqBy(event => event.path, relevantGets)
-  let stream = empty()
+  const streams = []
   R.forEach(get => {
-    stream = merge(stream, subx.stale$.pipe(filter(event => R.equals(event.path, get.path))))
+    streams.push(subx.stale$.pipe(filter(event => R.equals(event.path, get.path))))
     const val = R.path(get.path, subx)
     if (val !== undefined) {
-      stream = merge(stream, subx.delete$.pipe(filter(event => R.equals(event.path, get.path))))
+      streams.push(subx.delete$.pipe(filter(event => R.equals(event.path, get.path))))
     }
-    stream = merge(stream, subx.set$.pipe(
+    streams.push(subx.set$.pipe(
       filter(event => R.startsWith(event.path, get.path)),
       filter(event => {
         const parentVal = R.path(R.init(get.path), subx)
@@ -28,18 +28,18 @@ const monitorGets = (subx, gets) => {
       })
     ))
   }, uniqGets)
-  return stream
+  return streams
 }
 
 const monitorHass = (subx, hass) => {
   const uniqHass = R.uniqBy(has => has.path, hass)
-  let stream = empty()
+  const streams = []
   R.forEach(has => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx)
     if (val === true) {
-      stream = merge(stream, subx.delete$.pipe(filter(event => R.equals(event.path, has.path))))
+      streams.push(subx.delete$.pipe(filter(event => R.equals(event.path, has.path))))
     }
-    stream = merge(stream, subx.set$.pipe(
+    streams.push(subx.set$.pipe(
       filter(event => R.startsWith(event.path, has.path)),
       filter(event => {
         const parentVal = R.path(R.init(has.path), subx)
@@ -51,15 +51,15 @@ const monitorHass = (subx, hass) => {
       })
     ))
   }, uniqHass)
-  return stream
+  return streams
 }
 
 const monitorkeyss = (subx, keyss) => {
   const uniqKeyss = R.uniqBy(keys => keys.path, keyss)
-  let stream = empty()
+  const streams = []
   R.forEach(keys => {
     const val = Object.keys(R.path(keys.path, subx))
-    stream = merge(stream, subx.delete$.pipe(
+    streams.push(subx.delete$.pipe(
       filter(event => keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path)),
       _merge(subx.set$.pipe(
         filter(event => R.startsWith(event.path, keys.path) || (keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path))))),
@@ -73,7 +73,7 @@ const monitorkeyss = (subx, keyss) => {
       })
     ))
   }, uniqKeyss)
-  return stream
+  return streams
 }
 
 export const removeDuplicateEvents = events => { // a subx obj and one of its children attached to the same this.props
@@ -94,9 +94,9 @@ export const removeDuplicateEvents = events => { // a subx obj and one of its ch
 
 export const monitor = (subx, { gets, hass, keyss }) => {
   return merge(
-    monitorGets(subx, removeDuplicateEvents(gets)),
-    monitorHass(subx, removeDuplicateEvents(hass)),
-    monitorkeyss(subx, removeDuplicateEvents(keyss))
+    ...monitorGets(subx, removeDuplicateEvents(gets)),
+    ...monitorHass(subx, removeDuplicateEvents(hass)),
+    ...monitorkeyss(subx, removeDuplicateEvents(keyss))
   ).pipe(distinct())
 }
 

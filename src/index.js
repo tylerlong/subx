@@ -98,7 +98,7 @@ class SubX {
             const descriptor = Object.getOwnPropertyDescriptor(target, prop)
             if ('value' in descriptor) {
               proxy[prop] = target[prop]
-            } else if ('get' in descriptor && descriptor.set === undefined) { // getter function
+            } else if ('get' in descriptor) { // getter function
               descriptor.get = computed(proxy, descriptor.get)
               Object.defineProperty(newObj, prop, descriptor)
             }
