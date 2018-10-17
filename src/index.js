@@ -89,17 +89,8 @@ class SubX {
     class Model {
       constructor (obj = {}) {
         const newObj = R.empty(obj)
-
-        newObj.set$ = new Subject()
-        newObj.delete$ = new Subject()
-        newObj.get$ = new Subject()
-        newObj.has$ = new Subject()
-        newObj.keys$ = new Subject()
-        newObj.compute_begin$ = new Subject()
-        newObj.compute_finish$ = new Subject()
-        newObj.stale$ = new Subject()
+        R.forEach(name => { newObj[name] = new Subject() }, EVENT_NAMES)
         newObj.$ = merge(newObj.set$, newObj.delete$)
-
         const proxy = new Proxy(newObj, handler)
         R.pipe(
           R.concat,
