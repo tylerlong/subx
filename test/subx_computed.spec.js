@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index'
-import computed from '../src/computed'
+import { computed } from '../src/monitor'
 
 describe('SubX computed', () => {
   test('cache', () => {

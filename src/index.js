@@ -4,8 +4,7 @@ import * as R from 'ramda'
 import util from 'util'
 import uuid from 'uuid/v4'
 
-import computed from './computed'
-import { runAndMonitor, autoRun } from './monitor'
+import { computed, runAndMonitor, autoRun } from './monitor'
 
 const RESERVED_PROPERTIES = [
   '$', 'set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$'
