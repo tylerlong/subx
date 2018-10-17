@@ -6,9 +6,8 @@ import uuid from 'uuid/v4'
 
 import { computed, runAndMonitor, autoRun } from './monitor'
 
-const RESERVED_PROPERTIES = [
-  '$', 'set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$'
-]
+const EVENT_TYPES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$']
+const RESERVED_PROPERTIES = ['$', ...EVENT_TYPES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -16,33 +15,27 @@ const handler = {
       prop = `_${prop}` // prefix reserved keywords with underscore
     }
     const oldVal = target[prop]
-    let subscriptions = []
-    if (typeof val === 'object' && val !== null) {
-      let proxy
-      if (val.__isSubX__) { // p.b = p.a
-        proxy = val
-      } else {
-        proxy = SubX.create(val) // for recursive
-      }
-      subscriptions.push(proxy.set$.subscribe(event => target.set$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.delete$.subscribe(event => target.delete$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.get$.subscribe(event => target.get$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.has$.subscribe(event => target.has$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.keys$.subscribe(event => target.keys$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.compute_begin$.subscribe(event => target.compute_begin$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.compute_finish$.subscribe(event => target.compute_finish$.next(R.assoc('path', [prop, ...event.path], event))))
-      subscriptions.push(proxy.stale$.subscribe(event => target.stale$.next(R.assoc('path', [prop, ...event.path], event))))
-      target[prop] = proxy
-    } else {
+    if (val === null || typeof val !== 'object') {
       target[prop] = val
+      target.set$.next({ type: 'SET', path: [prop], val, oldVal, id: uuid() })
+      return true
     }
+    const proxy = val.__isSubX__ ? val : SubX.create(val)
+    const subscriptions = []
+    subscriptions.push(proxy.set$.subscribe(event => target.set$.next(R.assoc('path', [prop, ...event.path], event))))
+    subscriptions.push(proxy.delete$.subscribe(event => target.delete$.next(R.assoc('path', [prop, ...event.path], event))))
+    subscriptions.push(proxy.get$.subscribe(event => target.get$.next(R.assoc('path', [prop, ...event.path], event))))
+    subscriptions.push(proxy.has$.subscribe(event => target.has$.next(R.assoc('path', [prop, ...event.path], event))))
+    subscriptions.push(proxy.keys$.subscribe(event => target.keys$.next(R.assoc('path', [prop, ...event.path], event))))
+    subscriptions.push(proxy.compute_begin$.subscribe(event => target.compute_begin$.next(R.assoc('path', [prop, ...event.path], event))))
+    subscriptions.push(proxy.compute_finish$.subscribe(event => target.compute_finish$.next(R.assoc('path', [prop, ...event.path], event))))
+    subscriptions.push(proxy.stale$.subscribe(event => target.stale$.next(R.assoc('path', [prop, ...event.path], event))))
+    target[prop] = proxy
     target.set$.next({ type: 'SET', path: [prop], val, oldVal, id: uuid() })
-    if (subscriptions.length > 0) {
-      const temp = target.$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
-        R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-        temp.unsubscribe()
-      })
-    }
+    const temp = target.$.pipe(filter(event => event.path.length === 1 && event.path[0] === prop)).subscribe(event => {
+      R.forEach(subscription => subscription.unsubscribe(), subscriptions)
+      temp.unsubscribe()
+    })
     return true
   },
   get: (target, prop, receiver) => {
