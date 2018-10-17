@@ -1,5 +1,5 @@
 import { Subject, merge } from 'rxjs'
-import { filter, take, takeUntil } from 'rxjs/operators'
+import { filter, first, takeUntil } from 'rxjs/operators'
 import * as R from 'ramda'
 import util from 'util'
 import uuid from 'uuid/v4'
@@ -22,7 +22,7 @@ const handler = {
     }
     const proxy = val.__isSubX__ ? val : SubX.create(val)
     const id = uuid()
-    const detach$ = target.$.pipe(filter(event => event.id !== id && R.equals(event.path, [prop])), take(1)) // prop detached from obj
+    const detach$ = target.$.pipe(filter(event => event.id !== id && R.equals(event.path, [prop])), first()) // prop detached from obj
     EVENT_NAMES.map(name => { // pass prop event to obj
       return proxy[name].pipe(takeUntil(detach$)).subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
     })

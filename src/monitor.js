@@ -1,5 +1,5 @@
 import { merge, BehaviorSubject } from 'rxjs'
-import { filter, merge as _merge, publish, distinct, take } from 'rxjs/operators'
+import { filter, merge as _merge, publish, distinct, first } from 'rxjs/operators'
 import * as R from 'ramda'
 import uuid from 'uuid/v4'
 
@@ -128,7 +128,7 @@ export const computed = (subx, f) => {
       const { result, stream$ } = runAndMonitor(subx, f.bind(subx))
       cache = result
       stale = false
-      stream$.pipe(take(1)).subscribe(event => {
+      stream$.pipe(first()).subscribe(event => {
         stale = true
         subx.stale$.next({ type: 'STALE', path: [functionName], root: event, cache, id: uuid() })
       })
@@ -149,7 +149,7 @@ export const autoRun = (subx, f, ...operators) => {
     } else {
       results$.next(result)
     }
-    subscription = stream$.pipe(...operators, take(1)).subscribe(event => run())
+    subscription = stream$.pipe(...operators, first()).subscribe(event => run())
   }
   run()
   results$.subscribe(undefined, undefined, () => { // complete
