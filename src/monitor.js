@@ -114,8 +114,8 @@ export const runAndMonitor = (subx, f) => {
   const result = f()
   count -= 1
   R.forEach(subscription => subscription.unsubscribe(), subscriptions)
-  const stream = monitor(subx, { gets, hass, keyss })
-  return { result, stream }
+  const stream$ = monitor(subx, { gets, hass, keyss })
+  return { result, stream$ }
 }
 
 export const computed = (subx, f) => {
@@ -125,10 +125,10 @@ export const computed = (subx, f) => {
   const wrapped = () => {
     if (stale) {
       subx.compute_begin$.next({ type: 'COMPUTE_BEGIN', path: [functionName], id: uuid() })
-      const { result, stream } = runAndMonitor(subx, f.bind(subx))
+      const { result, stream$ } = runAndMonitor(subx, f.bind(subx))
       cache = result
       stale = false
-      const subscription = stream.subscribe(event => {
+      const subscription = stream$.subscribe(event => {
         stale = true
         subscription.unsubscribe()
         subx.stale$.next({ type: 'STALE', path: [functionName], root: event, cache, id: uuid() })
@@ -144,13 +144,13 @@ export const autoRun = (subx, f, ...operators) => {
   let results$
   let subscription
   const run = () => {
-    const { result, stream } = runAndMonitor(subx, f)
+    const { result, stream$ } = runAndMonitor(subx, f)
     if (!results$) {
       results$ = new BehaviorSubject(result)
     } else {
       results$.next(result)
     }
-    subscription = stream.pipe(...operators).subscribe(event => {
+    subscription = stream$.pipe(...operators).subscribe(event => {
       subscription.unsubscribe()
       run()
     })

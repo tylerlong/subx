@@ -26,10 +26,10 @@ describe('monitor delete', () => {
       expect(todo.title).toBe('333')
     }
     const props = { store, todo: store.todos[2] }
-    const { result, stream } = SubX.runAndMonitor(SubX.create(props), () => render(props))
+    const { result, stream$ } = SubX.runAndMonitor(SubX.create(props), () => render(props))
     expect(result).toBeUndefined()
     const events = []
-    stream.subscribe(e => events.push(e))
+    stream$.subscribe(e => events.push(e))
     store.todos.splice(2, 1)
     expect(events).toEqual([]) // delete parent path won't trigger stale
   })
