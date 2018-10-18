@@ -78,15 +78,11 @@ describe('monitor subscribers', () => {
         return target[prop]
       },
       set: (target, prop, val, receiver) => {
-        if (prop === 'length') {
-          if (val === 1 && val === target[prop]) {
-            if (target.$) {
-              target.$.next(true)
-            }
-          } else if (val === 0) {
-            if (target.$) {
-              target.$.next(false)
-            }
+        if (target.$ && prop === 'length') {
+          if (val === 0) {
+            target.$.next(false) // no observers
+          } else if (val === 1 && val === target[prop]) {
+            target.$.next(true) // first observer
           }
         }
         target[prop] = val
