@@ -1,4 +1,4 @@
-import { merge, BehaviorSubject } from 'rxjs'
+import { merge, BehaviorSubject, Subscription } from 'rxjs'
 import { filter, merge as _merge, publish, distinct, first } from 'rxjs/operators'
 import * as R from 'ramda'
 import uuid from 'uuid/v4'
@@ -104,16 +104,16 @@ export const runAndMonitor = (subx, f) => {
   const hass = []
   const keyss = []
   let count = 0
-  const subscriptions = []
-  subscriptions.push(subx.get$.subscribe(event => count === 1 && gets.push(event)))
-  subscriptions.push(subx.has$.subscribe(event => count === 1 && hass.push(event)))
-  subscriptions.push(subx.keys$.subscribe(event => count === 1 && keyss.push(event)))
-  subscriptions.push(subx.compute_begin$.subscribe(event => { count += 1 }))
-  subscriptions.push(subx.compute_finish$.subscribe(event => { count -= 1 }))
+  const subscription = new Subscription()
+  subscription.add(subx.get$.subscribe(event => count === 1 && gets.push(event)))
+  subscription.add(subx.has$.subscribe(event => count === 1 && hass.push(event)))
+  subscription.add(subx.keys$.subscribe(event => count === 1 && keyss.push(event)))
+  subscription.add(subx.compute_begin$.subscribe(event => { count += 1 }))
+  subscription.add(subx.compute_finish$.subscribe(event => { count -= 1 }))
   count += 1
   const result = f()
   count -= 1
-  R.forEach(subscription => subscription.unsubscribe(), subscriptions)
+  subscription.unsubscribe()
   const stream$ = monitor(subx, { gets, hass, keyss })
   return { result, stream$ }
 }
