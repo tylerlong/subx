@@ -278,6 +278,15 @@ describe('duplicate events', () => {
       { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
     ])
     expect(events[2].id).toBe(events[3].id)
+
+    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
+    ])
   })
 
   test('access via longer one 2', () => {
@@ -315,6 +324,15 @@ describe('duplicate events', () => {
       { 'path': ['todo', 'completed'], 'type': 'GET' }
     ])
     expect(events[2].id).toBe(events[3].id)
+
+    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
+    ])
   })
 
   test('access via saved longer one', () => {
@@ -390,6 +408,12 @@ describe('duplicate events', () => {
       { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' }
     ])
     expect(events[0].id).toBe(events[1].id)
+
+    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'completed'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' }
+    ])
   })
 
   test('access via shorter one 2', () => {
@@ -425,5 +449,11 @@ describe('duplicate events', () => {
       { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
       { 'path': ['todo', 'title'], 'type': 'GET' }])
     expect(events[0].id).toBe(events[1].id)
+
+    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'completed'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' }
+    ])
   })
 })
