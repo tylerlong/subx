@@ -266,20 +266,164 @@ describe('duplicate events', () => {
     const events = []
     props.get$.subscribe(e => events.push(e))
     expect(store.todos[1].title).toBe('222')
+    expect(store.todos[1].completed).toBe(false)
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { type: 'GET',
-        path: [ 'zzz', 'todos' ]
-      },
-      { type: 'GET',
-        path: [ 'zzz', 'todos', '1' ]
-      },
-      { type: 'GET',
-        path: [ 'zzz', 'todos', '1', 'title' ]
-      },
-      { type: 'GET',
-        path: [ 'todo', 'title' ]
-      }
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['todo', 'completed'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
     ])
     expect(events[2].id).toBe(events[3].id)
+  })
+
+  test('access via longer one 2', () => {
+    const store = SubX.create({
+      todos: [
+        {
+          title: '111',
+          completed: false
+        },
+        {
+          title: '222',
+          completed: false
+        },
+        {
+          title: '333',
+          completed: false
+        }
+      ]
+    })
+    const todo = store.todos[1]
+    const props = SubX.create({ zzz: store, todo })
+
+    const events = []
+    props.get$.subscribe(e => events.push(e))
+    expect(store.todos[1].title).toBe('222')
+    expect(store.todos[1].completed).toBe(false)
+    expect(R.map(R.dissoc('id'), events)).toEqual([
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' },
+      { 'path': ['todo', 'completed'], 'type': 'GET' }
+    ])
+    expect(events[2].id).toBe(events[3].id)
+  })
+
+  test('access via saved longer one', () => {
+    const store = SubX.create({
+      todos: [
+        {
+          title: '111',
+          completed: false
+        },
+        {
+          title: '222',
+          completed: false
+        },
+        {
+          title: '333',
+          completed: false
+        }
+      ]
+    })
+    const todo = store.todos[1]
+    const props = SubX.create({ zzz: store, todo })
+
+    const events = []
+    props.get$.subscribe(e => events.push(e))
+    const todo2 = store.todos[1]
+    expect(todo2.title).toBe('222')
+    expect(todo2.completed).toBe(false)
+    expect(todo2.title).toBe('222')
+    expect(R.map(R.dissoc('id'), events)).toEqual([
+      { 'path': ['zzz', 'todos'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' },
+      { 'path': ['todo', 'completed'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' }
+    ])
+    expect(events[2].id).toBe(events[3].id)
+  })
+
+  test('access via shorter one', () => {
+    const store = SubX.create({
+      todos: [
+        {
+          title: '111',
+          completed: false
+        },
+        {
+          title: '222',
+          completed: false
+        },
+        {
+          title: '333',
+          completed: false
+        }
+      ]
+    })
+    const todo = store.todos[1]
+    const props = SubX.create({ todo, zzz: store })
+
+    const events = []
+    props.get$.subscribe(e => events.push(e))
+    expect(todo.title).toBe('222')
+    expect(todo.completed).toBe(false)
+    expect(todo.title).toBe('222')
+    expect(R.map(R.dissoc('id'), events)).toEqual([
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'completed'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' }
+    ])
+    expect(events[0].id).toBe(events[1].id)
+  })
+
+  test('access via shorter one 2', () => {
+    const store = SubX.create({
+      todos: [
+        {
+          title: '111',
+          completed: false
+        },
+        {
+          title: '222',
+          completed: false
+        },
+        {
+          title: '333',
+          completed: false
+        }
+      ]
+    })
+    const todo = store.todos[1]
+    const props = SubX.create({ zzz: store, todo })
+
+    const events = []
+    props.get$.subscribe(e => events.push(e))
+    expect(todo.title).toBe('222')
+    expect(todo.completed).toBe(false)
+    expect(todo.title).toBe('222')
+    expect(R.map(R.dissoc('id'), events)).toEqual([
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' },
+      { 'path': ['todo', 'completed'], 'type': 'GET' },
+      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+      { 'path': ['todo', 'title'], 'type': 'GET' }])
+    expect(events[0].id).toBe(events[1].id)
   })
 })

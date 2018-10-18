@@ -78,15 +78,26 @@ const monitorkeyss = (subx, keyss) => {
 
 // a subx obj and one of its children attached to the same parent (props of React)
 export const removeDuplicateEvents = events => R.reduce((result, event) => {
-  if (result.length === 1 && result[0].id === event.id) {
+  if (result.length === 0) {
     return [event]
   }
-  if (result.length >= 2 && event.id === R.last(result).id) {
-    if (R.startsWith(R.last(R.init(result)).path, R.last(result).path)) {
-      return result
+  const last = R.last(result)
+  if (event.id === last.id) {
+    let longer
+    let shorter
+    if (event.path.length > last.path.length) {
+      longer = event
+      shorter = last
     } else {
-      return R.update(result.length - 1, event, result)
+      longer = last
+      shorter = event
     }
+    const lastLast = result.length > 1 ? R.last(R.init(result)) : { path: [undefined] }
+    const correct = R.startsWith(lastLast.path, longer.path) ? longer : shorter
+    if (correct !== last) {
+      return [...R.init(result), correct]
+    }
+    return result
   }
   return R.append(event, result)
 })([], events)
