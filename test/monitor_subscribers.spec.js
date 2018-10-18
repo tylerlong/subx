@@ -39,18 +39,67 @@ describe('monitor subscribers', () => {
 
   test('monitor observers', () => {
     const s = new Subject()
+    let add = 0
+    let remove = 0
     s.observers = new Proxy([], {
       set: (target, prop, val, receiver) => {
         if (prop === 'length') {
-          console.log('observers ' + (val === target[prop] ? 'added' : 'removed'))
+          if (val === target[prop]) {
+            add += 1
+          } else {
+            remove += 1
+          }
         }
         target[prop] = val
         return true
       }
     })
     const subscription = new Subscription()
+    expect(add).toBe(0)
+    expect(remove).toBe(0)
     subscription.add(s.subscribe(e => {}))
+    expect(add).toBe(1)
+    expect(remove).toBe(0)
     subscription.add(s.subscribe(e => {}))
+    expect(add).toBe(2)
+    expect(remove).toBe(0)
     subscription.unsubscribe()
+    expect(add).toBe(2)
+    expect(remove).toBe(2)
+  })
+
+  test('observers stream', () => {
+    const s = new Subject()
+    s.observers = new Proxy([], {
+      get: (target, prop, receiver) => {
+        if (prop === '$' && !target.$) {
+          target.$ = new Subject()
+        }
+        return target[prop]
+      },
+      set: (target, prop, val, receiver) => {
+        if (prop === 'length') {
+          if (val === 1 && val === target[prop]) {
+            if (target.$) {
+              target.$.next(true)
+            }
+          } else if (val === 0) {
+            if (target.$) {
+              target.$.next(false)
+            }
+          }
+        }
+        target[prop] = val
+        return true
+      }
+    })
+
+    const events = []
+    s.observers.$.subscribe(e => events.push(e))
+    expect(events).toEqual([])
+    const subscription = s.subscribe(e => {})
+    expect(events).toEqual([true])
+    subscription.unsubscribe()
+    expect(events).toEqual([true, false])
   })
 })
