@@ -23,9 +23,9 @@ const handler = {
     const proxy = val.__isSubX__ ? val : SubX.create(val)
     const id = uuid()
     const detach$ = target.$.pipe(first(event => event.id !== id && R.equals(event.path, [prop]))) // prop detached from obj
-    EVENT_NAMES.map(name => { // pass prop event to obj
-      return proxy[name].pipe(takeUntil(detach$)).subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
-    })
+    R.forEach(name => // pass prop event to obj
+      proxy[name].pipe(takeUntil(detach$)).subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
+    , EVENT_NAMES)
     target[prop] = proxy
     target.set$.next({ type: 'SET', path: [prop], val, oldVal, id })
     return true
