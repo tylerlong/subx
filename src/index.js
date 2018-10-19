@@ -98,7 +98,9 @@ class SubX {
         newObj.__id__ = uuid()
         newObj.__parents__ = {}
         newObj.__emitEvent__ = (name, event) => {
-          newObj[name].next(event)
+          if (newObj[name].observers.length > 0) {
+            newObj[name].next(event)
+          }
           R.pipe(
             R.values,
             R.forEach(({ parent, prop }) => parent.__emitEvent__(name, R.assoc('path', [prop, ...event.path], event)))
