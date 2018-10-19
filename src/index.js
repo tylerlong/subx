@@ -1,5 +1,5 @@
-import { Subject, merge } from 'rxjs'
-import { first, takeUntil } from 'rxjs/operators'
+import { Subject, merge, Subscription } from 'rxjs'
+import { first, takeUntil, filter, startWith, publish } from 'rxjs/operators'
 import * as R from 'ramda'
 import util from 'util'
 import uuid from 'uuid/v4'
@@ -7,10 +7,14 @@ import uuid from 'uuid/v4'
 import { computed, runAndMonitor, autoRun } from './monitor'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$']
-const RESERVED_PROPERTIES = ['$', ...EVENT_NAMES]
+const RESERVED_PROPERTIES = ['$', '__subscription__', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
+    if (prop === '__subscription__') {
+      target[prop] = val
+      return true
+    }
     if (R.contains(prop, RESERVED_PROPERTIES)) {
       prop = `_${prop}` // prefix reserved keywords with underscore
     }
@@ -22,12 +26,24 @@ const handler = {
     }
     const proxy = val.__isSubX__ ? val : SubX.create(val)
     const id = uuid()
-    const detach$ = target.$.pipe(first(event => event.id !== id && R.equals(event.path, [prop]))) // prop detached from obj
-    R.forEach(name => // pass prop event to obj
-      proxy[name].pipe(takeUntil(detach$)).subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
-    , EVENT_NAMES)
+
+    if (!proxy.__subscription__) {
+      proxy.__subscription__ = new Subscription()
+    }
+    // target.detach$.pipe(first(event => event.id !== id && event.path[0] === prop)).subscribe(e => subscription.unsubscribe()) // prop detached from obj
+    R.forEach(name => { // pass prop event to obj
+      proxy.__subscription__.add(target[name].observers.$.pipe(startWith(target[name].observers.length > 0), filter(e => e)).subscribe(e => {
+        const stopBubble$ = target[name].observers.$.pipe(first(e => !e))
+        proxy.__subscription__.add(proxy[name].pipe(takeUntil(stopBubble$)).subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event))))
+      }))
+    }, EVENT_NAMES)
+
+    if (oldVal && oldVal.__isSubX__ && oldVal.__subscription__) {
+      oldVal.__subscription__.unsubscribe()
+    }
     target[prop] = proxy
-    target.set$.next({ type: 'SET', path: [prop], val, oldVal, id })
+    const data = { type: 'SET', path: [prop], val, oldVal, id }
+    target.set$.next(data)
     return true
   },
   get: (target, prop, receiver) => {
@@ -57,8 +73,13 @@ const handler = {
       return false // disallow deletion of reserved keywords
     }
     const val = target[prop]
+    if (val && val.__isSubX__ && val.__subscription__) {
+      val.__subscription__.unsubscribe()
+    }
     delete target[prop]
-    target.delete$.next({ type: 'DELETE', path: [prop], val, id: uuid() })
+    const data = { type: 'DELETE', path: [prop], val, id: uuid() }
+    target.delete$.next(data)
+
     return true
   },
   has: (target, prop) => {
@@ -82,13 +103,38 @@ const handler = {
   }
 }
 
+const observersHandler = {
+  get: (target, prop, receiver) => {
+    if (prop === '$' && !target.$) {
+      target.$ = new Subject()
+    }
+    return target[prop]
+  },
+  set: (target, prop, val, receiver) => {
+    if (target.$ && prop === 'length') {
+      if (val === 0 && val !== target[prop]) { // 1 observers in used internally as `detach$`
+        target.$.next(false) // no observers
+      } else if (val === 1 && val === target[prop]) {
+        target.$.next(true) // first observer
+      }
+    }
+    target[prop] = val
+    return true
+  }
+}
+
 class SubX {
   constructor (modelObj = {}) {
     class Model {
       constructor (obj = {}) {
         const newObj = R.empty(obj)
-        R.forEach(name => { newObj[name] = new Subject() }, EVENT_NAMES)
-        newObj.$ = merge(newObj.set$, newObj.delete$)
+        R.forEach(name => {
+          const subject = new Subject()
+          subject.observers = new Proxy([], observersHandler)
+          newObj[name] = subject
+        }, EVENT_NAMES)
+        // newObj.detach$ = new Subject()
+        newObj.$ = merge(newObj.set$, newObj.delete$).pipe(publish()).refCount()
         const proxy = new Proxy(newObj, handler)
         R.pipe(
           R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
