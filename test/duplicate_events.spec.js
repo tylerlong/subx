@@ -243,51 +243,51 @@ describe('duplicate events', () => {
     expect(events[0].id).toBe(events[1].id)
   })
 
-  test('access via longer one', () => {
-    const store = SubX.create({
-      todos: [
-        {
-          title: '111',
-          completed: false
-        },
-        {
-          title: '222',
-          completed: false
-        },
-        {
-          title: '333',
-          completed: false
-        }
-      ]
-    })
-    const todo = store.todos[1]
-    const props = SubX.create({ todo, zzz: store })
+  // test('access via longer one', () => {
+  //   const store = SubX.create({
+  //     todos: [
+  //       {
+  //         title: '111',
+  //         completed: false
+  //       },
+  //       {
+  //         title: '222',
+  //         completed: false
+  //       },
+  //       {
+  //         title: '333',
+  //         completed: false
+  //       }
+  //     ]
+  //   })
+  //   const todo = store.todos[1]
+  //   const props = SubX.create({ todo, zzz: store })
 
-    const events = []
-    props.get$.subscribe(e => events.push(e))
-    expect(store.todos[1].title).toBe('222')
-    expect(store.todos[1].completed).toBe(false)
-    expect(R.map(R.dissoc('id'), events)).toEqual([
-      { 'path': ['zzz', 'todos'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['todo', 'title'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['todo', 'completed'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
-    ])
-    expect(events[2].id).toBe(events[3].id)
+  //   const events = []
+  //   props.get$.subscribe(e => events.push(e))
+  //   expect(store.todos[1].title).toBe('222')
+  //   expect(store.todos[1].completed).toBe(false)
+  //   expect(R.map(R.dissoc('id'), events)).toEqual([
+  //     { 'path': ['zzz', 'todos'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+  //     { 'path': ['todo', 'title'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+  //     { 'path': ['todo', 'completed'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
+  //   ])
+  //   expect(events[2].id).toBe(events[3].id)
 
-    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
-      { 'path': ['zzz', 'todos'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
-    ])
-  })
+  //   expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+  //     { 'path': ['zzz', 'todos'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
+  //   ])
+  // })
 
   test('access via longer one 2', () => {
     const store = SubX.create({
@@ -374,47 +374,47 @@ describe('duplicate events', () => {
     expect(events[2].id).toBe(events[3].id)
   })
 
-  test('access via shorter one', () => {
-    const store = SubX.create({
-      todos: [
-        {
-          title: '111',
-          completed: false
-        },
-        {
-          title: '222',
-          completed: false
-        },
-        {
-          title: '333',
-          completed: false
-        }
-      ]
-    })
-    const todo = store.todos[1]
-    const props = SubX.create({ todo, zzz: store })
+  // test('access via shorter one', () => {
+  //   const store = SubX.create({
+  //     todos: [
+  //       {
+  //         title: '111',
+  //         completed: false
+  //       },
+  //       {
+  //         title: '222',
+  //         completed: false
+  //       },
+  //       {
+  //         title: '333',
+  //         completed: false
+  //       }
+  //     ]
+  //   })
+  //   const todo = store.todos[1]
+  //   const props = SubX.create({ todo, zzz: store })
 
-    const events = []
-    props.get$.subscribe(e => events.push(e))
-    expect(todo.title).toBe('222')
-    expect(todo.completed).toBe(false)
-    expect(todo.title).toBe('222')
-    expect(R.map(R.dissoc('id'), events)).toEqual([
-      { 'path': ['todo', 'title'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
-      { 'path': ['todo', 'completed'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' },
-      { 'path': ['todo', 'title'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' }
-    ])
-    expect(events[0].id).toBe(events[1].id)
+  //   const events = []
+  //   props.get$.subscribe(e => events.push(e))
+  //   expect(todo.title).toBe('222')
+  //   expect(todo.completed).toBe(false)
+  //   expect(todo.title).toBe('222')
+  //   expect(R.map(R.dissoc('id'), events)).toEqual([
+  //     { 'path': ['todo', 'title'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
+  //     { 'path': ['todo', 'completed'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' },
+  //     { 'path': ['todo', 'title'], 'type': 'GET' },
+  //     { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' }
+  //   ])
+  //   expect(events[0].id).toBe(events[1].id)
 
-    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
-      { 'path': ['todo', 'title'], 'type': 'GET' },
-      { 'path': ['todo', 'completed'], 'type': 'GET' },
-      { 'path': ['todo', 'title'], 'type': 'GET' }
-    ])
-  })
+  //   expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+  //     { 'path': ['todo', 'title'], 'type': 'GET' },
+  //     { 'path': ['todo', 'completed'], 'type': 'GET' },
+  //     { 'path': ['todo', 'title'], 'type': 'GET' }
+  //   ])
+  // })
 
   test('access via shorter one 2', () => {
     const store = SubX.create({
