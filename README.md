@@ -183,7 +183,7 @@ Method signature explained:
 1. When we invoke `autoRun`, the second argument `f` is invoked immediately.
 1. Then the the first argument `subx` is monitored.
 1. Whenever `subx` changes which might affect the result of `f`, `f` is invoked again.
-1. The invocation of `f` is further controller by `...operators`.
+1. The invocation of `f` is further controlled by `...operators`.
 1. The result of `f()` are directed to the returned `stream$`
 1. We can `stream$.subscribe(...)` to consume the results of `f()`
 1. We can `stream$.complete()` to stop the whole monitor & autoRun process described above.
