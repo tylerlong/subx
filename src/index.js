@@ -7,7 +7,7 @@ import uuid from 'uuid/v4'
 import { computed, runAndMonitor, autoRun } from './monitor'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$']
-const RESERVED_PROPERTIES = ['$', ...EVENT_NAMES]
+const RESERVED_PROPERTIES = ['$', '__emitEvent__', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -17,22 +17,27 @@ const handler = {
     const oldVal = target[prop]
     if (val === null || typeof val !== 'object') { // simple value such as integer
       target[prop] = val
-      target.set$.next({ type: 'SET', path: [prop], val, oldVal, id: uuid() })
+      target.__emitEvent__('set$', { type: 'SET', path: [prop], val, oldVal, id: uuid() })
       return true
     }
     const proxy = val.__isSubX__ ? val : SubX.create(val)
     const id = uuid()
+
     const detach$ = target.$.pipe(first(event => event.id !== id && R.equals(event.path, [prop]))) // prop detached from obj
     R.forEach(name => // pass prop event to obj
       proxy[name].pipe(takeUntil(detach$)).subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
     , EVENT_NAMES)
+
     target[prop] = proxy
-    target.set$.next({ type: 'SET', path: [prop], val, oldVal, id })
+
+    // target.__emitEvent__('set$', { type: 'SET', path: [prop], val, oldVal, id })
+    target.__emitEvent__('set$', { type: 'SET', path: [prop], val, oldVal, id })
+
     return true
   },
   get: (target, prop, receiver) => {
     if (!R.contains(prop, RESERVED_PROPERTIES)) {
-      target.get$.next({ type: 'GET', path: [prop], id: uuid() })
+      target.__emitEvent__('get$', { type: 'GET', path: [prop], id: uuid() })
     }
     switch (prop) {
       case '__isSubX__':
@@ -58,17 +63,17 @@ const handler = {
     }
     const val = target[prop]
     delete target[prop]
-    target.delete$.next({ type: 'DELETE', path: [prop], val, id: uuid() })
+    target.__emitEvent__('delete$', { type: 'DELETE', path: [prop], val, id: uuid() })
     return true
   },
   has: (target, prop) => {
     const val = prop in target
-    target.has$.next({ type: 'HAS', path: [prop], val, id: uuid() })
+    target.__emitEvent__('has$', { type: 'HAS', path: [prop], val, id: uuid() })
     return val
   },
   ownKeys: target => {
     const val = R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
-    target.keys$.next({ type: 'KEYS', path: [], val, id: uuid() })
+    target.__emitEvent__('keys$', { type: 'KEYS', path: [], val, id: uuid() })
     return val
   },
   setPrototypeOf: (target, prototype) => {
@@ -89,6 +94,11 @@ class SubX {
         const newObj = R.empty(obj)
         R.forEach(name => { newObj[name] = new Subject() }, EVENT_NAMES)
         newObj.$ = merge(newObj.set$, newObj.delete$)
+
+        newObj.__emitEvent__ = (name, event) => {
+          newObj[name].next(event)
+        }
+
         const proxy = new Proxy(newObj, handler)
         R.pipe(
           R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
