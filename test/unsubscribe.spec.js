@@ -23,6 +23,7 @@ describe('unsubscribe', () => {
     expect(count1).toBe(0)
     expect(count2).toBe(2)
   })
+
   test('override property', () => {
     const p = SubX.create({ a: { b: {} } })
     let count = 0

@@ -1,5 +1,4 @@
 import { Subject, merge } from 'rxjs'
-import { first, takeUntil } from 'rxjs/operators'
 import * as R from 'ramda'
 import util from 'util'
 import uuid from 'uuid/v4'
@@ -7,7 +6,7 @@ import uuid from 'uuid/v4'
 import { computed, runAndMonitor, autoRun } from './monitor'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$']
-const RESERVED_PROPERTIES = ['$', '__emitEvent__', ...EVENT_NAMES]
+const RESERVED_PROPERTIES = ['$', '__id__', '__emitEvent__', '__parents__', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -23,12 +22,13 @@ const handler = {
     const proxy = val.__isSubX__ ? val : SubX.create(val)
     const id = uuid()
 
-    const detach$ = target.$.pipe(first(event => event.id !== id && R.equals(event.path, [prop]))) // prop detached from obj
-    R.forEach(name => // pass prop event to obj
-      proxy[name].pipe(takeUntil(detach$)).subscribe(event => target[name].next(R.assoc('path', [prop, ...event.path], event)))
-    , EVENT_NAMES)
-
     target[prop] = proxy
+
+    proxy.__parents__.push([target, prop])
+    if (oldVal && oldVal.__isSubX__) {
+      const index = R.findIndex(parent => parent[0].__id__ === target.__id__, oldVal.__parents__)
+      oldVal.__parents__.splice(index, 1)
+    }
 
     // target.__emitEvent__('set$', { type: 'SET', path: [prop], val, oldVal, id })
     target.__emitEvent__('set$', { type: 'SET', path: [prop], val, oldVal, id })
@@ -63,6 +63,12 @@ const handler = {
     }
     const val = target[prop]
     delete target[prop]
+
+    if (val && val.__isSubX__) {
+      const index = R.findIndex(parent => parent[0].__id__ === target.__id__, val.__parents__)
+      val.__parents__.splice(index, 1)
+    }
+
     target.__emitEvent__('delete$', { type: 'DELETE', path: [prop], val, id: uuid() })
     return true
   },
@@ -95,8 +101,13 @@ class SubX {
         R.forEach(name => { newObj[name] = new Subject() }, EVENT_NAMES)
         newObj.$ = merge(newObj.set$, newObj.delete$)
 
+        newObj.__id__ = uuid()
+        newObj.__parents__ = []
         newObj.__emitEvent__ = (name, event) => {
           newObj[name].next(event)
+          R.forEach(([parent, prop]) => {
+            parent.__emitEvent__(name, R.assoc('path', [prop, ...event.path], event))
+          }, newObj.__parents__)
         }
 
         const proxy = new Proxy(newObj, handler)
