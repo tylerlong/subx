@@ -20,7 +20,7 @@ If you want to use SubX together with React, please check [react-subx](https://g
 - Performant, it helps us to minimize backend computation and frontend rendering.
 - Based on RxJS, we can use [ALL the RxJS operators](https://www.learnrxjs.io/operators/).
 - Schemaless, we don't need to specify all our data fields at the beginning. We can add them gradually and dynamically.
-- Small. 300 lines of code. (Unbelievable, huh?) We've written 5000+ lines of testing code to cover the tiny core.
+- Small. 350 lines of code. (Unbelievable, huh?) We've written 5000+ lines of testing code to cover the tiny core.
 
 
 ## Installation

@@ -51,13 +51,28 @@ const handler = {
           target.__transactions__ = []
         }
       case 'endTransaction':
-        return () => {
+        return (name) => {
           const events = R.pipe(
             R.reverse, R.uniqBy(event => event.path), R.reverse
           )(target.__transactions__)
           delete target.__transactions__
-          target.__emitEvent__('transaction$', { type: 'TRANSACTION', path: [], events })
+          const event = { type: 'TRANSACTION', name, path: [], events, id: uuid() }
+          if (name) {
+            event.name = name
+          }
+          target.__emitEvent__('transaction$', event)
         }
+      case 'unshift':
+        if (Array.isArray(target)) {
+          const f = (...args) => {
+            receiver.startTransaction()
+            const r = target[prop].bind(receiver)(...args)
+            receiver.endTransaction(prop)
+            return r
+          }
+          return f
+        }
+        return target[prop]
       default:
         const val = target[prop]
         if (typeof val !== 'function' && !R.contains(prop, RESERVED_PROPERTIES)) {

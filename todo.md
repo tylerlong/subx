@@ -11,3 +11,4 @@
     - Or can we replace the current with completely new arr instead?
 - There seem to be tooooo many GETs when changing an array
 - Change for faster equals/uniq library?
+- Not all events need id

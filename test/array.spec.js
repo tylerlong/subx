@@ -69,12 +69,14 @@ describe('array', () => {
   test('unshift', () => {
     const a = SubX.create([1, 2, 3])
     const events = []
-    a.$.subscribe(event => {
-      events.push(event)
-    })
+    a.$.subscribe(event => events.push(event))
+    const events2 = []
+    a.transaction$.subscribe(e => events2.push(e))
     a.unshift(0)
     expect(a).toEqual([0, 1, 2, 3])
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(R.map(R.dissoc('id'), events)).toEqual([])
+    expect(events2.length).toBe(1)
+    expect(R.map(R.dissoc('id'), events2[0].events)).toEqual([
       {
         type: 'SET',
         path: ['3']
@@ -116,7 +118,7 @@ describe('array', () => {
     expect(R.equals(o.b.a, [1, 2, 3])).toBeTruthy()
 
     let events = []
-    o.$.subscribe(event => { events.push(event) })
+    o.$.subscribe(event => events.push(event))
 
     // push
     o.b.a.push(4)
@@ -147,29 +149,39 @@ describe('array', () => {
     // unshift
     o.b.a = [1, 2, 3]
     events = []
+    const events2 = []
+    o.transaction$.subscribe(event => events2.push(event))
     o.b.a.unshift(0)
     expect(o.b.a).toEqual([0, 1, 2, 3])
-    expect(R.map(R.dissoc('id'), events)).toEqual([
-      {
-        type: 'SET',
-        path: ['b', 'a', '3']
-      },
-      {
-        type: 'SET',
-        path: ['b', 'a', '2']
-      },
-      {
-        type: 'SET',
-        path: ['b', 'a', '1']
-      },
-      {
-        type: 'SET',
-        path: ['b', 'a', '0']
-      },
-      {
-        type: 'SET',
-        path: ['b', 'a', 'length']
-      }
-    ])
+    expect(R.map(R.dissoc('id'), events)).toEqual([])
+    expect(events2.length).toBe(1)
+    events2[0].events = R.map(R.dissoc('id'), events2[0].events)
+    expect(R.dissoc('id', events2[0])).toEqual({
+      type: 'TRANSACTION',
+      name: 'unshift',
+      path: ['b', 'a'],
+      events: [
+        {
+          type: 'SET',
+          path: ['3']
+        },
+        {
+          type: 'SET',
+          path: ['2']
+        },
+        {
+          type: 'SET',
+          path: ['1']
+        },
+        {
+          type: 'SET',
+          path: ['0']
+        },
+        {
+          type: 'SET',
+          path: ['length']
+        }
+      ]
+    })
   })
 })
