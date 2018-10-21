@@ -42,9 +42,29 @@ describe('transaction', () => {
     expect(events3.length).toBe(7) // GET p.a
     expect(R.dissoc('events', events2[0])).toEqual({ 'path': ['a'], 'type': 'TRANSACTION' })
     expect(R.map(R.dissoc('id'), events2[0].events)).toEqual([
-      { 'type': 'SET', 'path': ['b'] },
-      { 'type': 'SET', 'path': ['b'] },
       { 'type': 'SET', 'path': ['b'] }
     ])
+  })
+
+  test('uniq transaction events', () => {
+    const p = SubX.create({ a: 1 })
+    let events = []
+    p.transaction$.subscribe(e => events.push(e))
+    p.startTransaction()
+    p.a = 1
+    p.a = 2
+    delete p.a
+    p.endTransaction()
+    expect(R.map(R.dissoc('events'), events)).toEqual([{ type: 'TRANSACTION', path: [] }])
+    expect(R.map(R.dissoc('id'), events[0].events)).toEqual([ { type: 'DELETE', path: [ 'a' ] } ])
+
+    events = []
+    p.startTransaction()
+    p.a = 1
+    delete p.a
+    p.a = 2
+    p.endTransaction()
+    expect(R.map(R.dissoc('events'), events)).toEqual([{ type: 'TRANSACTION', path: [] }])
+    expect(R.map(R.dissoc('id'), events[0].events)).toEqual([ { type: 'SET', path: [ 'a' ] } ])
   })
 })

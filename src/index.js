@@ -52,7 +52,9 @@ const handler = {
         }
       case 'endTransaction':
         return () => {
-          const events = target.__transactions__
+          const events = R.pipe(
+            R.reverse, R.uniqBy(event => event.path), R.reverse
+          )(target.__transactions__)
           delete target.__transactions__
           target.__emitEvent__('transaction$', { type: 'TRANSACTION', path: [], events })
         }
