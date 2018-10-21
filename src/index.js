@@ -62,6 +62,14 @@ const handler = {
           }
           target.__emitEvent__('transaction$', event)
         }
+      case 'copyWithin': // https://www.w3schools.com/jsref/jsref_obj_array.asp
+      case 'fill':
+      case 'pop':
+      case 'push':
+      case 'reverse':
+      case 'shift':
+      case 'sort':
+      case 'splice':
       case 'unshift':
         if (Array.isArray(target)) {
           const f = (...args) => {
