@@ -21,6 +21,21 @@ const matchFilters = {
       }
       return false
     }
+  },
+  has: (subx, has) => {
+    const val = R.last(has.path) in R.path(R.init(has.path), subx)
+    return event => {
+      if (event.type === 'DELETE' && val === true && R.equals(event.path, has.path)) {
+        return true
+      }
+      if (event.type === 'SET' && R.startsWith(event.path, has.path)) {
+        const parentVal = R.path(R.init(has.path), subx)
+        if (typeof parentVal === 'object' && parentVal !== null) {
+          return (R.last(has.path) in parentVal) !== val
+        }
+      }
+      return false
+    }
   }
 }
 
@@ -46,21 +61,12 @@ const monitorHass = (subx, hass) => {
   const uniqHass = R.uniqBy(has => has.path, hass)
   const streams = []
   R.forEach(has => {
-    const val = R.last(has.path) in R.path(R.init(has.path), subx)
-    if (val === true) {
-      streams.push(subx.delete$.pipe(filter(event => R.equals(event.path, has.path))))
-    }
-    streams.push(subx.set$.pipe(
-      filter(event => R.startsWith(event.path, has.path)),
-      filter(event => {
-        const parentVal = R.path(R.init(has.path), subx)
-        if (typeof parentVal === 'object' && parentVal !== null) {
-          return (R.last(has.path) in parentVal) !== val
-        } else {
-          return false // won't trigger stale when parent cannot have props
-        }
-      })
-    ))
+    const hasFilter = matchFilters.get(subx, has)
+    streams.push(merge(subx.delete$, subx.set$).pipe(filter(event => hasFilter(event))))
+    streams.push(subx.transaction$.pipe(filter(e => {
+      const events = e.events.map(ev => ({ ...ev, path: [...e.path, ...ev.path] }))
+      return events.any(event => hasFilter(event))
+    })))
   }, uniqHass)
   return streams
 }
