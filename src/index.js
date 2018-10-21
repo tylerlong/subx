@@ -5,8 +5,8 @@ import uuid from 'uuid/v4'
 
 import { computed, runAndMonitor, autoRun } from './monitor'
 
-const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$']
-const RESERVED_PROPERTIES = ['$', '__id__', '__emitEvent__', '__parents__', ...EVENT_NAMES]
+const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$', 'transaction$']
+const RESERVED_PROPERTIES = ['$', '__id__', '__emitEvent__', '__parents__', '__transactions__', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -49,6 +49,16 @@ const handler = {
             R.reject(k => R.contains(k, RESERVED_PROPERTIES)),
             R.reduce((obj, k) => Object.defineProperty(obj, k, Object.getOwnPropertyDescriptor(receiver, k)))({})
           )(receiver)
+      case 'startTransaction':
+        return () => {
+          target.__transactions__ = []
+        }
+      case 'endTransaction':
+        return () => {
+          const events = target.__transactions__
+          delete target.__transactions__
+          target.__emitEvent__('transaction$', { type: 'TRANSACTION', path: [], events })
+        }
       default:
         return target[prop]
     }
@@ -100,6 +110,10 @@ class SubX {
         newObj.__id__ = uuid()
         newObj.__parents__ = []
         newObj.__emitEvent__ = (name, event) => {
+          if (newObj.__transactions__) {
+            newObj.__transactions__.push(event)
+            return
+          }
           if (newObj[name].observers.length > 0) {
             newObj[name].next(event)
           }

@@ -11,3 +11,4 @@
     - Or can we replace the current with completely new arr instead?
 - There seem to be tooooo many GETs when changing an array
 - Don't emit get "funciton" events?
+    - `endTransaction`
