@@ -72,11 +72,8 @@ The corresponding event streams are `set$`, `delete$`, `get$`, `has$` & `keys$`
 There are 3 advanced events: `COMPUTE_BEGIN`, `COMPUTE_FINISH` & `STALE`.
 The corresponding event streams are `compute_begin$`, `compute_finish$` & `stale$`.
 
-### $
 
-`$` is the merge of `set$` & `delete$`. We provide it as sugar since it is mostly used.
-
-### SET
+### `set$` & `$`
 
 Most of the event mentioned in this page are `SET` events. `SET` means a property has been assigned to. Such as `person.firstName = 'John'`.
 
@@ -86,7 +83,9 @@ person.set$.subscribe(console.log)
 person.firstName = 'Peter'
 ```
 
-### DELETE
+**`$` is a synonym of `set$`**. We provide it as sugar since `set$` is the mostly used event.
+
+### `delete$`
 
 `DELETE` events are triggered as well. We already see one of such event above in "Array events" section. Here is one more sample:
 
@@ -96,7 +95,7 @@ person.delete$.subscribe(console.log)
 delete person.firstName
 ```
 
-### GET
+### `get$`
 
 `GET` events are triggered when we access a property
 
@@ -106,7 +105,7 @@ person.get$.subscribe(console.log)
 console.log(person.firstName)
 ```
 
-### HAS
+### `has$`
 
 `GET` events are triggered when we use the `in` operator
 
@@ -116,7 +115,7 @@ person.has$.subscribe(console.log)
 console.log('firstName' in person)
 ```
 
-### KEYS
+### `keys$`
 
 `KEYS` events are triggered when we use `Object.keys(...)`
 
@@ -126,7 +125,7 @@ person.keys$.subscribe(console.log)
 console.log(Object.keys(person))
 ```
 
-### COMPUTE_BEGIN, COMPUTE_FINISH & STALE
+### `compute_begin$`, `compute_end$` & `state$`
 
 These 3 events are advanced. Most likely we don't need to know them.
 They are for computed properties(which is covered below).

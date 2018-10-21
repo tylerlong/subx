@@ -1,6 +1,7 @@
 /* eslint-env jest */
 import SubX from '../src/index'
 import * as R from 'ramda'
+import { merge } from 'rxjs'
 
 describe('array splice', () => {
   test('default', () => {
@@ -35,7 +36,7 @@ describe('array splice', () => {
       todos: [1, 2, 3]
     })
     const events = []
-    store.$.subscribe(event => events.push(event))
+    merge(store.$, store.delete$).subscribe(event => events.push(event))
     store.todos.pop()
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { 'path': ['todos', '2'], 'type': 'DELETE' },

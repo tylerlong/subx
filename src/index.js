@@ -1,4 +1,4 @@
-import { Subject, merge } from 'rxjs'
+import { Subject } from 'rxjs'
 import * as R from 'ramda'
 import util from 'util'
 import uuid from 'uuid/v4'
@@ -95,7 +95,7 @@ class SubX {
       constructor (obj = {}) {
         const newObj = R.empty(obj)
         R.forEach(name => { newObj[name] = new Subject() }, EVENT_NAMES)
-        newObj.$ = merge(newObj.set$, newObj.delete$)
+        newObj.$ = newObj.set$
 
         newObj.__id__ = uuid()
         newObj.__parents__ = []

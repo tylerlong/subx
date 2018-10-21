@@ -9,7 +9,7 @@ const allEvents = p => merge(p.set$, p.delete$, p.get$, p.has$, p.keys$, p.compu
 describe('large array', () => {
   test('push', () => {
     const p = SubX.create({
-      todos: R.range(0, 3)
+      todos: R.range(0, 10)
     })
     const all$ = allEvents(p)
     const events = []
@@ -20,13 +20,13 @@ describe('large array', () => {
       { 'path': ['todos'], 'type': 'GET' },
       { 'path': ['todos', 'push'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'GET' },
-      { 'path': ['todos', '3'], 'type': 'SET' },
+      { 'path': ['todos', '10'], 'type': 'SET' },
       { 'path': ['todos', 'length'], 'type': 'SET' }
     ])
   })
   test('unshift', () => {
     const p = SubX.create({
-      todos: R.range(0, 3)
+      todos: R.range(0, 10)
     })
     const all$ = allEvents(p)
     const events = []
@@ -37,6 +37,27 @@ describe('large array', () => {
       { 'path': ['todos'], 'type': 'GET' },
       { 'path': ['todos', 'unshift'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'GET' },
+      { 'path': ['todos', '9'], 'type': 'HAS' },
+      { 'path': ['todos', '9'], 'type': 'GET' },
+      { 'path': ['todos', '10'], 'type': 'SET' },
+      { 'path': ['todos', '8'], 'type': 'HAS' },
+      { 'path': ['todos', '8'], 'type': 'GET' },
+      { 'path': ['todos', '9'], 'type': 'SET' },
+      { 'path': ['todos', '7'], 'type': 'HAS' },
+      { 'path': ['todos', '7'], 'type': 'GET' },
+      { 'path': ['todos', '8'], 'type': 'SET' },
+      { 'path': ['todos', '6'], 'type': 'HAS' },
+      { 'path': ['todos', '6'], 'type': 'GET' },
+      { 'path': ['todos', '7'], 'type': 'SET' },
+      { 'path': ['todos', '5'], 'type': 'HAS' },
+      { 'path': ['todos', '5'], 'type': 'GET' },
+      { 'path': ['todos', '6'], 'type': 'SET' },
+      { 'path': ['todos', '4'], 'type': 'HAS' },
+      { 'path': ['todos', '4'], 'type': 'GET' },
+      { 'path': ['todos', '5'], 'type': 'SET' },
+      { 'path': ['todos', '3'], 'type': 'HAS' },
+      { 'path': ['todos', '3'], 'type': 'GET' },
+      { 'path': ['todos', '4'], 'type': 'SET' },
       { 'path': ['todos', '2'], 'type': 'HAS' },
       { 'path': ['todos', '2'], 'type': 'GET' },
       { 'path': ['todos', '3'], 'type': 'SET' },

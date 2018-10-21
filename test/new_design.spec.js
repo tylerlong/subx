@@ -133,7 +133,7 @@ describe('new design', () => {
     const Person = new SubX({ firstName: '', lastName: '' })
     const p = new Person({ firstName: 'Chuntao', lastName: 'Liu' })
     const events = []
-    p.$.subscribe(event => {
+    p.delete$.subscribe(event => {
       events.push(event)
     })
     delete p.firstName

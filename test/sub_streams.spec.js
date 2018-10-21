@@ -66,6 +66,6 @@ describe('sub streams', () => {
     p.b = 2
     p.a = 3
     delete p.b
-    expect(R.map(R.dissoc('id'), events3)).toEqual(R.concat(R.map(R.dissoc('id'), events1), R.map(R.dissoc('id'), events2)))
+    expect(events3).toEqual(events1)
   })
 })
