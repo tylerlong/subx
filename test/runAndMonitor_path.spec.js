@@ -39,7 +39,14 @@ describe('runAndMonitor path', () => {
     stream$.subscribe(e => events.push(e))
     store.todos.push({ title: '222', completed: false })
     expect(events.length).toBe(1)
-    expect(events[0].path).toEqual(['todos', 'length'])
+    expect(R.pipe(R.dissoc('id'), R.dissocPath(['events', 0, 'id']), R.dissocPath(['events', 1, 'id']))(events[0])).toEqual({
+      'events': [
+        { 'path': ['1'], 'type': 'SET' },
+        { 'path': ['length'], 'type': 'SET' }],
+      'name': 'push',
+      'path': ['todos'],
+      'type': 'TRANSACTION'
+    })
   })
 
   test('toJSON events', () => {

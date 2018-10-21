@@ -38,17 +38,17 @@ describe('array', () => {
     a.$.subscribe(event => {
       events.push(event)
     })
+    const events22 = []
+    a.transaction$.subscribe(e => events22.push(e))
     a.push(4)
     expect(a).toEqual([1, 2, 3, 4])
-    expect(R.map(R.dissoc('id'), events)).toEqual([
-      {
-        type: 'SET',
-        path: ['3']
-      },
-      {
-        type: 'SET',
-        path: ['length']
-      }
+    expect(events22.length).toBe(1)
+    expect(R.pipe(R.dissoc('events'), R.dissoc('id'))(events22[0])).toEqual(
+      { type: 'TRANSACTION', name: 'push', path: []
+      })
+    expect(R.map(R.dissoc('id'), events22[0].events)).toEqual([
+      { 'path': ['3'], 'type': 'SET' },
+      { 'path': ['length'], 'type': 'SET' }
     ])
   })
   test('assign', () => {
@@ -121,17 +121,16 @@ describe('array', () => {
     o.$.subscribe(event => events.push(event))
 
     // push
+    const events22 = []
+    o.transaction$.subscribe(e => events22.push(e))
     o.b.a.push(4)
     expect(o.b.a).toEqual([1, 2, 3, 4])
-    expect(R.map(R.dissoc('id'), events)).toEqual([
-      {
-        type: 'SET',
-        path: ['b', 'a', '3']
-      },
-      {
-        type: 'SET',
-        path: ['b', 'a', 'length']
-      }
+    expect(R.map(R.dissoc('id'), events)).toEqual([]) // no event out of transaction
+    expect(events22.length).toBe(1)
+    expect(R.pipe(R.dissoc('events'), R.dissoc('id'))(events22[0])).toEqual({ type: 'TRANSACTION', name: 'push', path: ['b', 'a'] })
+    expect(R.map(R.dissoc('id'), events22[0].events)).toEqual([
+      { 'path': ['3'], 'type': 'SET' },
+      { 'path': ['length'], 'type': 'SET' }
     ])
 
     // assign

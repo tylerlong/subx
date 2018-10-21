@@ -17,11 +17,13 @@ describe('large array', () => {
     const sub = all$.subscribe(e => events.push(e))
     p.todos.push(1)
     sub.unsubscribe()
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('id'), R.dissoc('events')), events)).toEqual([
       { 'path': ['todos'], 'type': 'GET' },
-      { 'path': ['todos', 'length'], 'type': 'GET' },
-      { 'path': ['todos', '10'], 'type': 'SET' },
-      { 'path': ['todos', 'length'], 'type': 'SET' }
+      { 'path': ['todos'], 'type': 'TRANSACTION', name: 'push' }
+    ])
+    expect(R.map(R.dissoc('id'), events[1].events)).toEqual([
+      { 'path': ['10'], 'type': 'SET' },
+      { 'path': ['length'], 'type': 'SET' }
     ])
   })
   test('unshift', () => {
@@ -65,11 +67,11 @@ describe('large array', () => {
     const sub = all$.subscribe(e => events.push(e))
     p.todos.splice(1, 0)
     sub.unsubscribe()
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('id'), R.dissoc('events')), events)).toEqual([
       { 'path': ['todos'], 'type': 'GET' },
-      { 'path': ['todos', 'length'], 'type': 'GET' },
-      { 'path': ['todos', 'length'], 'type': 'SET' }
+      { 'path': ['todos'], 'type': 'TRANSACTION', name: 'splice' }
     ])
+    expect(R.map(R.dissoc('id'), events[1].events)).toEqual([{ 'path': ['length'], 'type': 'SET' }])
   })
   test('splice', () => {
     const p = SubX.create({
@@ -80,16 +82,18 @@ describe('large array', () => {
     const sub = all$.subscribe(e => events.push(e))
     p.todos.splice(1, 1)
     sub.unsubscribe()
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('id'), R.dissoc('events')), events)).toEqual([
       { 'path': ['todos'], 'type': 'GET' },
-      { 'path': ['todos', 'length'], 'type': 'GET' },
-      { 'path': ['todos', '1'], 'type': 'HAS' },
-      { 'path': ['todos', '1'], 'type': 'GET' },
-      { 'path': ['todos', '2'], 'type': 'HAS' },
-      { 'path': ['todos', '2'], 'type': 'GET' },
-      { 'path': ['todos', '1'], 'type': 'SET' },
-      { 'path': ['todos', '2'], 'type': 'DELETE' },
-      { 'path': ['todos', 'length'], 'type': 'SET' }
+      {
+        'name': 'splice',
+        'path': ['todos'],
+        'type': 'TRANSACTION'
+      }
+    ])
+    expect(R.map(R.dissoc('id'), events[1].events)).toEqual([
+      { 'path': ['1'], 'type': 'SET' },
+      { 'path': ['2'], 'type': 'DELETE' },
+      { 'path': ['length'], 'type': 'SET' }
     ])
   })
   test('R.remove', () => {

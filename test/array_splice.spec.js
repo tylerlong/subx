@@ -1,7 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index'
 import * as R from 'ramda'
-import { merge } from 'rxjs'
 
 describe('array splice', () => {
   test('default', () => {
@@ -9,7 +8,7 @@ describe('array splice', () => {
       todos: [1, 2, 3]
     })
     let notified = false
-    store.$.subscribe(event => {
+    store.transaction$.subscribe(event => {
       notified = true
     })
     store.todos.push(4)
@@ -27,30 +26,48 @@ describe('array splice', () => {
       todos: [1, 2, 3]
     })
     const events = []
-    store.$.subscribe(event => events.push(event))
+    store.transaction$.subscribe(event => events.push(event))
     store.todos.splice(1, 1)
-    expect(R.dissoc('id', events[events.length - 1])).toEqual({ type: 'SET', path: [ 'todos', 'length' ] })
+    expect(events.length).toBe(1)
+    const transactionEvents = events[0].events
+    expect(R.map(R.dissoc('id'), transactionEvents)).toEqual([
+      { type: 'SET', path: ['1'] },
+      { type: 'DELETE', path: ['2'] },
+      { type: 'SET', path: ['length'] }
+    ])
+    expect(events[0].path).toEqual(['todos'])
+    expect(events[0].type).toBe('TRANSACTION')
+    expect(events[0].name).toBe('splice')
   })
   test('pop', () => {
     const store = SubX.create({
       todos: [1, 2, 3]
     })
     const events = []
-    merge(store.$, store.delete$).subscribe(event => events.push(event))
+    store.transaction$.subscribe(event => events.push(event))
     store.todos.pop()
-    expect(R.map(R.dissoc('id'), events)).toEqual([
-      { 'path': ['todos', '2'], 'type': 'DELETE' },
-      { 'path': ['todos', 'length'], 'type': 'SET' }
+    expect(events.length).toBe(1)
+    const transactionEvents = events[0].events
+    expect(R.map(R.dissoc('id'), transactionEvents)).toEqual([
+      { type: 'DELETE', path: ['2'] },
+      { type: 'SET', path: ['length'] }
     ])
+    expect(events[0].path).toEqual(['todos'])
+    expect(events[0].type).toBe('TRANSACTION')
+    expect(events[0].name).toBe('pop')
   })
   test('shift', () => {
     const store = SubX.create({
       todos: [1, 2, 3]
     })
     const events = []
-    store.$.subscribe(event => events.push(event))
+    store.transaction$.subscribe(event => events.push(event))
     store.todos.shift(0)
-    expect(R.dissoc('id', events[events.length - 1])).toEqual({ type: 'SET', path: [ 'todos', 'length' ] })
+    const lastTransactionEvent = R.last(events[0].events)
+    expect(R.dissoc('id', lastTransactionEvent)).toEqual({ type: 'SET', path: ['length'] })
+    expect(events[0].path).toEqual(['todos'])
+    expect(events[0].type).toBe('TRANSACTION')
+    expect(events[0].name).toBe('shift')
   })
   test('map and get events', () => {
     const store = SubX.create({

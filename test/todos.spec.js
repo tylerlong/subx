@@ -25,6 +25,7 @@ describe('todos', () => {
     let notified = false
     const todos = store.todos
     store.$.subscribe(event => { notified = true })
+    store.transaction$.subscribe(event => { notified = true }) // array push is transaction
     expect(notified).toBeFalsy()
     todos.push({ title: '444', completed: false })
     expect(notified).toBeTruthy()
