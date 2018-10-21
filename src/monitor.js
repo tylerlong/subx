@@ -1,5 +1,5 @@
 import { merge, BehaviorSubject, Subscription } from 'rxjs'
-import { filter, merge as _merge, publish, distinct, first } from 'rxjs/operators'
+import { filter, publish, distinct, first } from 'rxjs/operators'
 import * as R from 'ramda'
 import uuid from 'uuid/v4'
 
@@ -36,6 +36,19 @@ const matchFilters = {
       }
       return false
     }
+  },
+  keys: (subx, keys) => {
+    const val = Object.keys(R.path(keys.path, subx))
+    return event => {
+      if ((event.type === 'DELETE' && keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path)) ||
+        (event.type === 'SET' && (R.startsWith(event.path, keys.path) || (keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path))))) {
+        const parentVal = R.path(keys.path, subx)
+        if (typeof parentVal === 'object' && parentVal !== null) {
+          return !R.equals(Object.keys(parentVal), val)
+        }
+      }
+      return false
+    }
   }
 }
 
@@ -61,7 +74,7 @@ const monitorHass = (subx, hass) => {
   const uniqHass = R.uniqBy(has => has.path, hass)
   const streams = []
   R.forEach(has => {
-    const hasFilter = matchFilters.get(subx, has)
+    const hasFilter = matchFilters.has(subx, has)
     streams.push(merge(subx.delete$, subx.set$).pipe(filter(event => hasFilter(event))))
     streams.push(subx.transaction$.pipe(filter(e => {
       const events = e.events.map(ev => ({ ...ev, path: [...e.path, ...ev.path] }))
@@ -75,20 +88,12 @@ const monitorkeyss = (subx, keyss) => {
   const uniqKeyss = R.uniqBy(keys => keys.path, keyss)
   const streams = []
   R.forEach(keys => {
-    const val = Object.keys(R.path(keys.path, subx))
-    streams.push(subx.delete$.pipe(
-      filter(event => keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path)),
-      _merge(subx.set$.pipe(
-        filter(event => R.startsWith(event.path, keys.path) || (keys.path.length + 1 === event.path.length && R.startsWith(keys.path, event.path))))),
-      filter(event => {
-        const parentVal = R.path(keys.path, subx)
-        if (typeof parentVal === 'object' && parentVal !== null) {
-          return !R.equals(Object.keys(parentVal), val)
-        } else {
-          return false // won't trigger stale when parent cannot have props
-        }
-      })
-    ))
+    const keysFilter = matchFilters.keys(subx, keys)
+    streams.push(merge(subx.delete$, subx.set$).pipe(filter(event => keysFilter(event))))
+    streams.push(subx.transaction$.pipe(filter(e => {
+      const events = e.events.map(ev => ({ ...ev, path: [...e.path, ...ev.path] }))
+      return events.any(event => keysFilter(event))
+    })))
   }, uniqKeyss)
   return streams
 }
