@@ -141,7 +141,7 @@ export const computed = (subx, f) => {
       stale = false
       stream$.pipe(first()).subscribe(event => {
         stale = true
-        subx.__emitEvent__('stale$', { type: 'STALE', path: [functionName], root: event, cache, id: uuid() })
+        subx.__emitEvent__('stale$', { type: 'STALE', path: [functionName], cache, id: uuid() })
       })
       subx.__emitEvent__('compute_finish$', { type: 'COMPUTE_FINISH', path: [functionName], id: uuid() })
     }

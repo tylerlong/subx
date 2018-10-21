@@ -17,21 +17,15 @@ describe('sub streams', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['a'],
-        val: 1,
-        oldVal: undefined
+        path: ['a']
       },
       {
         type: 'SET',
-        path: ['b'],
-        val: 2,
-        oldVal: undefined
+        path: ['b']
       },
       {
         type: 'SET',
-        path: ['a'],
-        val: 3,
-        oldVal: 1
+        path: ['a']
       }
     ])
   })
@@ -49,8 +43,7 @@ describe('sub streams', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'DELETE',
-        path: ['b'],
-        val: 2
+        path: ['b']
       }
     ])
   })

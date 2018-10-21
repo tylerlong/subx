@@ -11,8 +11,8 @@ describe('Michael cases', () => {
     p.a = {}
     p.a.b = 2
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { type: 'SET', path: [ 'a' ], val: {}, oldVal: 1 },
-      { type: 'SET', path: [ 'a', 'b' ], val: 2, oldVal: undefined }
+      { type: 'SET', path: [ 'a' ] },
+      { type: 'SET', path: [ 'a', 'b' ] }
     ])
   })
 

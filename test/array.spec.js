@@ -43,15 +43,11 @@ describe('array', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['3'],
-        val: 4,
-        oldVal: undefined
+        path: ['3']
       },
       {
         type: 'SET',
-        path: ['length'],
-        val: 4,
-        oldVal: 4
+        path: ['length']
       }
     ])
   })
@@ -66,9 +62,7 @@ describe('array', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['1'],
-        val: 4,
-        oldVal: 2
+        path: ['1']
       }
     ])
   })
@@ -83,33 +77,23 @@ describe('array', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['3'],
-        val: 3,
-        oldVal: undefined
+        path: ['3']
       },
       {
         type: 'SET',
-        path: ['2'],
-        val: 2,
-        oldVal: 3
+        path: ['2']
       },
       {
         type: 'SET',
-        path: ['1'],
-        val: 1,
-        oldVal: 2
+        path: ['1']
       },
       {
         type: 'SET',
-        path: ['0'],
-        val: 0,
-        oldVal: 1
+        path: ['0']
       },
       {
         type: 'SET',
-        path: ['length'],
-        val: 4,
-        oldVal: 4
+        path: ['length']
       }
     ])
   })
@@ -140,15 +124,11 @@ describe('array', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['b', 'a', '3'],
-        val: 4,
-        oldVal: undefined
+        path: ['b', 'a', '3']
       },
       {
         type: 'SET',
-        path: ['b', 'a', 'length'],
-        val: 4,
-        oldVal: 4
+        path: ['b', 'a', 'length']
       }
     ])
 
@@ -160,9 +140,7 @@ describe('array', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['b', 'a', '1'],
-        val: 4,
-        oldVal: 2
+        path: ['b', 'a', '1']
       }
     ])
 
@@ -174,33 +152,23 @@ describe('array', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['b', 'a', '3'],
-        val: 3,
-        oldVal: undefined
+        path: ['b', 'a', '3']
       },
       {
         type: 'SET',
-        path: ['b', 'a', '2'],
-        val: 2,
-        oldVal: 3
+        path: ['b', 'a', '2']
       },
       {
         type: 'SET',
-        path: ['b', 'a', '1'],
-        val: 1,
-        oldVal: 2
+        path: ['b', 'a', '1']
       },
       {
         type: 'SET',
-        path: ['b', 'a', '0'],
-        val: 0,
-        oldVal: 1
+        path: ['b', 'a', '0']
       },
       {
         type: 'SET',
-        path: ['b', 'a', 'length'],
-        val: 4,
-        oldVal: 4
+        path: ['b', 'a', 'length']
       }
     ])
   })

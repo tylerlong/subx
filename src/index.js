@@ -16,7 +16,7 @@ const handler = {
     const oldVal = target[prop]
     if (val === null || typeof val !== 'object') { // simple value such as integer
       target[prop] = val
-      target.__emitEvent__('set$', { type: 'SET', path: [prop], val, oldVal, id: uuid() })
+      target.__emitEvent__('set$', { type: 'SET', path: [prop], id: uuid() })
       return true
     }
     const proxy = val.__isSubX__ ? val : SubX.create(val)
@@ -28,7 +28,7 @@ const handler = {
       oldVal.__parents__.splice(index, 1)
     }
 
-    target.__emitEvent__('set$', { type: 'SET', path: [prop], val, oldVal, id: uuid() })
+    target.__emitEvent__('set$', { type: 'SET', path: [prop], id: uuid() })
     return true
   },
   get: (target, prop, receiver) => {
@@ -65,17 +65,17 @@ const handler = {
       val.__parents__.splice(index, 1)
     }
 
-    target.__emitEvent__('delete$', { type: 'DELETE', path: [prop], val, id: uuid() })
+    target.__emitEvent__('delete$', { type: 'DELETE', path: [prop], id: uuid() })
     return true
   },
   has: (target, prop) => {
     const val = prop in target
-    target.__emitEvent__('has$', { type: 'HAS', path: [prop], val, id: uuid() })
+    target.__emitEvent__('has$', { type: 'HAS', path: [prop], id: uuid() })
     return val
   },
   ownKeys: target => {
     const val = R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
-    target.__emitEvent__('keys$', { type: 'KEYS', path: [], val, id: uuid() })
+    target.__emitEvent__('keys$', { type: 'KEYS', path: [], id: uuid() })
     return val
   },
   setPrototypeOf: (target, prototype) => {

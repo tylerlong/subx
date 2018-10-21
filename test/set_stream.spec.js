@@ -15,15 +15,11 @@ describe('set stream', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['a'],
-        val: 'hello',
-        oldVal: undefined
+        path: ['a']
       },
       {
         type: 'SET',
-        path: ['b'],
-        val: 'world',
-        oldVal: undefined
+        path: ['b']
       }
     ])
   })
@@ -38,15 +34,11 @@ describe('set stream', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['a', 'c'],
-        val: 'hello',
-        oldVal: undefined
+        path: ['a', 'c']
       },
       {
         type: 'SET',
-        path: ['b', 'd'],
-        val: 'world',
-        oldVal: undefined
+        path: ['b', 'd']
       }
     ])
   })

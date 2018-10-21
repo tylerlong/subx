@@ -15,8 +15,7 @@ describe('has stream', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'HAS',
-        path: ['a'],
-        val: false
+        path: ['a']
       }
     ])
   })
@@ -36,20 +35,17 @@ describe('has stream', () => {
     expect(R.map(R.dissoc('id'), events1)).toEqual([
       {
         type: 'HAS',
-        path: ['a'],
-        val: true
+        path: ['a']
       }
     ])
     expect(R.map(R.dissoc('id'), events2)).toEqual([
       {
         type: 'HAS',
-        path: ['a'],
-        val: true
+        path: ['a']
       },
       {
         type: 'HAS',
-        path: ['a', 'b', 'd'],
-        val: false
+        path: ['a', 'b', 'd']
       }
     ])
   })

@@ -15,13 +15,11 @@ describe('keys stream', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'KEYS',
-        path: [],
-        val: []
+        path: []
       },
       {
         type: 'KEYS',
-        path: [],
-        val: ['a']
+        path: []
       }
     ])
   })
@@ -36,13 +34,11 @@ describe('keys stream', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'KEYS',
-        path: ['a'],
-        val: []
+        path: ['a']
       },
       {
         type: 'KEYS',
-        path: ['a'],
-        val: ['c']
+        path: ['a']
       }
     ])
   })

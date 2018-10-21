@@ -18,15 +18,11 @@ describe('null value', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'SET',
-        path: ['name'],
-        val: 'hello',
-        oldVal: undefined
+        path: ['name']
       },
       {
         type: 'SET',
-        path: ['name'],
-        val: null,
-        oldVal: 'hello'
+        path: ['name']
       }
     ])
   })

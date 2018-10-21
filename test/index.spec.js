@@ -23,8 +23,8 @@ describe('index', () => {
     model.b = '222'
     expect(count).toBe(2)
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { type: 'SET', path: ['a'], val: '111', oldVal: 'hello' },
-      { type: 'SET', path: ['b'], val: '222', oldVal: 'world' }
+      { type: 'SET', path: ['a'] },
+      { type: 'SET', path: ['b'] }
     ])
   })
 
@@ -38,7 +38,7 @@ describe('index', () => {
       events.push(val)
     })
     model.a = 'world'
-    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: ['a'], val: 'world', oldVal: 'hello' }])
+    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: ['a'] }])
   })
 
   test('different ways to trigger event', () => {
@@ -53,8 +53,8 @@ describe('index', () => {
     model.a = '222'
     model['a'] = '333'
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { type: 'SET', path: ['a'], val: '222', oldVal: '111' },
-      { type: 'SET', path: ['a'], val: '333', oldVal: '222' }
+      { type: 'SET', path: ['a'] },
+      { type: 'SET', path: ['a'] }
     ])
   })
 })

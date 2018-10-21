@@ -30,15 +30,10 @@ describe('stale deep equal', () => {
     expect(p.render.length).toBe(3)
 
     p.visibility = 'active'
-    expect(R.map(R.pipe(R.dissoc('id'), R.dissocPath(['root', 'id']), R.dissocPath(['root', 'root', 'id'])))(events)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('id')))(events)).toEqual([
       {
         type: 'STALE',
         path: [ 'visibleTodos' ],
-        root: { type: 'SET',
-          path: [ 'visibility' ],
-          val: 'active',
-          oldVal: 'all'
-        },
         cache: [
           { completed: false },
           { completed: false },
@@ -48,20 +43,6 @@ describe('stale deep equal', () => {
       {
         type: 'STALE',
         path: [ 'render' ],
-        root: {
-          type: 'STALE',
-          path: [ 'visibleTodos' ],
-          root: { type: 'SET',
-            path: [ 'visibility' ],
-            val: 'active',
-            oldVal: 'all'
-          },
-          cache: [
-            { completed: false },
-            { completed: false },
-            { completed: false }
-          ]
-        },
         cache: [
           { completed: false },
           { completed: false },
@@ -81,20 +62,13 @@ describe('stale deep equal', () => {
     events = []
     p.todos[1].completed = true
     expect(p.render.length).toBe(1)
-    expect(R.map(R.pipe(R.dissoc('id'), R.dissocPath(['root', 'id']), R.dissocPath(['root', 'root', 'id'])))(events)).toEqual([
+    expect(R.map(R.pipe(R.dissoc('id')))(events)).toEqual([
       { type: 'STALE',
         path: [ 'visibleTodos' ],
-        root: { type: 'SET', path: ['todos', '1', 'completed'], val: true, oldVal: false },
         cache: []
       },
       { type: 'STALE',
         path: [ 'render' ],
-        root: {
-          type: 'STALE',
-          path: [ 'visibleTodos' ],
-          root: { type: 'SET', path: ['todos', '1', 'completed'], val: true, oldVal: false },
-          cache: []
-        },
         cache: []
       }
     ])

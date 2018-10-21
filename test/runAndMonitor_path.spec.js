@@ -12,7 +12,7 @@ describe('runAndMonitor path', () => {
     let events = []
     stream$.subscribe(e => events.push(e))
     p.number = 2
-    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: [ 'number' ], val: 2, oldVal: 1 }])
+    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: [ 'number' ] }])
   })
 
   test('root is not subx', () => { // now root must be subx
@@ -23,7 +23,7 @@ describe('runAndMonitor path', () => {
     let events = []
     stream$.subscribe(e => events.push(e))
     p.number = 2
-    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: [ 'child', 'number' ], val: 2, oldVal: 1 }])
+    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: [ 'child', 'number' ] }])
   })
 
   test('TodoMVC save', () => {

@@ -177,8 +177,8 @@ describe('duplicate events', () => {
     props.delete$.subscribe(e => events.push(e))
     delete todo.a.b.c
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { 'path': ['store', 'todos', '1', 'a', 'b', 'c'], 'type': 'DELETE', 'val': { 'd': 'world' } },
-      { 'path': ['todo', 'a', 'b', 'c'], 'type': 'DELETE', 'val': { 'd': 'world' } }
+      { 'path': ['store', 'todos', '1', 'a', 'b', 'c'], 'type': 'DELETE' },
+      { 'path': ['todo', 'a', 'b', 'c'], 'type': 'DELETE' }
     ])
     expect(events[0].id).toBe(events[1].id)
   })

@@ -15,13 +15,11 @@ describe('delete stream', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'DELETE',
-        path: ['a'],
-        val: {}
+        path: ['a']
       },
       {
         type: 'DELETE',
-        path: ['b'],
-        val: {}
+        path: ['b']
       }
     ])
   })
@@ -36,13 +34,11 @@ describe('delete stream', () => {
     expect(R.map(R.dissoc('id'), events)).toEqual([
       {
         type: 'DELETE',
-        path: ['a', 'c'],
-        val: undefined
+        path: ['a', 'c']
       },
       {
         type: 'DELETE',
-        path: ['b', 'd'],
-        val: undefined
+        path: ['b', 'd']
       }
     ])
   })

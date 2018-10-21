@@ -57,42 +57,30 @@ describe('new design', () => {
     expect(R.map(R.dissoc('id'), events1)).toEqual([
       {
         type: 'SET',
-        path: ['a', 'b'],
-        val: {},
-        oldVal: undefined
+        path: ['a', 'b']
       },
       {
         type: 'SET',
-        path: ['a', 'b', 'c'],
-        val: {},
-        oldVal: undefined
+        path: ['a', 'b', 'c']
       },
       {
         type: 'SET',
-        path: ['a', 'b', 'c', 'd'],
-        val: {},
-        oldVal: undefined
+        path: ['a', 'b', 'c', 'd']
       },
       {
         type: 'SET',
-        path: ['a', 'b', 'c', 'd', 'e'],
-        val: {},
-        oldVal: undefined
+        path: ['a', 'b', 'c', 'd', 'e']
       }
     ])
 
     expect(R.map(R.dissoc('id'), events2)).toEqual([
       {
         type: 'SET',
-        path: ['d'],
-        val: {},
-        oldVal: undefined
+        path: ['d']
       },
       {
         type: 'SET',
-        path: ['d', 'e'],
-        val: {},
-        oldVal: undefined
+        path: ['d', 'e']
       }
     ])
   })
@@ -103,11 +91,11 @@ describe('new design', () => {
     p.lastName = 'Liu'
     const firstName$ = p.$.pipe(
       filter(event => event.path[0] === 'firstName'),
-      map(event => event.val), startWith(p.firstName)
+      map(event => R.path(event.path, p)), startWith(p.firstName)
     )
     const lastName$ = p.$.pipe(
       filter(event => event.path[0] === 'lastName'),
-      map(event => event.val),
+      map(event => R.path(event.path, p)),
       startWith(p.lastName)
     )
     const data = []
@@ -153,12 +141,10 @@ describe('new design', () => {
     expect(events.length).toBe(2)
     expect(R.map(R.dissoc('id'), events)).toEqual([{
       type: 'DELETE',
-      path: ['firstName'],
-      val: 'Chuntao'
+      path: ['firstName']
     }, {
       type: 'DELETE',
-      path: ['lastName'],
-      val: 'Liu'
+      path: ['lastName']
     }])
   })
 })
