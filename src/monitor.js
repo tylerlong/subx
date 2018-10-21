@@ -58,7 +58,7 @@ const monitorGets = (subx, gets) => {
     (events.length > 0 && R.startsWith(R.last(events).path, event.path))
       ? R.update(events.length - 1, event, events) : R.append(event, events)
   )([], gets)
-  const uniqGets = R.uniqBy(event => event.path, relevantGets)
+  const uniqGets = R.uniqBy(event => event.path.join('.'), relevantGets)
   const streams = []
   R.forEach(get => {
     const getFilter = matchFilters.get(subx, get)
@@ -72,7 +72,7 @@ const monitorGets = (subx, gets) => {
 }
 
 const monitorHass = (subx, hass) => {
-  const uniqHass = R.uniqBy(has => has.path, hass)
+  const uniqHass = R.uniqBy(has => has.path.join('.'), hass)
   const streams = []
   R.forEach(has => {
     const hasFilter = matchFilters.has(subx, has)
@@ -86,7 +86,7 @@ const monitorHass = (subx, hass) => {
 }
 
 const monitorkeyss = (subx, keyss) => {
-  const uniqKeyss = R.uniqBy(keys => keys.path, keyss)
+  const uniqKeyss = R.uniqBy(keys => keys.path.join('.'), keyss)
   const streams = []
   R.forEach(keys => {
     const keysFilter = matchFilters.keys(subx, keys)

@@ -53,7 +53,7 @@ const handler = {
       case 'endTransaction':
         return (name) => {
           const events = R.pipe(
-            R.reverse, R.uniqBy(event => event.path), R.reverse
+            R.reverse, R.uniqBy(event => event.path.join('.')), R.reverse
           )(target.__cache__)
           delete target.__cache__
           const event = { type: 'TRANSACTION', name, path: [], events, id: uuid() }
