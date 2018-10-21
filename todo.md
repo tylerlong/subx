@@ -12,3 +12,4 @@
 - There seem to be tooooo many GETs when changing an array
 - Change for faster equals/uniq library?
 - Not all events need id
+- removeDuplicateEvents 可能是没必要的。 只要 set 和 get 在出现重复的 event id 的时候统一都取短的那个， 就能解决重复刷新的问题。

@@ -6,7 +6,7 @@ import uuid from 'uuid/v4'
 import { computed, runAndMonitor, autoRun } from './monitor'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$', 'transaction$']
-const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__parents__', '__transactions__', ...EVENT_NAMES]
+const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__parents__', '__cache__', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -48,14 +48,14 @@ const handler = {
           )(receiver)
       case 'startTransaction':
         return () => {
-          target.__transactions__ = []
+          target.__cache__ = []
         }
       case 'endTransaction':
         return (name) => {
           const events = R.pipe(
             R.reverse, R.uniqBy(event => event.path), R.reverse
-          )(target.__transactions__)
-          delete target.__transactions__
+          )(target.__cache__)
+          delete target.__cache__
           const event = { type: 'TRANSACTION', name, path: [], events, id: uuid() }
           if (name) {
             event.name = name
@@ -128,9 +128,9 @@ class SubX {
         newObj.__id__ = uuid()
         newObj.__parents__ = []
         newObj.__emitEvent__ = (name, event) => {
-          if (newObj.__transactions__) {
+          if (newObj.__cache__) {
             if (event.type === 'SET' || event.type === 'DELETE') {
-              newObj.__transactions__.push(event)
+              newObj.__cache__.push(event)
             }
             return
           }
