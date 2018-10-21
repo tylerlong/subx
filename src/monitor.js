@@ -64,7 +64,7 @@ const monitorGets = (subx, gets) => {
     streams.push(merge(subx.stale$, subx.delete$, subx.set$).pipe(filter(event => getFilter(event))))
     streams.push(subx.transaction$.pipe(filter(e => {
       const events = e.events.map(ev => ({ ...ev, path: [...e.path, ...ev.path] }))
-      return events.any(event => getFilter(event))
+      return events.some(event => getFilter(event))
     })))
   }, uniqGets)
   return streams
@@ -78,7 +78,7 @@ const monitorHass = (subx, hass) => {
     streams.push(merge(subx.delete$, subx.set$).pipe(filter(event => hasFilter(event))))
     streams.push(subx.transaction$.pipe(filter(e => {
       const events = e.events.map(ev => ({ ...ev, path: [...e.path, ...ev.path] }))
-      return events.any(event => hasFilter(event))
+      return events.some(event => hasFilter(event))
     })))
   }, uniqHass)
   return streams
@@ -92,7 +92,7 @@ const monitorkeyss = (subx, keyss) => {
     streams.push(merge(subx.delete$, subx.set$).pipe(filter(event => keysFilter(event))))
     streams.push(subx.transaction$.pipe(filter(e => {
       const events = e.events.map(ev => ({ ...ev, path: [...e.path, ...ev.path] }))
-      return events.any(event => keysFilter(event))
+      return events.some(event => keysFilter(event))
     })))
   }, uniqKeyss)
   return streams
