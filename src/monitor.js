@@ -1,7 +1,31 @@
-import { merge, BehaviorSubject, Subscription } from 'rxjs'
+import { merge, BehaviorSubject, Subscription, empty } from 'rxjs'
 import { filter, merge as _merge, publish, distinct, first } from 'rxjs/operators'
 import * as R from 'ramda'
 import uuid from 'uuid/v4'
+
+const matchMatrix = {
+  get: (subx, get) => {
+    const result = {
+      stale: event => R.equals(event.path, get.path)
+    }
+    const val = R.path(get.path, subx)
+    if (val !== undefined) {
+      result.delete = event => R.equals(event.path, get.path)
+    }
+    result.set = event => {
+      if (!R.startsWith(event.path, get.path)) {
+        return false
+      }
+      const parentVal = R.path(R.init(get.path), subx)
+      if (typeof parentVal === 'object' && parentVal !== null) {
+        return val !== parentVal[R.last(get.path)]
+      } else {
+        return false // won't trigger stale when parent cannot have props
+      }
+    }
+    return result
+  }
+}
 
 const monitorGets = (subx, gets) => {
   const relevantGets = R.reduce((events, event) =>
@@ -11,22 +35,17 @@ const monitorGets = (subx, gets) => {
   const uniqGets = R.uniqBy(event => event.path, relevantGets)
   const streams = []
   R.forEach(get => {
-    streams.push(subx.stale$.pipe(filter(event => R.equals(event.path, get.path))))
-    const val = R.path(get.path, subx)
-    if (val !== undefined) {
-      streams.push(subx.delete$.pipe(filter(event => R.equals(event.path, get.path))))
-    }
-    streams.push(subx.set$.pipe(
-      filter(event => R.startsWith(event.path, get.path)),
-      filter(event => {
-        const parentVal = R.path(R.init(get.path), subx)
-        if (typeof parentVal === 'object' && parentVal !== null) {
-          return val !== parentVal[R.last(get.path)]
-        } else {
-          return false // won't trigger stale when parent cannot have props
-        }
+    const getMatrix = matchMatrix.get(subx, get)
+    streams.push(getMatrix.stale ? subx.stale$.pipe(filter(event => getMatrix.stale(event))) : empty())
+    streams.push(getMatrix.delete ? subx.delete$.pipe(filter(event => getMatrix.delete(event))) : empty())
+    streams.push(getMatrix.set ? subx.set$.pipe(filter(event => getMatrix.set(event))) : empty())
+    streams.push(subx.transaction$.pipe(filter(e => {
+      const events = e.events.map(ev => ({ ...ev, path: [...e.path, ...ev.path] }))
+      return events.any(event => {
+        (event.type === 'DELETE' && getMatrix.delete(event)) ||
+        (event.type === 'SET' && getMatrix.set(event))
       })
-    ))
+    })))
   }, uniqGets)
   return streams
 }
