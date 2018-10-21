@@ -117,7 +117,7 @@ describe('SubX computed', () => {
     expect(count).toBe(3)
   })
 
-  test('cache has', () => {
+  test('has cache', () => {
     let count = 0
     const p = SubX.create({
       firstName: 'Tyler',
@@ -129,6 +129,26 @@ describe('SubX computed', () => {
     })
     const f = computed(p, p.fullName)
     expect(f()).toBe('Tyler has last name')
+    expect(f()).toBe('Tyler has last name')
+    expect(count).toBe(1)
+    delete p.lastName
+    expect(f()).toBe('Tyler no last name')
+    expect(f()).toBe('Tyler no last name')
+    expect(count).toBe(2)
+  })
+
+  test('has cache undefined', () => {
+    let count = 0
+    const p = SubX.create({
+      firstName: 'Tyler',
+      lastName: undefined,
+      fullName: function () {
+        count += 1
+        return `${this.firstName} ${'lastName' in this ? 'has last name' : 'no last name'}`
+      }
+    })
+    const f = computed(p, p.fullName)
+    expect(f()).toBe('Tyler has last name') // undefined is his last name
     expect(f()).toBe('Tyler has last name')
     expect(count).toBe(1)
     delete p.lastName
