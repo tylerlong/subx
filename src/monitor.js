@@ -1,7 +1,7 @@
 import { merge, BehaviorSubject, Subscription } from 'rxjs'
 import { filter, publish, distinct, first } from 'rxjs/operators'
 import * as R from 'ramda'
-import uuid from 'uuid/v4'
+import uuid from 'uuid/v1'
 
 const matchFilters = {
   get: (subx, get) => {

@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs'
 import * as R from 'ramda'
 import util from 'util'
-import uuid from 'uuid/v4'
+import uuid from 'uuid/v1'
 
 import { computed, runAndMonitor, autoRun } from './monitor'
 
