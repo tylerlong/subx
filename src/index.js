@@ -6,7 +6,7 @@ import uuid from 'uuid/v4'
 import { computed, runAndMonitor, autoRun } from './monitor'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$', 'transaction$']
-const RESERVED_PROPERTIES = ['$', '__id__', '__emitEvent__', '__parents__', '__transactions__', ...EVENT_NAMES]
+const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__parents__', '__transactions__', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -32,9 +32,6 @@ const handler = {
     return true
   },
   get: (target, prop, receiver) => {
-    if (!R.contains(prop, RESERVED_PROPERTIES)) {
-      target.__emitEvent__('get$', { type: 'GET', path: [prop], id: uuid() })
-    }
     switch (prop) {
       case '__isSubX__':
         return true
@@ -60,7 +57,11 @@ const handler = {
           target.__emitEvent__('transaction$', { type: 'TRANSACTION', path: [], events })
         }
       default:
-        return target[prop]
+        const val = target[prop]
+        if (typeof val !== 'function' && !R.contains(prop, RESERVED_PROPERTIES)) {
+          target.__emitEvent__('get$', { type: 'GET', path: [prop], id: uuid() })
+        }
+        return val
     }
   },
   deleteProperty: (target, prop) => {

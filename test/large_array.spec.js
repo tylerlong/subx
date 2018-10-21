@@ -18,7 +18,6 @@ describe('large array', () => {
     sub.unsubscribe()
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { 'path': ['todos'], 'type': 'GET' },
-      { 'path': ['todos', 'push'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'GET' },
       { 'path': ['todos', '10'], 'type': 'SET' },
       { 'path': ['todos', 'length'], 'type': 'SET' }
@@ -35,7 +34,6 @@ describe('large array', () => {
     sub.unsubscribe()
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { 'path': ['todos'], 'type': 'GET' },
-      { 'path': ['todos', 'unshift'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'GET' },
       { 'path': ['todos', '9'], 'type': 'HAS' },
       { 'path': ['todos', '9'], 'type': 'GET' },
@@ -82,9 +80,7 @@ describe('large array', () => {
     sub.unsubscribe()
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { 'path': ['todos'], 'type': 'GET' },
-      { 'path': ['todos', 'splice'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'GET' },
-      { 'path': ['todos', 'constructor'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'SET' }
     ])
   })
@@ -99,9 +95,7 @@ describe('large array', () => {
     sub.unsubscribe()
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { 'path': ['todos'], 'type': 'GET' },
-      { 'path': ['todos', 'splice'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'GET' },
-      { 'path': ['todos', 'constructor'], 'type': 'GET' },
       { 'path': ['todos', '1'], 'type': 'HAS' },
       { 'path': ['todos', '1'], 'type': 'GET' },
       { 'path': ['todos', '2'], 'type': 'HAS' },
@@ -125,14 +119,12 @@ describe('large array', () => {
       { 'path': ['todos'], 'type': 'GET' },
       { 'path': ['todos', '@@functional/placeholder'], 'type': 'GET' },
       { 'path': ['todos', 'length'], 'type': 'GET' },
-      { 'path': ['todos', 'constructor'], 'type': 'GET' },
       { 'path': ['todos', '0'], 'type': 'HAS' },
       { 'path': ['todos', '0'], 'type': 'GET' },
       { 'path': ['todos', '1'], 'type': 'HAS' },
       { 'path': ['todos', '1'], 'type': 'GET' },
       { 'path': ['todos', '2'], 'type': 'HAS' },
       { 'path': ['todos', '2'], 'type': 'GET' },
-      { 'path': ['todos', '__isSubX__'], 'type': 'GET' },
       { 'path': ['todos'], 'type': 'SET' }
     ])
   })
