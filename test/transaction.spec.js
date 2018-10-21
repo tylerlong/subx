@@ -1,4 +1,6 @@
 /* eslint-env jest */
+import * as R from 'ramda'
+
 import SubX from '../src/index'
 
 describe('transaction', () => {
@@ -24,15 +26,25 @@ describe('transaction', () => {
     p.$.subscribe(e => events.push(e))
     const events2 = []
     p.transaction$.subscribe(e => events2.push(e))
+    const events3 = []
+    p.get$.subscribe(e => events3.push(e))
     p.a.startTransaction()
     p.a.b = 2
     p.a.b = 3
     p.a.b = 4
+    expect(p.a.b).toBe(4) // trigger GET
+    expect(p.a.b).toBe(4) // trigger GET
     expect(events.length).toBe(0)
     expect(events2.length).toBe(0)
     p.a.endTransaction()
     expect(events.length).toBe(0)
     expect(events2.length).toBe(1)
-    // console.log(JSON.stringify(events2, null, 2))
+    expect(events3.length).toBe(7) // GET p.a
+    expect(R.dissoc('events', events2[0])).toEqual({ 'path': ['a'], 'type': 'TRANSACTION' })
+    expect(R.map(R.dissoc('id'), events2[0].events)).toEqual([
+      { 'type': 'SET', 'path': ['b'] },
+      { 'type': 'SET', 'path': ['b'] },
+      { 'type': 'SET', 'path': ['b'] }
+    ])
   })
 })

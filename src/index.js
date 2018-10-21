@@ -112,7 +112,9 @@ class SubX {
         newObj.__parents__ = []
         newObj.__emitEvent__ = (name, event) => {
           if (newObj.__transactions__) {
-            newObj.__transactions__.push(event)
+            if (event.type === 'SET' || event.type === 'DELETE') {
+              newObj.__transactions__.push(event)
+            }
             return
           }
           if (newObj[name].observers.length > 0) {
