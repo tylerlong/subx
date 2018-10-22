@@ -1,6 +1,5 @@
-// import hyperid from 'hyperid'
-
-// const uuid = hyperid()
+// It's fake uuid, and it is sufficient for this project
+// There is no need for real uuid because it is slow to generate
 
 let id = new Date().valueOf()
 const uuid = () => {
