@@ -8,9 +8,14 @@
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
 - Can we replace array with completely new arr instead? (instead of in-place unshift and splice ...etc)
+    - it might be even slower
 - There seem to be tooooo many GETs when changing an array
+    - issue resolved? especially we are now using transaction
 - Change for faster equals/uniq library?
+    - fastequal
+    - benchmark first
 - Not all events need id
+    - but now id is really cheap
 - removeDuplicateEvents 可能是没必要的。 只要 set 和 get 在出现重复的 event id 的时候统一都取短的那个， 就能解决重复刷新的问题。
 - Does transaction events property needs to include stale$ in addition to set$ and delete$.
     - I guess yes, when we allow user to do freeform transaction
