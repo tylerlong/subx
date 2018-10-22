@@ -42,6 +42,8 @@ describe('transaction', () => {
     expect(events3.length).toBe(7) // GET p.a
     expect(R.pipe(R.dissoc('events'), R.dissoc('id'))(events2[0])).toEqual({ 'path': ['a'], 'type': 'TRANSACTION' })
     expect(R.map(R.dissoc('id'), events2[0].events)).toEqual([
+      { 'type': 'SET', 'path': ['b'] },
+      { 'type': 'SET', 'path': ['b'] },
       { 'type': 'SET', 'path': ['b'] }
     ])
   })
@@ -59,7 +61,11 @@ describe('transaction', () => {
     expect(p.a).toBeUndefined()
     p.endTransaction()
     expect(R.map(R.pipe(R.dissoc('events'), R.dissoc('id')), events)).toEqual([{ type: 'TRANSACTION', path: [] }])
-    expect(R.map(R.dissoc('id'), events[0].events)).toEqual([ { type: 'DELETE', path: [ 'a' ] } ])
+    expect(R.map(R.dissoc('id'), events[0].events)).toEqual([
+      { type: 'SET', path: [ 'a' ] },
+      { type: 'SET', path: [ 'a' ] },
+      { type: 'DELETE', path: [ 'a' ] }
+    ])
 
     events = []
     p.startTransaction()
@@ -71,6 +77,10 @@ describe('transaction', () => {
     expect(p.a).toBe(2)
     p.endTransaction()
     expect(R.map(R.pipe(R.dissoc('events'), R.dissoc('id')), events)).toEqual([{ type: 'TRANSACTION', path: [] }])
-    expect(R.map(R.dissoc('id'), events[0].events)).toEqual([ { type: 'SET', path: [ 'a' ] } ])
+    expect(R.map(R.dissoc('id'), events[0].events)).toEqual([
+      { type: 'SET', path: [ 'a' ] },
+      { type: 'DELETE', path: [ 'a' ] },
+      { type: 'SET', path: [ 'a' ] }
+    ])
   })
 })

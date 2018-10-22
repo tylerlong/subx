@@ -49,11 +49,8 @@ const handler = {
         return () => { target.__cache__ = [] }
       case 'endTransaction':
         return name => {
-          const events = R.pipe(
-            R.reverse, R.uniqBy(event => event.path.join('.')), R.reverse
-          )(target.__cache__)
+          const event = { type: 'TRANSACTION', name, path: [], events: target.__cache__, id: uuid() }
           delete target.__cache__
-          const event = { type: 'TRANSACTION', name, path: [], events, id: uuid() }
           if (name) {
             event.name = name
           }
