@@ -98,14 +98,12 @@ const handler = {
     return true
   },
   has: (target, prop) => {
-    const val = prop in target
     target.__emitEvent__('has$', { type: 'HAS', path: [prop], id: uuid() })
-    return val
+    return prop in target
   },
   ownKeys: target => {
-    const val = R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
     target.__emitEvent__('keys$', { type: 'KEYS', path: [], id: uuid() })
-    return val
+    return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target))
   },
   setPrototypeOf: (target, prototype) => {
     return false // disallow setPrototypeOf
