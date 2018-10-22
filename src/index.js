@@ -22,10 +22,9 @@ const handler = {
     const proxy = val.__isSubX__ ? val : SubX.create(val)
     target[prop] = proxy
 
-    proxy.__parents__.push([target, prop])
+    proxy.__parents__[target.__id__] = [target, prop]
     if (oldVal && oldVal.__isSubX__) {
-      const index = R.findIndex(parent => parent[0].__id__ === target.__id__, oldVal.__parents__)
-      oldVal.__parents__.splice(index, 1)
+      delete oldVal.__parents__[target.__id__]
     }
 
     target.__emitEvent__('set$', { type: 'SET', path: [prop], id: uuid() })
@@ -97,8 +96,7 @@ const handler = {
     delete target[prop]
 
     if (val && val.__isSubX__) {
-      const index = R.findIndex(parent => parent[0].__id__ === target.__id__, val.__parents__)
-      val.__parents__.splice(index, 1)
+      delete val.__parents__[target.__id__]
     }
 
     target.__emitEvent__('delete$', { type: 'DELETE', path: [prop], id: uuid() })
@@ -134,7 +132,7 @@ class SubX {
         newObj.$ = newObj.set$
 
         newObj.__id__ = uuid()
-        newObj.__parents__ = []
+        newObj.__parents__ = {}
         newObj.__emitEvent__ = (name, event) => {
           if (newObj.__cache__) {
             if (event.type === 'SET' || event.type === 'DELETE') {
@@ -145,7 +143,10 @@ class SubX {
           if (newObj[name].observers.length > 0) {
             newObj[name].next(event)
           }
-          newObj.__parents__.forEach(([parent, prop]) => parent.__emitEvent__(name, R.assoc('path', [prop, ...event.path], event)))
+          Object.keys(newObj.__parents__).forEach(k => {
+            const [parent, prop] = newObj.__parents__[k]
+            parent.__emitEvent__(name, R.assoc('path', [prop, ...event.path], event))
+          })
         }
 
         const proxy = new Proxy(newObj, handler)

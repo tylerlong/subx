@@ -7,8 +7,8 @@ const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$
 const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__parents__', '__cache__', ...EVENT_NAMES]
 const set = new Set(RESERVED_PROPERTIES)
 const indexOf = i => RESERVED_PROPERTIES.indexOf(i) !== -1
-const suite3 = new Benchmark.Suite()
-suite3
+const suite = new Benchmark.Suite()
+suite
   .add('R.contains', () => {
     for (let i = 0; i < 100000; i++) {
       R.contains(uuid(), RESERVED_PROPERTIES)
@@ -36,3 +36,11 @@ suite3
     console.log('Fastest is ' + this.filter('fastest').map('name'))
   })
   .run()
+
+/*
+R.contains x 372 ops/sec ±1.16% (79 runs sampled)
+Set x 484 ops/sec ±0.79% (87 runs sampled)
+indexOf x 524 ops/sec ±0.79% (89 runs sampled)
+includes x 410 ops/sec ±0.39% (92 runs sampled)
+Fastest is indexOf
+*/
