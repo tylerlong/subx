@@ -10,7 +10,7 @@ const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__pa
 
 const handler = {
   set: (target, prop, val, receiver) => {
-    if (R.contains(prop, RESERVED_PROPERTIES)) {
+    if (RESERVED_PROPERTIES.indexOf(prop) !== -1) {
       prop = `_${prop}` // prefix reserved keywords with underscore
     }
     const oldVal = target[prop]
@@ -43,7 +43,7 @@ const handler = {
         return () => Array.isArray(target) ? receiver
           : R.pipe(
             R.keys,
-            R.reject(k => R.contains(k, RESERVED_PROPERTIES)),
+            R.reject(k => RESERVED_PROPERTIES.indexOf(k) !== -1),
             R.reduce((obj, k) => Object.defineProperty(obj, k, Object.getOwnPropertyDescriptor(receiver, k)))({})
           )(receiver)
       case 'startTransaction':
@@ -83,14 +83,14 @@ const handler = {
         return target[prop]
       default:
         const val = target[prop]
-        if (typeof val !== 'function' && !R.contains(prop, RESERVED_PROPERTIES)) {
+        if (typeof val !== 'function' && RESERVED_PROPERTIES.indexOf(prop) === -1) {
           target.__emitEvent__('get$', { type: 'GET', path: [prop], id: uuid() })
         }
         return val
     }
   },
   deleteProperty: (target, prop) => {
-    if (R.contains(prop, RESERVED_PROPERTIES)) {
+    if (RESERVED_PROPERTIES.indexOf(prop) !== -1) {
       return false // disallow deletion of reserved keywords
     }
     const val = target[prop]
