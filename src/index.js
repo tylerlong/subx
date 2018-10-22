@@ -46,11 +46,9 @@ const handler = {
             R.reduce((obj, k) => Object.defineProperty(obj, k, Object.getOwnPropertyDescriptor(receiver, k)))({})
           )(receiver)
       case 'startTransaction':
-        return () => {
-          target.__cache__ = []
-        }
+        return () => { target.__cache__ = [] }
       case 'endTransaction':
-        return (name) => {
+        return name => {
           const events = R.pipe(
             R.reverse, R.uniqBy(event => event.path.join('.')), R.reverse
           )(target.__cache__)
