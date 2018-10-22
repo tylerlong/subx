@@ -46,8 +46,8 @@ person.lastName = 'Long'
 #### Console output
 
 ```
-{ type: 'SET', path: ['firstName'], val: 'Tyler', oldVal: undefined, id: 'uuid-1' }
-{ type: 'SET', path: ['lastName'], val: 'Long', oldVal: undefined, id: 'uuid-2' }
+{ type: 'SET', path: ['firstName'], id: 'uuid-1' }
+{ type: 'SET', path: ['lastName'], id: 'uuid-2' }
 ```
 
 In the sample code above, `person` is a SubX object. `person.$` is a stream of events about changes to `person`'s properties.
