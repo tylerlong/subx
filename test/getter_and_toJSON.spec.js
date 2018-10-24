@@ -77,7 +77,7 @@ describe('getter & toJSON', () => {
       }
     })
     const json = JSON.stringify(p, null, 2)
-    expect(json).toContain('fullName')
+    expect(json).not.toContain('fullName') // no longer serialize getter to JSON
     expect(json).not.toContain('fullName2')
   })
 

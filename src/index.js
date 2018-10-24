@@ -35,7 +35,13 @@ const handler = {
       case '__isSubX__':
         return true
       case 'toJSON':
-        return () => Array.isArray(target) ? receiver : R.reduce((t, k) => R.dissoc(k, t), receiver, RESERVED_PROPERTIES)
+        return () => Array.isArray(target) ? receiver
+          : R.pipe(
+            R.keys,
+            R.filter(k => RESERVED_PROPERTIES.indexOf(k) === -1 && 'value' in Object.getOwnPropertyDescriptor(receiver, k)),
+            R.map(k => [k, receiver[k]]),
+            R.fromPairs
+          )(receiver)
       case 'toString':
         return () => '[object SubX]'
       case util.inspect.custom:
