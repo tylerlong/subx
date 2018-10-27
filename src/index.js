@@ -22,9 +22,9 @@ const handler = {
     const proxy = val.__isSubX__ ? val : SubX.create(val)
     target[prop] = proxy
 
-    proxy.__parents__[target.__id__] = [target, prop]
+    proxy.__parents__[target.__id__ + ':' + prop] = [target, prop]
     if (oldVal && oldVal.__isSubX__) {
-      delete oldVal.__parents__[target.__id__]
+      delete oldVal.__parents__[target.__id__ + ':' + prop]
     }
 
     target.__emitEvent__('set$', { type: 'SET', path: [prop], id: uuid() })
@@ -97,7 +97,7 @@ const handler = {
     delete target[prop]
 
     if (val && val.__isSubX__) {
-      delete val.__parents__[target.__id__]
+      delete val.__parents__[target.__id__ + ':' + prop]
     }
 
     target.__emitEvent__('delete$', { type: 'DELETE', path: [prop], id: uuid() })
