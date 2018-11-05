@@ -38,7 +38,10 @@ const handler = {
         return () => Array.isArray(target) ? receiver
           : R.pipe(
             R.keys,
-            R.filter(k => RESERVED_PROPERTIES.indexOf(k) === -1 && 'value' in Object.getOwnPropertyDescriptor(receiver, k)),
+            R.filter(k => RESERVED_PROPERTIES.indexOf(k) === -1 &&
+              'value' in Object.getOwnPropertyDescriptor(receiver, k) &&
+              typeof receiver[k] !== 'function'
+            ),
             R.map(k => [k, receiver[k]]),
             R.fromPairs
           )(receiver)
