@@ -24,10 +24,10 @@
     "rxjs": "^6.5.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.0",
-    "@babel/preset-env": "^7.5.2",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
-    "@babel/register": "^7.4.4",
+    "@babel/register": "^7.5.5",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^24.8.0",
     "benchmark": "^2.1.4",
@@ -35,10 +35,10 @@
     "jest": "^24.8.0",
     "react": "^16.8.6",
     "react-test-renderer": "^16.8.6",
-    "standard": "^12.0.1",
+    "standard": "^13.0.2",
     "timeout-as-promise": "^1.0.0",
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.5",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6",
     "yarn-upgrade-all": "^0.5.0"
   },
   "files": [
@@ -47,7 +47,9 @@
     "yarn.lock"
   ],
   "jest": {
-    "setupFilesAfterEnv": ["./test/setup.js"]
+    "setupFilesAfterEnv": [
+      "./test/setup.js"
+    ]
   },
   "yarn-upgrade-all": {
     "ignore": [
