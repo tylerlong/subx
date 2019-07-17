@@ -47,8 +47,8 @@ describe('array', () => {
       { type: 'TRANSACTION', name: 'push', path: []
       })
     expect(R.map(R.dissoc('id'), events22[0].events)).toEqual([
-      { 'path': ['3'], 'type': 'SET' },
-      { 'path': ['length'], 'type': 'SET' }
+      { path: ['3'], type: 'SET' },
+      { path: ['length'], type: 'SET' }
     ])
   })
   test('assign', () => {
@@ -129,8 +129,8 @@ describe('array', () => {
     expect(events22.length).toBe(1)
     expect(R.pipe(R.dissoc('events'), R.dissoc('id'))(events22[0])).toEqual({ type: 'TRANSACTION', name: 'push', path: ['b', 'a'] })
     expect(R.map(R.dissoc('id'), events22[0].events)).toEqual([
-      { 'path': ['3'], 'type': 'SET' },
-      { 'path': ['length'], 'type': 'SET' }
+      { path: ['3'], type: 'SET' },
+      { path: ['length'], type: 'SET' }
     ])
 
     // assign

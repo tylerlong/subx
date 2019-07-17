@@ -9,10 +9,10 @@ describe('runAndMonitor path', () => {
       number: 1
     })
     const stream$ = SubX.runAndMonitor(p, () => p.number).stream$
-    let events = []
+    const events = []
     stream$.subscribe(e => events.push(e))
     p.number = 2
-    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: [ 'number' ] }])
+    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: ['number'] }])
   })
 
   test('root is not subx', () => { // now root must be subx
@@ -20,10 +20,10 @@ describe('runAndMonitor path', () => {
       number: 1
     })
     const stream$ = SubX.runAndMonitor(SubX.create({ child: p }), () => p.number).stream$
-    let events = []
+    const events = []
     stream$.subscribe(e => events.push(e))
     p.number = 2
-    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: [ 'child', 'number' ] }])
+    expect(R.map(R.dissoc('id'), events)).toEqual([{ type: 'SET', path: ['child', 'number'] }])
   })
 
   test('TodoMVC save', () => {
@@ -40,12 +40,12 @@ describe('runAndMonitor path', () => {
     store.todos.push({ title: '222', completed: false })
     expect(events.length).toBe(1)
     expect(R.pipe(R.dissoc('id'), R.dissocPath(['events', 0, 'id']), R.dissocPath(['events', 1, 'id']))(events[0])).toEqual({
-      'events': [
-        { 'path': ['1'], 'type': 'SET' },
-        { 'path': ['length'], 'type': 'SET' }],
-      'name': 'push',
-      'path': ['todos'],
-      'type': 'TRANSACTION'
+      events: [
+        { path: ['1'], type: 'SET' },
+        { path: ['length'], type: 'SET' }],
+      name: 'push',
+      path: ['todos'],
+      type: 'TRANSACTION'
     })
   })
 

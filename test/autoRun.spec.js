@@ -85,7 +85,7 @@ describe('autoRun', () => {
   test('operators 3', () => {
     const p = SubX.create({ number: 1 })
     let count = 0
-    let stream$ = SubX.autoRun(p, () => {
+    const stream$ = SubX.autoRun(p, () => {
       count += 1
       return p.number * 10
     }, filter(e => p.number % 2 === 0))

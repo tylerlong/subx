@@ -76,6 +76,6 @@ describe('array splice', () => {
     const events = []
     store.get$.subscribe(event => events.push(event))
     expect(store.todos.map(todo => todo)).toBeDefined()
-    expect(R.any(event => R.equals(R.dissoc('id', event), { type: 'GET', path: [ 'todos', 'length' ] }), events)).toBeTruthy()
+    expect(R.any(event => R.equals(R.dissoc('id', event), { type: 'GET', path: ['todos', 'length'] }), events)).toBeTruthy()
   })
 })

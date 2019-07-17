@@ -30,10 +30,10 @@ describe('duplicate events', () => {
     expect(todo.title).toBe('222')
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'GET',
-        path: [ 'store', 'todos', '1', 'title' ]
+        path: ['store', 'todos', '1', 'title']
       },
       { type: 'GET',
-        path: [ 'todo', 'title' ]
+        path: ['todo', 'title']
       }
     ])
     expect(events[0].id).toBe(events[1].id)
@@ -42,14 +42,14 @@ describe('duplicate events', () => {
     todo.a = { b: { c: { d: 'hello' } } }
     expect(todo.a.b.c.d).toBe('hello')
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { 'path': ['store', 'todos', '1', 'a'], 'type': 'GET' },
-      { 'path': ['todo', 'a'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1', 'a', 'b'], 'type': 'GET' },
-      { 'path': ['todo', 'a', 'b'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1', 'a', 'b', 'c'], 'type': 'GET' },
-      { 'path': ['todo', 'a', 'b', 'c'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1', 'a', 'b', 'c', 'd'], 'type': 'GET' },
-      { 'path': ['todo', 'a', 'b', 'c', 'd'], 'type': 'GET' }
+      { path: ['store', 'todos', '1', 'a'], type: 'GET' },
+      { path: ['todo', 'a'], type: 'GET' },
+      { path: ['store', 'todos', '1', 'a', 'b'], type: 'GET' },
+      { path: ['todo', 'a', 'b'], type: 'GET' },
+      { path: ['store', 'todos', '1', 'a', 'b', 'c'], type: 'GET' },
+      { path: ['todo', 'a', 'b', 'c'], type: 'GET' },
+      { path: ['store', 'todos', '1', 'a', 'b', 'c', 'd'], type: 'GET' },
+      { path: ['todo', 'a', 'b', 'c', 'd'], type: 'GET' }
     ])
     expect(events[0].id).toBe(events[1].id)
     expect(events[2].id).toBe(events[3].id)
@@ -59,16 +59,16 @@ describe('duplicate events', () => {
     events = []
     expect(store.todos[1].a.b.c.d).toBe('hello')
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { 'path': ['store', 'todos'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1', 'a'], 'type': 'GET' },
-      { 'path': ['todo', 'a'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1', 'a', 'b'], 'type': 'GET' },
-      { 'path': ['todo', 'a', 'b'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1', 'a', 'b', 'c'], 'type': 'GET' },
-      { 'path': ['todo', 'a', 'b', 'c'], 'type': 'GET' },
-      { 'path': ['store', 'todos', '1', 'a', 'b', 'c', 'd'], 'type': 'GET' },
-      { 'path': ['todo', 'a', 'b', 'c', 'd'], 'type': 'GET' }
+      { path: ['store', 'todos'], type: 'GET' },
+      { path: ['store', 'todos', '1'], type: 'GET' },
+      { path: ['store', 'todos', '1', 'a'], type: 'GET' },
+      { path: ['todo', 'a'], type: 'GET' },
+      { path: ['store', 'todos', '1', 'a', 'b'], type: 'GET' },
+      { path: ['todo', 'a', 'b'], type: 'GET' },
+      { path: ['store', 'todos', '1', 'a', 'b', 'c'], type: 'GET' },
+      { path: ['todo', 'a', 'b', 'c'], type: 'GET' },
+      { path: ['store', 'todos', '1', 'a', 'b', 'c', 'd'], type: 'GET' },
+      { path: ['todo', 'a', 'b', 'c', 'd'], type: 'GET' }
     ])
   })
 
@@ -91,19 +91,19 @@ describe('duplicate events', () => {
     })
     const todo = store.todos[1]
     const props = SubX.create({ store, todo })
-    let events = []
+    const events = []
     props.get$.subscribe(e => events.push(e))
     todo.a = { b: { c: { d: 'hello' } } }
     expect(todo.a.b.c.d).toBe('hello')
     expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
       { type: 'GET',
-        path: [ 'todo', 'a' ] },
+        path: ['todo', 'a'] },
       { type: 'GET',
-        path: [ 'todo', 'a', 'b' ] },
+        path: ['todo', 'a', 'b'] },
       { type: 'GET',
-        path: [ 'todo', 'a', 'b', 'c' ] },
+        path: ['todo', 'a', 'b', 'c'] },
       { type: 'GET',
-        path: [ 'todo', 'a', 'b', 'c', 'd' ] }
+        path: ['todo', 'a', 'b', 'c', 'd'] }
     ])
   })
 
@@ -126,28 +126,28 @@ describe('duplicate events', () => {
     })
     const todo = store.todos[1]
     const props = SubX.create({ store, todo })
-    let events = []
+    const events = []
     props.get$.subscribe(e => events.push(e))
     todo.a = { b: { c: { d: 'hello' } } }
     expect(store.todos[1].a.b.c.d).toBe('hello')
     expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
       { type: 'GET',
-        path: [ 'store', 'todos' ]
+        path: ['store', 'todos']
       },
       { type: 'GET',
-        path: [ 'store', 'todos', '1' ]
+        path: ['store', 'todos', '1']
       },
       { type: 'GET',
-        path: [ 'store', 'todos', '1', 'a' ]
+        path: ['store', 'todos', '1', 'a']
       },
       { type: 'GET',
-        path: [ 'store', 'todos', '1', 'a', 'b' ]
+        path: ['store', 'todos', '1', 'a', 'b']
       },
       { type: 'GET',
-        path: [ 'store', 'todos', '1', 'a', 'b', 'c' ]
+        path: ['store', 'todos', '1', 'a', 'b', 'c']
       },
       { type: 'GET',
-        path: [ 'store', 'todos', '1', 'a', 'b', 'c', 'd' ]
+        path: ['store', 'todos', '1', 'a', 'b', 'c', 'd']
       }
     ])
   })
@@ -177,8 +177,8 @@ describe('duplicate events', () => {
     props.delete$.subscribe(e => events.push(e))
     delete todo.a.b.c
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { 'path': ['store', 'todos', '1', 'a', 'b', 'c'], 'type': 'DELETE' },
-      { 'path': ['todo', 'a', 'b', 'c'], 'type': 'DELETE' }
+      { path: ['store', 'todos', '1', 'a', 'b', 'c'], type: 'DELETE' },
+      { path: ['todo', 'a', 'b', 'c'], type: 'DELETE' }
     ])
     expect(events[0].id).toBe(events[1].id)
   })
@@ -209,12 +209,12 @@ describe('duplicate events', () => {
     expect(store.todos[1].completed).toBe(false)
 
     expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
-      { 'path': ['zzz', 'todos'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'completed'], 'type': 'GET' }
+      { path: ['zzz', 'todos'], type: 'GET' },
+      { path: ['zzz', 'todos', '1'], type: 'GET' },
+      { path: ['zzz', 'todos', '1', 'title'], type: 'GET' },
+      { path: ['zzz', 'todos'], type: 'GET' },
+      { path: ['zzz', 'todos', '1'], type: 'GET' },
+      { path: ['zzz', 'todos', '1', 'completed'], type: 'GET' }
     ])
   })
 
@@ -246,11 +246,11 @@ describe('duplicate events', () => {
     expect(todo2.title).toBe('222')
 
     expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
-      { 'path': ['zzz', 'todos'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1'], 'type': 'GET' },
-      { 'path': ['zzz', 'todos', '1', 'title'], 'type': 'GET' },
-      { 'path': ['todo', 'completed'], 'type': 'GET' },
-      { 'path': ['todo', 'title'], 'type': 'GET' }
+      { path: ['zzz', 'todos'], type: 'GET' },
+      { path: ['zzz', 'todos', '1'], type: 'GET' },
+      { path: ['zzz', 'todos', '1', 'title'], type: 'GET' },
+      { path: ['todo', 'completed'], type: 'GET' },
+      { path: ['todo', 'title'], type: 'GET' }
     ])
   })
 
@@ -281,9 +281,9 @@ describe('duplicate events', () => {
     expect(todo.title).toBe('222')
 
     expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
-      { 'path': ['todo', 'title'], 'type': 'GET' },
-      { 'path': ['todo', 'completed'], 'type': 'GET' },
-      { 'path': ['todo', 'title'], 'type': 'GET' }
+      { path: ['todo', 'title'], type: 'GET' },
+      { path: ['todo', 'completed'], type: 'GET' },
+      { path: ['todo', 'title'], type: 'GET' }
     ])
   })
 })

@@ -11,7 +11,7 @@ describe('Symbol', () => {
     const events = []
     p.$.subscribe(e => events.push(e))
     p[a] = 'world'
-    expect(R.map(R.dissoc('id'))(events)).toEqual([{ type: 'SET', path: [ a ] }])
+    expect(R.map(R.dissoc('id'))(events)).toEqual([{ type: 'SET', path: [a] }])
     expect(a).toBe(a)
     expect(a).toEqual(a)
   })

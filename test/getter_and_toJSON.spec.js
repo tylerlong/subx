@@ -83,7 +83,7 @@ describe('getter & toJSON', () => {
 
   test('array json', () => {
     const o = {
-      todos: [ {
+      todos: [{
         title: '111',
         completed: false,
         editing: false

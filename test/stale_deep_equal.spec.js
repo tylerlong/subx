@@ -33,7 +33,7 @@ describe('stale deep equal', () => {
     expect(R.map(R.pipe(R.dissoc('id')))(events)).toEqual([
       {
         type: 'STALE',
-        path: [ 'visibleTodos' ],
+        path: ['visibleTodos'],
         cache: [
           { completed: false },
           { completed: false },
@@ -42,7 +42,7 @@ describe('stale deep equal', () => {
       },
       {
         type: 'STALE',
-        path: [ 'render' ],
+        path: ['render'],
         cache: [
           { completed: false },
           { completed: false },
@@ -64,11 +64,11 @@ describe('stale deep equal', () => {
     expect(p.render.length).toBe(1)
     expect(R.map(R.pipe(R.dissoc('id')))(events)).toEqual([
       { type: 'STALE',
-        path: [ 'visibleTodos' ],
+        path: ['visibleTodos'],
         cache: []
       },
       { type: 'STALE',
-        path: [ 'render' ],
+        path: ['render'],
         cache: []
       }
     ])

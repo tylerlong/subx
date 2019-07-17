@@ -14,7 +14,7 @@ describe('index', () => {
     expect(model.b).toBe('world')
 
     let count = 0
-    let events = []
+    const events = []
     model.$.subscribe(val => {
       count += 1
       events.push(val)

@@ -17,13 +17,13 @@ describe('double dollar', () => {
 
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET',
-        path: [ 'position', 'x' ] },
+        path: ['position', 'x'] },
       { type: 'SET',
-        path: [ 'position', 'y' ] },
+        path: ['position', 'y'] },
       { type: 'SET',
-        path: [ 'size', 'width' ] },
+        path: ['size', 'width'] },
       { type: 'SET',
-        path: [ 'size', 'height' ] }
+        path: ['size', 'height'] }
     ])
   })
 
@@ -44,15 +44,15 @@ describe('double dollar', () => {
 
     expect(R.map(R.dissoc('id'), events1)).toEqual([
       { type: 'SET',
-        path: [ 'x' ] },
+        path: ['x'] },
       { type: 'SET',
-        path: [ 'y' ] }
+        path: ['y'] }
     ])
     expect(R.map(R.dissoc('id'), events2)).toEqual([
       { type: 'SET',
-        path: [ 'width' ] },
+        path: ['width'] },
       { type: 'SET',
-        path: [ 'height' ] }
+        path: ['height'] }
     ])
   })
 })
