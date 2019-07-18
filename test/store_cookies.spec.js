@@ -58,6 +58,36 @@ describe('Symbol', () => {
     expect(count).toBe(4)
   })
 
+  test('complex value console.log 2', () => {
+    const store = SubX.create({ token: { access_token: 1 } })
+    let count = 0
+    SubX.autoRun(store, () => {
+      count += 1
+      console.log({ token: store.token })
+      console.log({ token: store.token })
+    })
+    store.token = 2
+    store.token = 3
+    delete store.token
+
+    expect(count).toBe(4)
+  })
+
+  test('complex value console.log 3', () => {
+    const store = SubX.create({ token: { access_token: 1 } })
+    let count = 0
+    SubX.autoRun(store, () => {
+      count += 1
+      console.log({ token: store.token })
+      console.log(JSON.stringify({ token: store.token })) // this line causes test to fail
+    })
+    store.token = 2
+    store.token = 3
+    delete store.token
+
+    expect(count).toBe(4)
+  })
+
   test('simple get', () => {
     const store = SubX.create({ token: { access_token: 1 } })
     let count = 0
