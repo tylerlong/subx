@@ -54,11 +54,7 @@ const matchFilters = {
 }
 
 const monitorGets = (subx, gets) => {
-  const relevantGets = R.reduce((events, event) =>
-    (events.length > 0 && R.startsWith(R.last(events).path, event.path))
-      ? R.update(events.length - 1, event, events) : R.append(event, events)
-  )([], gets)
-  const uniqGets = R.uniqBy(event => event.path.join('.'), relevantGets)
+  const uniqGets = R.uniqBy(event => event.path.join('.'), gets)
   const streams = []
   R.forEach(get => {
     const getFilter = matchFilters.get(subx, get)

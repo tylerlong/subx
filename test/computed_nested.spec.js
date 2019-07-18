@@ -37,18 +37,18 @@ describe('computed nested', () => {
     }
     expect(f()).toBe(`3 2`)
     expect(f()).toBe(`3 2`)
-    expect(count).toBe(2)
+    expect(count).toBe(3) // it's cool if we could keep this as 2, it's OK if we cannot
     p.d.e.f.h = 2
     expect(f()).toBe(`3 2`)
     expect(f()).toBe(`3 2`)
-    expect(count).toBe(2)
+    expect(count).toBe(3)
     p.d.e.f.h = 4
     expect(f()).toBe(`3 4`)
     expect(f()).toBe(`3 4`)
-    expect(count).toBe(3)
+    expect(count).toBe(4)
     delete p.d.e.f.g
     expect(f()).toBe(`undefined 4`)
     expect(f()).toBe(`undefined 4`)
-    expect(count).toBe(4)
+    expect(count).toBe(5)
   })
 })
