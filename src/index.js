@@ -6,7 +6,7 @@ import { computed, runAndMonitor, autoRun } from './monitor'
 import uuid from './uuid'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$', 'transaction$']
-const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__parents__', '__cache__', ...EVENT_NAMES]
+const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__parents__', '__cache__', '@@functional/placeholder', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {

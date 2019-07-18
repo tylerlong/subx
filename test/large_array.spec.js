@@ -108,7 +108,6 @@ describe('large array', () => {
     expect(p.todos).toEqual([0, 2])
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { path: ['todos'], type: 'GET' },
-      { path: ['todos', '@@functional/placeholder'], type: 'GET' },
       { path: ['todos', 'length'], type: 'GET' },
       { path: ['todos', '0'], type: 'HAS' },
       { path: ['todos', '0'], type: 'GET' },
