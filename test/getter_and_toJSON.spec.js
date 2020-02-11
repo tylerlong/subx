@@ -34,10 +34,12 @@ describe('getter & toJSON', () => {
         }
       }
     }
-    expect(util.inspect(o)).toEqual(`{ firstName: 'Tyler',
+    expect(util.inspect(o)).toEqual(`{
+  firstName: 'Tyler',
   lastName: 'Liu',
   fullName: [Getter],
-  nested: { a: { b: 'hello world' } } }`
+  nested: { a: { b: 'hello world' } }
+}`
     )
     expect(count).toBe(0)
   })
