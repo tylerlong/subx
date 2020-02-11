@@ -51,7 +51,7 @@ describe('index', () => {
       events.push(val)
     })
     model.a = '222'
-    model['a'] = '333'
+    model.a = '333'
     expect(R.map(R.dissoc('id'), events)).toEqual([
       { type: 'SET', path: ['a'] },
       { type: 'SET', path: ['a'] }

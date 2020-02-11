@@ -44,8 +44,7 @@ describe('array', () => {
     expect(a).toEqual([1, 2, 3, 4])
     expect(events22.length).toBe(1)
     expect(R.pipe(R.dissoc('events'), R.dissoc('id'))(events22[0])).toEqual(
-      { type: 'TRANSACTION', name: 'push', path: []
-      })
+      { type: 'TRANSACTION', name: 'push', path: [] })
     expect(R.map(R.dissoc('id'), events22[0].events)).toEqual([
       { path: ['3'], type: 'SET' },
       { path: ['length'], type: 'SET' }

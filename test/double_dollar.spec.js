@@ -16,14 +16,22 @@ describe('double dollar', () => {
     rectangle.size.height = 100
 
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { type: 'SET',
-        path: ['position', 'x'] },
-      { type: 'SET',
-        path: ['position', 'y'] },
-      { type: 'SET',
-        path: ['size', 'width'] },
-      { type: 'SET',
-        path: ['size', 'height'] }
+      {
+        type: 'SET',
+        path: ['position', 'x']
+      },
+      {
+        type: 'SET',
+        path: ['position', 'y']
+      },
+      {
+        type: 'SET',
+        path: ['size', 'width']
+      },
+      {
+        type: 'SET',
+        path: ['size', 'height']
+      }
     ])
   })
 
@@ -43,16 +51,24 @@ describe('double dollar', () => {
     rectangle.size.height = 100
 
     expect(R.map(R.dissoc('id'), events1)).toEqual([
-      { type: 'SET',
-        path: ['x'] },
-      { type: 'SET',
-        path: ['y'] }
+      {
+        type: 'SET',
+        path: ['x']
+      },
+      {
+        type: 'SET',
+        path: ['y']
+      }
     ])
     expect(R.map(R.dissoc('id'), events2)).toEqual([
-      { type: 'SET',
-        path: ['width'] },
-      { type: 'SET',
-        path: ['height'] }
+      {
+        type: 'SET',
+        path: ['width']
+      },
+      {
+        type: 'SET',
+        path: ['height']
+      }
     ])
   })
 })

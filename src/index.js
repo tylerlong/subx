@@ -84,12 +84,13 @@ const handler = {
           return f
         }
         return target[prop]
-      default:
+      default: {
         const val = target[prop]
         if (typeof val !== 'function' && RESERVED_PROPERTIES.indexOf(prop) === -1) {
           target.__emitEvent__('get$', { type: 'GET', path: [prop], id: uuid() })
         }
         return val
+      }
     }
   },
   deleteProperty: (target, prop) => {

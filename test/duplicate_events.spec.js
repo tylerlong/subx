@@ -29,10 +29,12 @@ describe('duplicate events', () => {
     props.get$.subscribe(e => events.push(e))
     expect(todo.title).toBe('222')
     expect(R.map(R.dissoc('id'), events)).toEqual([
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['store', 'todos', '1', 'title']
       },
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['todo', 'title']
       }
     ])
@@ -96,14 +98,22 @@ describe('duplicate events', () => {
     todo.a = { b: { c: { d: 'hello' } } }
     expect(todo.a.b.c.d).toBe('hello')
     expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
-      { type: 'GET',
-        path: ['todo', 'a'] },
-      { type: 'GET',
-        path: ['todo', 'a', 'b'] },
-      { type: 'GET',
-        path: ['todo', 'a', 'b', 'c'] },
-      { type: 'GET',
-        path: ['todo', 'a', 'b', 'c', 'd'] }
+      {
+        type: 'GET',
+        path: ['todo', 'a']
+      },
+      {
+        type: 'GET',
+        path: ['todo', 'a', 'b']
+      },
+      {
+        type: 'GET',
+        path: ['todo', 'a', 'b', 'c']
+      },
+      {
+        type: 'GET',
+        path: ['todo', 'a', 'b', 'c', 'd']
+      }
     ])
   })
 
@@ -131,22 +141,28 @@ describe('duplicate events', () => {
     todo.a = { b: { c: { d: 'hello' } } }
     expect(store.todos[1].a.b.c.d).toBe('hello')
     expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['store', 'todos']
       },
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['store', 'todos', '1']
       },
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['store', 'todos', '1', 'a']
       },
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['store', 'todos', '1', 'a', 'b']
       },
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['store', 'todos', '1', 'a', 'b', 'c']
       },
-      { type: 'GET',
+      {
+        type: 'GET',
         path: ['store', 'todos', '1', 'a', 'b', 'c', 'd']
       }
     ])

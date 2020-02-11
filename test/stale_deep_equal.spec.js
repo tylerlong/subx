@@ -63,11 +63,13 @@ describe('stale deep equal', () => {
     p.todos[1].completed = true
     expect(p.render.length).toBe(1)
     expect(R.map(R.pipe(R.dissoc('id')))(events)).toEqual([
-      { type: 'STALE',
+      {
+        type: 'STALE',
         path: ['visibleTodos'],
         cache: []
       },
-      { type: 'STALE',
+      {
+        type: 'STALE',
         path: ['render'],
         cache: []
       }
