@@ -59,7 +59,8 @@ describe('getter & toJSON', () => {
         }
       }
     })
-    expect(util.inspect(o)).toEqual(`{ firstName: 'Tyler',
+    // https://github.com/nodejs/node/issues/31989
+    expect(util.inspect(o)).not.toEqual(`{ firstName: 'Tyler',
   lastName: 'Liu',
   fullName: [Getter],
   nested: { a: { b: 'hello world' } } }`

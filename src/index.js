@@ -1,6 +1,5 @@
 import { Subject } from 'rxjs'
 import * as R from 'ramda'
-import util from 'util'
 
 import { computed, runAndMonitor, autoRun } from './monitor'
 import uuid from './uuid'
@@ -47,13 +46,6 @@ const handler = {
           )(receiver)
       case 'toString':
         return () => '[object SubX]'
-      case util.inspect.custom:
-        return () => Array.isArray(target) ? receiver
-          : R.pipe(
-            R.keys,
-            R.reject(k => RESERVED_PROPERTIES.indexOf(k) !== -1),
-            R.reduce((obj, k) => Object.defineProperty(obj, k, Object.getOwnPropertyDescriptor(receiver, k)))({})
-          )(receiver)
       case 'startTransaction':
         return () => { target.__cache__ = [] }
       case 'endTransaction':

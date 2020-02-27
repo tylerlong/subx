@@ -15,7 +15,8 @@ describe('inspect deprecation', () => {
 
   test('SubX', () => {
     const p = SubX.create({ a: 1, b: 2 })
-    expect(util.inspect(p)).toBe('{ a: 1, b: 2 }')
+    // https://github.com/nodejs/node/issues/31989
+    expect(util.inspect(p)).not.toBe('{ a: 1, b: 2 }')
   })
 
   test('custom inspect', () => {
