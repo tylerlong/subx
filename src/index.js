@@ -42,6 +42,7 @@ const handler = {
               typeof receiver[k] !== 'function'
             ),
             R.map(k => [k, receiver[k]]),
+            R.map(([k, v]) => [k, v.__isSubX__ ? v.toJSON() : v]), // recursive
             R.fromPairs
           )(receiver)
       case 'toString':
