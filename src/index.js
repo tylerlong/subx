@@ -42,6 +42,7 @@ const handler = {
               typeof receiver[k] !== 'function'
             ),
             R.map(k => [k, receiver[k]]),
+            // todo: line below is extremely slow
             R.map(([k, v]) => [k, v.__isSubX__ ? v.toJSON() : v]), // recursive
             R.fromPairs
           )(receiver)
@@ -101,7 +102,9 @@ const handler = {
     return true
   },
   has: (target, prop) => {
-    target.__emitEvent__('has$', { type: 'HAS', path: [prop], id: uuid() })
+    if (typeof prop !== 'symbol') {
+      target.__emitEvent__('has$', { type: 'HAS', path: [prop], id: uuid() })
+    }
     return prop in target
   },
   ownKeys: target => {

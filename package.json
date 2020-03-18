@@ -1,6 +1,6 @@
 {
   "name": "subx",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "SubX, Next generation state container",
   "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
@@ -24,8 +24,8 @@
     "rxjs": "^6.5.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.6",
-    "@babel/preset-env": "^7.8.6",
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
     "@babel/preset-react": "^7.8.3",
     "@babel/register": "^7.8.6",
     "babel-core": "7.0.0-bridge.0",
@@ -35,9 +35,9 @@
     "jest": "^25.1.0",
     "react": "^16.13.0",
     "react-test-renderer": "^16.13.0",
-    "standard": "^14.3.1",
+    "standard": "^14.3.3",
     "timeout-as-promise": "^1.0.0",
-    "webpack": "^4.41.6",
+    "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "yarn-upgrade-all": "^0.5.2"
   },
