@@ -80,8 +80,8 @@ const handler = {
         return target[prop]
       default: {
         const val = target[prop]
-        if (typeof val !== 'function' && RESERVED_PROPERTIES.indexOf(prop) === -1 && typeof prop !== 'symbol') {
-          target.__emitEvent__('get$', { type: 'GET', path: [prop], id: uuid() })
+        if (typeof val !== 'function' && RESERVED_PROPERTIES.indexOf(prop) === -1) {
+          target.__emitEvent__('get$', { type: 'GET', path: [prop.toString()], id: uuid() })
         }
         return val
       }
@@ -102,9 +102,7 @@ const handler = {
     return true
   },
   has: (target, prop) => {
-    if (typeof prop !== 'symbol') {
-      target.__emitEvent__('has$', { type: 'HAS', path: [prop], id: uuid() })
-    }
+    target.__emitEvent__('has$', { type: 'HAS', path: [prop.toString()], id: uuid() })
     return prop in target
   },
   ownKeys: target => {
