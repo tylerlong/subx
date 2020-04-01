@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/tylerlong/subx.svg?branch=master)](https://travis-ci.org/tylerlong/subx)
 [![npm version](https://badge.fury.io/js/subx.svg)](https://badge.fury.io/js/subx)
 
-SubX is next generation state container. It could replace Redux and MobX in our React apps.
+SubX is next generation state container. It could replace Redux and MobX in React apps.
 
 Subject X, Reactive Subject. Pronunciation: [Sub X]
 
