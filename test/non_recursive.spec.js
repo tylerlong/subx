@@ -52,4 +52,16 @@ describe('non recursive', () => {
     rectangle.position = { x: 1, y: 2 }
     expect(count).toBe(1)
   })
+
+  test('change child to non recursive', () => {
+    const p = SubX.create({ a: { b: { c: 1 } } })
+    let count = 0
+    p.$.subscribe(e => { count += 1 })
+    p.a.b.c = 2
+    expect(count).toBe(1)
+    p.a = SubX.create(p.a.toJSON(), false) // p.a becomes non-recursive
+    count = 0
+    p.a.b.c = 3
+    expect(count).toBe(0)
+  })
 })
