@@ -226,6 +226,28 @@ Method signature explained:
 - [test/runAndMonitor_path.spec.js](test/runAndMonitor_path.spec.js)
 
 
+## Recursive
+
+By default, a SubX Object is recursive. Which means, all of its property objects are also SubX objects. For example:
+
+```js
+const p = SubX.create({ a: {}, b: {} })
+```
+
+`p` is a SubX object, so are `p.a` and `p.b`.
+
+
+You can disable the recursive behavior:
+
+```js
+const p1 = SubX.create({ a: {}, b: {} }, false)
+const P = new SubX({ a: {}, b: {} }, false)
+const p2 = new P()
+```
+
+`p1` and `p2` are SubX objects while none of `p1.a`, `p1.b`, `p2.a`, `p2.b` are SubX objects.
+
+
 ## Pitfalls
 
 ### Circular data

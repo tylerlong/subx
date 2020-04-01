@@ -5,7 +5,7 @@ import { computed, runAndMonitor, autoRun } from './monitor'
 import uuid from './uuid'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$', 'transaction$']
-const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__emitEvent__', '__parents__', '__cache__', '@@functional/placeholder', ...EVENT_NAMES]
+const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__recursive__', '__emitEvent__', '__parents__', '__cache__', '@@functional/placeholder', ...EVENT_NAMES]
 
 const handler = {
   set: (target, prop, val, receiver) => {
@@ -18,10 +18,11 @@ const handler = {
       target.__emitEvent__('set$', { type: 'SET', path: [prop], id: uuid() })
       return true
     }
-    const proxy = val.__isSubX__ ? val : SubX.create(val)
+    const proxy = val.__isSubX__ ? val : (target.__recursive__ ? SubX.create(val) : val)
     target[prop] = proxy
-
-    proxy.__parents__[target.__id__ + ':' + prop] = [target, prop]
+    if (proxy.__isSubX__) {
+      proxy.__parents__[target.__id__ + ':' + prop] = [target, prop]
+    }
     if (oldVal && oldVal.__isSubX__) {
       delete oldVal.__parents__[target.__id__ + ':' + prop]
     }
@@ -123,14 +124,15 @@ const handler = {
 }
 
 class SubX {
-  constructor (modelObj = {}) {
+  constructor (modelObj = {}, recursive = true) {
     class Model {
-      constructor (obj = {}) {
+      constructor (obj = {}, __recursive__ = recursive) {
         const newObj = R.empty(obj)
         R.forEach(name => { newObj[name] = new Subject() }, EVENT_NAMES)
         newObj.$ = newObj.set$
 
         newObj.__id__ = uuid()
+        newObj.__recursive__ = __recursive__
         newObj.__parents__ = {}
         newObj.__emitEvent__ = (name, event) => {
           if (newObj.__cache__) {
@@ -169,7 +171,7 @@ class SubX {
 }
 
 const DefaultModel = new SubX({})
-SubX.create = (obj = {}) => new DefaultModel(obj)
+SubX.create = (obj = {}, recursive = true) => new DefaultModel(obj, recursive)
 SubX.runAndMonitor = runAndMonitor
 SubX.autoRun = autoRun
 
