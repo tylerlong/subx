@@ -11,6 +11,7 @@ describe('toJSON', () => {
     const p1 = SubX.create({ a: { b: { c: 'd' } } })
     const p2 = SubX.create({ a: { b: { c: 'd' } } })
     const p3 = SubX.create([p1, p2])
-    expect(p3.toJSON()).toEqual([{ a: { b: { c: 'd' } } }, { a: { b: { c: 'd' } } }])
+    expect(JSON.stringify(p3)).toBe('[{"a":{"b":{"c":"d"}}},{"a":{"b":{"c":"d"}}}]')
+    expect(JSON.stringify(p3.toJSON())).toBe('[{"a":{"b":{"c":"d"}}},{"a":{"b":{"c":"d"}}}]')
   })
 })
