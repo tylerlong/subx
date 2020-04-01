@@ -248,6 +248,20 @@ const p2 = new P()
 `p1` and `p2` are SubX objects while none of `p1.a`, `p1.b`, `p2.a`, `p2.b` are SubX objects.
 
 
+### Convert recursive to non-recursive
+
+```js
+let p = SubX.create({ a: {}, b: {} })
+p = SubX.create(p.toJSON(), false)
+```
+
+### Convert non-recursive to recursive
+
+```js
+let p = SubX.create({ a: {}, b: {} }, false)
+p = SubX.create(p)
+```
+
 ## Pitfalls
 
 ### Circular data

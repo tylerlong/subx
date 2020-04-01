@@ -53,6 +53,48 @@ describe('non recursive', () => {
     expect(count).toBe(1)
   })
 
+  test('change recursive to non-recursive', () => {
+    let rectangle = SubX.create({ position: { }, size: { } })
+    let count = 0
+    rectangle.$.subscribe(e => { count += 1 })
+    rectangle.position.x = 0
+    rectangle.position.y = 0
+    rectangle.size.width = 200
+    rectangle.size.height = 100
+    expect(count).toBe(4)
+
+    // convert it
+    rectangle = SubX.create(rectangle.toJSON(), false)
+    count = 0
+    rectangle.$.subscribe(e => { count += 1 })
+    rectangle.position.x = 0
+    rectangle.position.y = 0
+    rectangle.size.width = 200
+    rectangle.size.height = 100
+    expect(count).toBe(0)
+  })
+
+  test('change non-recursive to recursive', () => {
+    let rectangle = SubX.create({ position: { }, size: { } }, false)
+    let count = 0
+    rectangle.$.subscribe(e => { count += 1 })
+    rectangle.position.x = 0
+    rectangle.position.y = 0
+    rectangle.size.width = 200
+    rectangle.size.height = 100
+    expect(count).toBe(0)
+
+    // convert it
+    rectangle = SubX.create(rectangle)
+    count = 0
+    rectangle.$.subscribe(e => { count += 1 })
+    rectangle.position.x = 0
+    rectangle.position.y = 0
+    rectangle.size.width = 200
+    rectangle.size.height = 100
+    expect(count).toBe(4)
+  })
+
   test('change child to non recursive', () => {
     const p = SubX.create({ a: { b: { c: 1 } } })
     let count = 0
