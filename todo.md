@@ -17,7 +17,7 @@
 - Not all events need id
     - but now id is really cheap
 - removeDuplicateEvents 可能是没必要的。 只要 set 和 get 在出现重复的 event id 的时候统一都取短的那个， 就能解决重复刷新的问题。
-- Does transaction events property needs to include stale$ in addition to set$ and delete$.
+- Does transaction events property need to include stale$ in addition to set$ and delete$.
     - I guess yes, when we allow user to do freeform transaction
     - If only transaction with array methods, there is no need to, because those methods should be atomic. It won't cause any stale in the middle.
 - Some ramda function causes us to monitor lots of useless gets$, especially `@@functional/placeholder`

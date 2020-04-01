@@ -9,7 +9,7 @@ const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__recursive__', '__em
 
 const handler = {
   set: (target, prop, val, receiver) => {
-    if (RESERVED_PROPERTIES.indexOf(prop) !== -1) {
+    if (RESERVED_PROPERTIES.includes(prop)) {
       prop = `_${prop}` // prefix reserved keywords with underscore
     }
     const oldVal = target[prop]
@@ -38,7 +38,7 @@ const handler = {
         return () => Array.isArray(target) ? receiver
           : R.pipe(
             R.keys,
-            R.filter(k => RESERVED_PROPERTIES.indexOf(k) === -1 &&
+            R.filter(k => !RESERVED_PROPERTIES.includes(k) &&
               'value' in Object.getOwnPropertyDescriptor(receiver, k) &&
               typeof receiver[k] !== 'function'
             ),
@@ -81,7 +81,7 @@ const handler = {
         return target[prop]
       default: {
         const val = target[prop]
-        if (typeof val !== 'function' && RESERVED_PROPERTIES.indexOf(prop) === -1 && typeof prop !== 'symbol') {
+        if (typeof val !== 'function' && !RESERVED_PROPERTIES.includes(prop) && typeof prop !== 'symbol') {
           target.__emitEvent__('get$', { type: 'GET', path: [prop], id: uuid() })
         }
         return val
@@ -89,7 +89,7 @@ const handler = {
     }
   },
   deleteProperty: (target, prop) => {
-    if (RESERVED_PROPERTIES.indexOf(prop) !== -1) {
+    if (RESERVED_PROPERTIES.includes(prop)) {
       return false // disallow deletion of reserved keywords
     }
     const val = target[prop]
