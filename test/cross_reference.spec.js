@@ -38,7 +38,7 @@ describe('cross reference', () => {
     p.a = shared
     p.b = shared
     p.a.c = 'hello'
-    expect(p.toJSON()).toEqual({
+    expect(p.toObject()).toEqual({
       a: { c: 'hello' },
       b: { } // because there is R.empty(obj) in SubX's constructor
     })
@@ -49,7 +49,7 @@ describe('cross reference', () => {
     p.a = SubX.create(shared)
     p.b = SubX.create(shared)
     p.b.c = 'hello'
-    expect({ a: p.a.toJSON(), b: p.b.toJSON() }).toEqual({
+    expect({ a: p.a.toObject(), b: p.b.toObject() }).toEqual({
       a: { }, // because there is R.empty(obj) in SubX's constructor
       b: { c: 'hello' }
     })

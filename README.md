@@ -63,6 +63,8 @@ A reactive subject is a special JavaScript object which allows us to subscribe t
 
 In content below, we call a reactive subject a **SubX object**.
 
+It is easy to convert a SubX object to a plain object: `const plainObj = subxObj.toObject()`.
+
 
 ## Types of events
 
@@ -252,7 +254,7 @@ const p2 = new P()
 
 ```js
 let p = SubX.create({ a: {}, b: {} })
-p = SubX.create(p.toJSON(), false)
+p = SubX.create(p.toObject(), false)
 ```
 
 ### Convert non-recursive to recursive
@@ -261,6 +263,7 @@ p = SubX.create(p.toJSON(), false)
 let p = SubX.create({ a: {}, b: {} }, false)
 p = SubX.create(p)
 ```
+
 
 ## Pitfalls
 

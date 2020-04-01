@@ -64,7 +64,7 @@ describe('non recursive', () => {
     expect(count).toBe(4)
 
     // convert it
-    rectangle = SubX.create(rectangle.toJSON(), false)
+    rectangle = SubX.create(rectangle.toObject(), false)
     count = 0
     rectangle.$.subscribe(e => { count += 1 })
     rectangle.position.x = 0
@@ -101,7 +101,7 @@ describe('non recursive', () => {
     p.$.subscribe(e => { count += 1 })
     p.a.b.c = 2
     expect(count).toBe(1)
-    p.a = SubX.create(p.a.toJSON(), false) // p.a becomes non-recursive
+    p.a = SubX.create(p.a.toObject(), false) // p.a becomes non-recursive
     count = 0
     p.a.b.c = 3
     expect(count).toBe(0)

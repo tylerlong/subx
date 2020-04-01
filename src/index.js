@@ -43,10 +43,10 @@ const handler = {
               typeof receiver[k] !== 'function'
             ),
             R.map(k => [k, receiver[k]]),
-            // todo: line below is extremely slow
-            R.map(([k, v]) => [k, v.__isSubX__ ? v.toJSON() : v]), // recursive
             R.fromPairs
           )(receiver)
+      case 'toObject':
+        return () => JSON.parse(JSON.stringify(receiver))
       case 'toString':
         return () => '[object SubX]'
       case 'startTransaction':
