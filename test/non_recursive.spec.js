@@ -64,4 +64,16 @@ describe('non recursive', () => {
     p.a.b.c = 3
     expect(count).toBe(0)
   })
+
+  test('change child to recursive', () => {
+    const p = SubX.create({ a: { b: { c: 1 } } }, false)
+    let count = 0
+    p.$.subscribe(e => { count += 1 })
+    p.a.b.c = 2
+    expect(count).toBe(0)
+    p.a = SubX.create(p.a) // p.a becomes recursive
+    count = 0
+    p.a.b.c = 3
+    expect(count).toBe(1)
+  })
 })
