@@ -7,6 +7,7 @@
     - definedProperty doesn't support parameter receiver. But we can save the receiver in `handler.get` & `handler.set`
 - Similar concept: https://github.com/nx-js/observer-util
     - It doesn't use RxJS
+    - Its computed property has no cache at all: https://github.com/tylerlong/choose-a-state-container/blob/master/cache/observer-util.spec.js
 - Can we replace array with completely new arr instead? (instead of in-place unshift and splice ...etc)
     - it might be even slower
 - There seem to be tooooo many GETs when changing an array
@@ -20,3 +21,7 @@
 - Does transaction events property need to include stale$ in addition to set$ and delete$.
     - I guess yes, when we allow user to do freeform transaction
     - If only transaction with array methods, there is no need to, because those methods should be atomic. It won't cause any stale in the middle.
+- Support inheritance?
+    - this product supports it: https://medium.com/@solkimicreb/stress-testing-react-easy-state-ac321fa3becf
+- Add benchmark to https://github.com/krausest/js-framework-benchmark
+- Compare with https://github.com/RisingStack/react-easy-state/tree/master/examples/todo-mvc
