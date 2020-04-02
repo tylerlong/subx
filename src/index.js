@@ -136,7 +136,7 @@ class SubX {
         newObj.__parents__ = {}
         newObj.__emitEvent__ = (name, event) => {
           if (newObj.__cache__) {
-            if (event.type === 'SET' || event.type === 'DELETE') {
+            if (event.type === 'SET' || event.type === 'DELETE') { // may need to include 'STALE' events for user-defined transactions in the future
               newObj.__cache__.push(event)
             }
             return

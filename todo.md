@@ -20,8 +20,3 @@
 - Does transaction events property need to include stale$ in addition to set$ and delete$.
     - I guess yes, when we allow user to do freeform transaction
     - If only transaction with array methods, there is no need to, because those methods should be atomic. It won't cause any stale in the middle.
-- Some ramda function causes us to monitor lots of useless gets$, especially `@@functional/placeholder`
-    - It's OK for users to use Ramda, but this library uses ramda which causes unecessary performance penalty.
-        - for example, toJSON method.
-        - Maybe it's better not to use ramda in this library
-            - Try to use less, just for performance reason
