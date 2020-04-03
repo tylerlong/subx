@@ -25,3 +25,6 @@
     - this product supports it: https://medium.com/@solkimicreb/stress-testing-react-easy-state-ac321fa3becf
 - Add benchmark to https://github.com/krausest/js-framework-benchmark
 - Compare with https://github.com/RisingStack/react-easy-state/tree/master/examples/todo-mvc
+- Support built-in objects like `Map`
+  - Ref: https://itnext.io/the-ideas-behind-react-easy-state-901d70e4d03e
+  - Low priority. JSON compatible data support is sufficient
