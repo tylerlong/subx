@@ -1,6 +1,6 @@
 {
   "name": "subx",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "SubX, Next generation state container",
   "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
@@ -14,25 +14,23 @@
     "State Container"
   ],
   "scripts": {
-    "bench": "node -r @babel/register benchmark/index.js",
+    "bench": "node -r @babel/register benchmark/find.js",
     "test": "standard && jest -w 1",
     "release": "webpack --progress --colors",
     "prepublishOnly": "yarn test && yarn release"
   },
   "dependencies": {
     "ramda": "^0.27.0",
-    "rxjs": "^6.5.4"
+    "rxjs": "^6.5.5"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "@babel/register": "^7.9.0",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "^25.2.4",
     "benchmark": "^2.1.4",
     "hyperid": "^2.0.3",
-    "jest": "^25.2.4",
+    "jest": "^25.3.0",
     "react": "^16.13.1",
     "react-test-renderer": "^16.13.1",
     "standard": "^14.3.3",
@@ -49,11 +47,6 @@
   "jest": {
     "setupFilesAfterEnv": [
       "./test/setup.js"
-    ]
-  },
-  "yarn-upgrade-all": {
-    "ignore": [
-      "babel-core"
     ]
   }
 }
