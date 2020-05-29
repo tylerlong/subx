@@ -17,7 +17,14 @@
     "bench": "node -r @babel/register benchmark/find.js",
     "test": "standard && jest -w 1",
     "release": "webpack --progress --colors",
-    "prepublishOnly": "yarn test && yarn release"
+    "prepublishOnly": "yarn test && yarn release",
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run check"
   },
   "dependencies": {
     "ramda": "^0.27.0",
@@ -28,13 +35,16 @@
     "@babel/preset-env": "^7.10.1",
     "@babel/preset-react": "^7.10.1",
     "@babel/register": "^7.10.1",
+    "@types/node": "^14.0.5",
     "benchmark": "^2.1.4",
+    "gts": "^2.0.2",
     "hyperid": "^2.0.5",
     "jest": "^26.0.1",
     "react": "^16.13.1",
     "react-test-renderer": "^16.13.1",
     "standard": "^14.3.4",
     "timeout-as-promise": "^1.0.0",
+    "typescript": "^3.9.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "yarn-upgrade-all": "^0.5.2"
