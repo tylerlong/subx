@@ -1,11 +1,11 @@
-import {merge, BehaviorSubject, Subscription} from 'rxjs';
+import {merge, BehaviorSubject, Subscription, Observable} from 'rxjs';
 import {filter, publish, distinct, take} from 'rxjs/operators';
 import * as R from 'ramda';
 
 import uuid from './uuid';
 
 const matchFilters = {
-  get: (subx, get) => {
+  get: (subx, get: Event) => {
     const val = R.path(get.path, subx);
     return (event: Event) => {
       if (event.type === 'STALE' && R.equals(event.path, get.path)) {
@@ -27,7 +27,7 @@ const matchFilters = {
       return false;
     };
   },
-  has: (subx, has) => {
+  has: (subx, has: Event) => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx);
     return (event: Event) => {
       if (
@@ -46,7 +46,7 @@ const matchFilters = {
       return false;
     };
   },
-  keys: (subx, keys) => {
+  keys: (subx, keys: Event) => {
     const val = Object.keys(R.path(keys.path, subx));
     return (event: Event) => {
       if (
@@ -68,9 +68,9 @@ const matchFilters = {
   },
 };
 
-const monitorGets = (subx, gets) => {
-  const uniqGets = R.uniqBy(event => event.path.join('.'), gets);
-  const streams = [];
+const monitorGets = (subx, gets: Event[]) => {
+  const uniqGets = R.uniqBy((event: Event) => event.path.join('.'), gets);
+  const streams: Observable<Event>[] = [];
   R.forEach(get => {
     const getFilter = matchFilters.get(subx, get);
     streams.push(
@@ -92,9 +92,9 @@ const monitorGets = (subx, gets) => {
   return streams;
 };
 
-const monitorHass = (subx, hass) => {
-  const uniqHass = R.uniqBy(has => has.path.join('.'), hass);
-  const streams = [];
+const monitorHass = (subx, hass: Event[]) => {
+  const uniqHass = R.uniqBy((has: Event) => has.path.join('.'), hass);
+  const streams: Observable<Event>[] = [];
   R.forEach(has => {
     const hasFilter = matchFilters.has(subx, has);
     streams.push(
@@ -114,9 +114,9 @@ const monitorHass = (subx, hass) => {
   return streams;
 };
 
-const monitorkeyss = (subx, keyss) => {
-  const uniqKeyss = R.uniqBy(keys => keys.path.join('.'), keyss);
-  const streams = [];
+const monitorkeyss = (subx, keyss: Event[]) => {
+  const uniqKeyss = R.uniqBy((keys: Event) => keys.path.join('.'), keyss);
+  const streams: Observable<Event>[] = [];
   R.forEach(keys => {
     const keysFilter = matchFilters.keys(subx, keys);
     streams.push(
@@ -255,7 +255,7 @@ export const autoRun = (subx, f, ...operators) => {
     }
     subscription = stream$
       .pipe(...operators, take(1))
-      .subscribe(event => run());
+      .subscribe((event: Event) => run());
   };
   run();
   results$.subscribe(undefined, undefined, () => {
