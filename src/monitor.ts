@@ -5,7 +5,7 @@ import * as R from 'ramda';
 import uuid from './uuid';
 
 const matchFilters = {
-  get: (subx, get: Event) => {
+  get: (subx: Obj, get: Event) => {
     const val = R.path(get.path, subx);
     return (event: Event) => {
       if (event.type === 'STALE' && R.equals(event.path, get.path)) {
@@ -27,7 +27,7 @@ const matchFilters = {
       return false;
     };
   },
-  has: (subx, has: Event) => {
+  has: (subx: Obj, has: Event) => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx);
     return (event: Event) => {
       if (
@@ -46,7 +46,7 @@ const matchFilters = {
       return false;
     };
   },
-  keys: (subx, keys: Event) => {
+  keys: (subx: Obj, keys: Event) => {
     const val = Object.keys(R.path(keys.path, subx));
     return (event: Event) => {
       if (
@@ -68,7 +68,7 @@ const matchFilters = {
   },
 };
 
-const monitorGets = (subx, gets: Event[]) => {
+const monitorGets = (subx: Obj, gets: Event[]) => {
   const uniqGets = R.uniqBy((event: Event) => event.path.join('.'), gets);
   const streams: Observable<Event>[] = [];
   R.forEach(get => {
@@ -92,7 +92,7 @@ const monitorGets = (subx, gets: Event[]) => {
   return streams;
 };
 
-const monitorHass = (subx, hass: Event[]) => {
+const monitorHass = (subx: Obj, hass: Event[]) => {
   const uniqHass = R.uniqBy((has: Event) => has.path.join('.'), hass);
   const streams: Observable<Event>[] = [];
   R.forEach(has => {
@@ -114,7 +114,7 @@ const monitorHass = (subx, hass: Event[]) => {
   return streams;
 };
 
-const monitorkeyss = (subx, keyss: Event[]) => {
+const monitorkeyss = (subx: Obj, keyss: Event[]) => {
   const uniqKeyss = R.uniqBy((keys: Event) => keys.path.join('.'), keyss);
   const streams: Observable<Event>[] = [];
   R.forEach(keys => {
@@ -166,7 +166,7 @@ export const removeDuplicateEvents = (events: Event[]) =>
     return R.append(event, result);
   })([], events);
 
-const monitor = (subx, {gets, hass, keyss}) => {
+const monitor = (subx: Obj, {gets, hass, keyss}) => {
   return merge(
     ...monitorGets(subx, removeDuplicateEvents(gets)),
     ...monitorHass(subx, removeDuplicateEvents(hass)),
@@ -176,7 +176,7 @@ const monitor = (subx, {gets, hass, keyss}) => {
     .refCount();
 };
 
-export const runAndMonitor = (subx, f) => {
+export const runAndMonitor = (subx: Obj, f) => {
   const gets: Event[] = [];
   const hass: Event[] = [];
   const keyss: Event[] = [];
@@ -209,7 +209,7 @@ export const runAndMonitor = (subx, f) => {
   return {result, stream$};
 };
 
-export const computed = (subx, f) => {
+export const computed = (subx: Obj, f) => {
   const functionName = R.last(f.name.split(' ')); // `get f` => `f`
   let cache;
   let stale = true;
@@ -243,7 +243,7 @@ export const computed = (subx, f) => {
   return wrapped;
 };
 
-export const autoRun = (subx, f, ...operators) => {
+export const autoRun = (subx: Obj, f, ...operators) => {
   let results$;
   let subscription;
   const run = () => {

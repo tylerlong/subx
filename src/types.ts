@@ -3,3 +3,7 @@ type Event = {
   path: string[];
   id: number;
 };
+
+type Obj = {
+  [key: string]: any;
+};
