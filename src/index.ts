@@ -8,7 +8,7 @@ import * as R from 'ramda';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
-import {Obj, Event} from './types';
+import {ProxyObj, Event, ModelObj} from './types';
 
 const EVENT_NAMES = [
   'set$',
@@ -34,7 +34,7 @@ const RESERVED_PROPERTIES = [
 ];
 
 const handler = {
-  set: (target: Obj, prop: string, val: any, receiver: Obj) => {
+  set: (target: ModelObj, prop: string, val: any, receiver: ProxyObj) => {
     if (RESERVED_PROPERTIES.includes(prop)) {
       prop = `_${prop}`; // prefix reserved keywords with underscore
     }
@@ -61,7 +61,7 @@ const handler = {
     target.__emitEvent__('set$', {type: 'SET', path: [prop], id: uuid()});
     return true;
   },
-  get: (target: Obj, prop: string, receiver: Obj) => {
+  get: (target: ModelObj, prop: string, receiver: ProxyObj) => {
     switch (prop) {
       case '__isSubX__':
         return true;
@@ -135,7 +135,7 @@ const handler = {
       }
     }
   },
-  deleteProperty: (target: Obj, prop: string) => {
+  deleteProperty: (target: ModelObj, prop: string) => {
     if (RESERVED_PROPERTIES.includes(prop)) {
       return false; // disallow deletion of reserved keywords
     }
@@ -149,35 +149,35 @@ const handler = {
     target.__emitEvent__('delete$', {type: 'DELETE', path: [prop], id: uuid()});
     return true;
   },
-  has: (target: Obj, prop: string) => {
+  has: (target: ModelObj, prop: string) => {
     if (typeof prop !== 'symbol') {
       target.__emitEvent__('has$', {type: 'HAS', path: [prop], id: uuid()});
     }
     return prop in target;
   },
-  ownKeys: (target: Obj) => {
+  ownKeys: (target: ModelObj) => {
     target.__emitEvent__('keys$', {type: 'KEYS', path: [], id: uuid()});
     return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target));
   },
-  setPrototypeOf: (target: Obj, prototype) => {
+  setPrototypeOf: (target: ModelObj, prototype) => {
     return false; // disallow setPrototypeOf
   },
-  defineProperty: (target: Obj, property, descriptor) => {
+  defineProperty: (target: ModelObj, property, descriptor) => {
     return false; // disallow defineProperty
   },
-  preventExtensions: (target: Obj) => {
+  preventExtensions: (target: ModelObj) => {
     return false; // disallow preventExtensions
   },
 };
 
 class SubX {
-  static create: (obj: Obj) => Obj;
+  static create: (obj: ModelObj) => ProxyObj;
   static runAndMonitor: (
-    subx: Obj,
+    subx: ProxyObj,
     f: () => any
   ) => {result: any; stream$: Observable<Event>};
   static autoRun: (
-    subx: Obj,
+    subx: ProxyObj,
     f: () => any,
     ...operators: MonoTypeOperatorFunction<Event>[]
   ) => BehaviorSubject<any>;
@@ -216,7 +216,7 @@ class SubX {
         const proxy = new Proxy(newObj, handler);
         R.pipe(
           R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
-          R.forEach(([target, prop]: [Obj, string]) => {
+          R.forEach(([target, prop]: [ModelObj, string]) => {
             const descriptor = Object.getOwnPropertyDescriptor(target, prop);
             if ('value' in descriptor) {
               proxy[prop] = target[prop];

@@ -15,8 +15,11 @@ export type StaleEvent = Event & {
   cache: any;
 };
 
-export type Obj = {
+export type ModelObj = {
   [key: string]: any;
+};
+
+export type ProxyObj = ModelObj & {
   $: Observable<Event>;
   set$: Observable<Event>;
   delete$: Observable<Event>;
