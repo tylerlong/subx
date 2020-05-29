@@ -1,4 +1,9 @@
-import {Subject} from 'rxjs';
+import {
+  Subject,
+  Observable,
+  MonoTypeOperatorFunction,
+  BehaviorSubject,
+} from 'rxjs';
 import * as R from 'ramda';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
@@ -167,6 +172,15 @@ const handler = {
 
 class SubX {
   static create: (obj: Obj) => Obj;
+  static runAndMonitor: (
+    subx: Obj,
+    f: () => any
+  ) => {result: any; stream$: Observable<Event>};
+  static autoRun: (
+    subx: Obj,
+    f: () => any,
+    ...operators: MonoTypeOperatorFunction<Event>[]
+  ) => BehaviorSubject<any>;
   constructor(modelObj = {}, recursive = true) {
     class Model {
       constructor(obj = {}, __recursive__ = recursive) {
