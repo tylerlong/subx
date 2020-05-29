@@ -17,6 +17,7 @@ export type StaleEvent = Event & {
 
 export type Obj = {
   [key: string]: any;
+  $: Observable<Event>;
   set$: Observable<Event>;
   delete$: Observable<Event>;
   get$: Observable<Event>;

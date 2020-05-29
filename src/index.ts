@@ -3,6 +3,7 @@ import * as R from 'ramda';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
+import {Obj, Event} from './types';
 
 const EVENT_NAMES = [
   'set$',
@@ -28,7 +29,7 @@ const RESERVED_PROPERTIES = [
 ];
 
 const handler = {
-  set: (target, prop, val, receiver) => {
+  set: (target: Obj, prop: string, val: any, receiver: Obj) => {
     if (RESERVED_PROPERTIES.includes(prop)) {
       prop = `_${prop}`; // prefix reserved keywords with underscore
     }
@@ -55,7 +56,7 @@ const handler = {
     target.__emitEvent__('set$', {type: 'SET', path: [prop], id: uuid()});
     return true;
   },
-  get: (target, prop, receiver) => {
+  get: (target: Obj, prop: string, receiver: Obj) => {
     switch (prop) {
       case '__isSubX__':
         return true;
@@ -83,7 +84,7 @@ const handler = {
           target.__cache__ = [];
         };
       case 'endTransaction':
-        return name => {
+        return (name: string) => {
           const event = {
             type: 'TRANSACTION',
             name,
@@ -129,7 +130,7 @@ const handler = {
       }
     }
   },
-  deleteProperty: (target, prop) => {
+  deleteProperty: (target: Obj, prop: string) => {
     if (RESERVED_PROPERTIES.includes(prop)) {
       return false; // disallow deletion of reserved keywords
     }
@@ -143,23 +144,23 @@ const handler = {
     target.__emitEvent__('delete$', {type: 'DELETE', path: [prop], id: uuid()});
     return true;
   },
-  has: (target, prop) => {
+  has: (target: Obj, prop: string) => {
     if (typeof prop !== 'symbol') {
       target.__emitEvent__('has$', {type: 'HAS', path: [prop], id: uuid()});
     }
     return prop in target;
   },
-  ownKeys: target => {
+  ownKeys: (target: Obj) => {
     target.__emitEvent__('keys$', {type: 'KEYS', path: [], id: uuid()});
     return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target));
   },
-  setPrototypeOf: (target, prototype) => {
+  setPrototypeOf: (target: Obj, prototype) => {
     return false; // disallow setPrototypeOf
   },
-  defineProperty: (target, property, descriptor) => {
+  defineProperty: (target: Obj, property, descriptor) => {
     return false; // disallow defineProperty
   },
-  preventExtensions: target => {
+  preventExtensions: (target: Obj) => {
     return false; // disallow preventExtensions
   },
 };
@@ -177,7 +178,7 @@ class SubX {
         newObj.__id__ = uuid();
         newObj.__recursive__ = __recursive__;
         newObj.__parents__ = {};
-        newObj.__emitEvent__ = (name, event) => {
+        newObj.__emitEvent__ = (name: string, event: Event) => {
           if (newObj.__cache__) {
             if (event.type === 'SET' || event.type === 'DELETE') {
               // may need to include 'STALE' events for user-defined transactions in the future
@@ -200,7 +201,7 @@ class SubX {
         const proxy = new Proxy(newObj, handler);
         R.pipe(
           R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
-          R.forEach(([target, prop]) => {
+          R.forEach(([target, prop]: [Obj, string]) => {
             const descriptor = Object.getOwnPropertyDescriptor(target, prop);
             if ('value' in descriptor) {
               proxy[prop] = target[prop];
