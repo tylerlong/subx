@@ -1,9 +1,29 @@
-type Event = {
+import {Observable} from 'rxjs';
+
+export type Event = {
   type: string;
   path: string[];
   id: number;
 };
 
-type Obj = {
+export type TransactionEvent = Event & {
+  name: string;
+  events: Event[];
+};
+
+export type StaleEvent = Event & {
+  cache: any;
+};
+
+export type Obj = {
   [key: string]: any;
+  set$: Observable<Event>;
+  delete$: Observable<Event>;
+  get$: Observable<Event>;
+  has$: Observable<Event>;
+  keys$: Observable<Event>;
+  compute_begin$: Observable<Event>;
+  compute_finish$: Observable<Event>;
+  stale$: Observable<StaleEvent>;
+  transaction$: Observable<TransactionEvent>;
 };

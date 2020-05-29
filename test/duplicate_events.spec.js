@@ -2,7 +2,7 @@
 import * as R from 'ramda'
 
 import SubX from '../src/index'
-import { removeDuplicateEvents } from '../src/monitor'
+import { removeDuplicateEvents } from '../build/monitor'
 
 describe('duplicate events', () => {
   test('get$', () => {

@@ -1,5 +1,6 @@
 ## Todo
 
+- Use generics in TS types
 - How to undo the changes according to events?
 - As Michael found, `seal`, `freeze` & `preventExtensions`  all trigger `preventExtensions` and `defineProperty`.
     - should support defineProperty?

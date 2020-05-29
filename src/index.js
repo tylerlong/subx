@@ -1,8 +1,8 @@
 import { Subject } from 'rxjs'
 import * as R from 'ramda'
 
-import { computed, runAndMonitor, autoRun } from './monitor'
-import uuid from './uuid'
+import { computed, runAndMonitor, autoRun } from '../build/monitor'
+import uuid from '../build/uuid'
 
 const EVENT_NAMES = ['set$', 'delete$', 'get$', 'has$', 'keys$', 'compute_begin$', 'compute_finish$', 'stale$', 'transaction$']
 const RESERVED_PROPERTIES = ['$', '__isSubX__', '__id__', '__recursive__', '__emitEvent__', '__parents__', '__cache__', '@@functional/placeholder', ...EVENT_NAMES]

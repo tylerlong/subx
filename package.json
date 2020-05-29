@@ -18,13 +18,8 @@
     "test": "standard && jest -w 1",
     "release": "webpack --progress --colors",
     "prepublishOnly": "yarn test && yarn release",
-    "check": "gts check",
-    "clean": "gts clean",
-    "compile": "tsc",
-    "fix": "gts fix",
-    "prepare": "yarn run compile",
-    "pretest": "yarn run compile",
-    "posttest": "yarn run check"
+    "compile": "rm -rf build/* && tsc && mv build/src/* build/ && rmdir build/src",
+    "pretest": "yarn run compile"
   },
   "dependencies": {
     "ramda": "^0.27.0",

@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index'
-import { computed } from '../src/monitor'
+import { computed } from '../build/monitor'
 
 describe('computed nested', () => {
   test('default', () => {

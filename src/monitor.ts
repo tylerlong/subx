@@ -1,8 +1,16 @@
-import {merge, BehaviorSubject, Subscription, Observable} from 'rxjs';
-import {filter, publish, distinct, take} from 'rxjs/operators';
+import {
+  merge,
+  BehaviorSubject,
+  Subscription,
+  Observable,
+  MonoTypeOperatorFunction,
+} from 'rxjs';
+import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
 import * as R from 'ramda';
 
 import uuid from './uuid';
+import {Obj, Event} from './types';
+import {pipeFromArray} from 'rxjs/internal/util/pipe';
 
 const matchFilters = {
   get: (subx: Obj, get: Event) => {
@@ -19,16 +27,16 @@ const matchFilters = {
         return true;
       }
       if (event.type === 'SET' && R.startsWith(event.path, get.path)) {
-        const parentVal = R.path(R.init(get.path), subx);
+        const parentVal = R.path<Obj>(R.init(get.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return val !== parentVal[R.last(get.path)];
+          return val !== parentVal[R.last(get.path)!];
         }
       }
       return false;
     };
   },
   has: (subx: Obj, has: Event) => {
-    const val = R.last(has.path) in R.path(R.init(has.path), subx);
+    const val = R.last(has.path)! in R.path<Obj>(R.init(has.path), subx)!;
     return (event: Event) => {
       if (
         event.type === 'DELETE' &&
@@ -40,14 +48,14 @@ const matchFilters = {
       if (event.type === 'SET' && R.startsWith(event.path, has.path)) {
         const parentVal = R.path(R.init(has.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return R.last(has.path) in parentVal !== val;
+          return R.last(has.path)! in parentVal !== val;
         }
       }
       return false;
     };
   },
   keys: (subx: Obj, keys: Event) => {
-    const val = Object.keys(R.path(keys.path, subx));
+    const val = Object.keys(R.path<Obj>(keys.path, subx)!);
     return (event: Event) => {
       if (
         (event.type === 'DELETE' &&
@@ -166,17 +174,19 @@ export const removeDuplicateEvents = (events: Event[]) =>
     return R.append(event, result);
   })([], events);
 
-const monitor = (subx: Obj, {gets, hass, keyss}) => {
+const monitor = (
+  subx: Obj,
+  {gets, hass, keyss}: {gets: Event[]; hass: Event[]; keyss: Event[]}
+) => {
   return merge(
     ...monitorGets(subx, removeDuplicateEvents(gets)),
     ...monitorHass(subx, removeDuplicateEvents(hass)),
     ...monitorkeyss(subx, removeDuplicateEvents(keyss))
-  )
-    .pipe(distinct(), publish())
-    .refCount();
+  ).pipe(distinct(), publish(), refCount());
+  // .refCount();
 };
 
-export const runAndMonitor = (subx: Obj, f) => {
+export const runAndMonitor = (subx: Obj, f: () => any) => {
   const gets: Event[] = [];
   const hass: Event[] = [];
   const keyss: Event[] = [];
@@ -209,9 +219,9 @@ export const runAndMonitor = (subx: Obj, f) => {
   return {result, stream$};
 };
 
-export const computed = (subx: Obj, f) => {
+export const computed = (subx: Obj, f: () => any) => {
   const functionName = R.last(f.name.split(' ')); // `get f` => `f`
-  let cache;
+  let cache: any;
   let stale = true;
   const wrapped = () => {
     if (stale) {
@@ -243,24 +253,28 @@ export const computed = (subx: Obj, f) => {
   return wrapped;
 };
 
-export const autoRun = (subx: Obj, f, ...operators) => {
-  let results$;
-  let subscription;
+export const autoRun = (
+  subx: Obj,
+  f: () => any,
+  ...operators: MonoTypeOperatorFunction<Event>[]
+) => {
+  let results$: BehaviorSubject<any> | undefined;
+  let subscription: Subscription;
   const run = () => {
     const {result, stream$} = runAndMonitor(subx, f);
-    if (!results$) {
+    if (results$ === undefined) {
       results$ = new BehaviorSubject(result);
     } else {
       results$.next(result);
     }
     subscription = stream$
-      .pipe(...operators, take(1))
+      .pipe(pipeFromArray(operators), take(1))
       .subscribe((event: Event) => run());
   };
   run();
-  results$.subscribe(undefined, undefined, () => {
+  results$!.subscribe(undefined, undefined, () => {
     // complete
     subscription.unsubscribe();
   });
-  return results$;
+  return results$!;
 };
