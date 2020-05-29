@@ -113,7 +113,7 @@ const handler = {
       case 'splice':
       case 'unshift':
         if (Array.isArray(target)) {
-          const f = (...args) => {
+          const f = (...args: any[]) => {
             receiver.startTransaction();
             const r = target[prop].bind(receiver)(...args);
             receiver.endTransaction(prop);
@@ -159,10 +159,14 @@ const handler = {
     target.__emitEvent__('keys$', {type: 'KEYS', path: [], id: uuid()});
     return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target));
   },
-  setPrototypeOf: (target: ModelObj, prototype) => {
+  setPrototypeOf: (target: ModelObj, prototype: ModelObj) => {
     return false; // disallow setPrototypeOf
   },
-  defineProperty: (target: ModelObj, property, descriptor) => {
+  defineProperty: (
+    target: ModelObj,
+    property: string,
+    descriptor: ModelObj
+  ) => {
     return false; // disallow defineProperty
   },
   preventExtensions: (target: ModelObj) => {
@@ -184,7 +188,7 @@ class SubX {
   constructor(modelObj = {}, recursive = true) {
     class Model {
       constructor(obj = {}, __recursive__ = recursive) {
-        const newObj = R.empty(obj);
+        const newObj: ModelObj = R.empty(obj);
         R.forEach(name => {
           newObj[name] = new Subject();
         }, EVENT_NAMES);
@@ -217,7 +221,7 @@ class SubX {
         R.pipe(
           R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
           R.forEach(([target, prop]: [ModelObj, string]) => {
-            const descriptor = Object.getOwnPropertyDescriptor(target, prop);
+            const descriptor = Object.getOwnPropertyDescriptor(target, prop)!;
             if ('value' in descriptor) {
               proxy[prop] = target[prop];
             } else if ('get' in descriptor) {
