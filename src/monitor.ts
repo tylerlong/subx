@@ -7,7 +7,7 @@ import uuid from './uuid';
 const matchFilters = {
   get: (subx, get) => {
     const val = R.path(get.path, subx);
-    return event => {
+    return (event: Event) => {
       if (event.type === 'STALE' && R.equals(event.path, get.path)) {
         return true;
       }
@@ -29,7 +29,7 @@ const matchFilters = {
   },
   has: (subx, has) => {
     const val = R.last(has.path) in R.path(R.init(has.path), subx);
-    return event => {
+    return (event: Event) => {
       if (
         event.type === 'DELETE' &&
         val === true &&
@@ -48,7 +48,7 @@ const matchFilters = {
   },
   keys: (subx, keys) => {
     const val = Object.keys(R.path(keys.path, subx));
-    return event => {
+    return (event: Event) => {
       if (
         (event.type === 'DELETE' &&
           keys.path.length + 1 === event.path.length &&
@@ -137,12 +137,12 @@ const monitorkeyss = (subx, keyss) => {
 };
 
 // a subx obj and one of its children attached to the same parent (props of React)
-export const removeDuplicateEvents = events =>
-  R.reduce((result, event) => {
+export const removeDuplicateEvents = (events: Event[]) =>
+  R.reduce((result: Event[], event: Event) => {
     if (result.length === 0) {
       return [event];
     }
-    const last = R.last(result);
+    const last = R.last(result)!;
     if (event.id === last.id) {
       let longer;
       let shorter;
@@ -154,7 +154,7 @@ export const removeDuplicateEvents = events =>
         shorter = event;
       }
       const lastLast =
-        result.length > 1 ? R.last(R.init(result)) : {path: [undefined]};
+        result.length > 1 ? R.last(R.init(result))! : {path: [undefined]};
       const correct = R.startsWith(lastLast.path, longer.path)
         ? longer
         : shorter;
@@ -177,27 +177,27 @@ const monitor = (subx, {gets, hass, keyss}) => {
 };
 
 export const runAndMonitor = (subx, f) => {
-  const gets = [];
-  const hass = [];
-  const keyss = [];
+  const gets: Event[] = [];
+  const hass: Event[] = [];
+  const keyss: Event[] = [];
   let count = 0;
   const subscription = new Subscription();
   subscription.add(
-    subx.get$.subscribe(event => count === 1 && gets.push(event))
+    subx.get$.subscribe((event: Event) => count === 1 && gets.push(event))
   );
   subscription.add(
-    subx.has$.subscribe(event => count === 1 && hass.push(event))
+    subx.has$.subscribe((event: Event) => count === 1 && hass.push(event))
   );
   subscription.add(
-    subx.keys$.subscribe(event => count === 1 && keyss.push(event))
+    subx.keys$.subscribe((event: Event) => count === 1 && keyss.push(event))
   );
   subscription.add(
-    subx.compute_begin$.subscribe(event => {
+    subx.compute_begin$.subscribe((event: Event) => {
       count += 1;
     })
   );
   subscription.add(
-    subx.compute_finish$.subscribe(event => {
+    subx.compute_finish$.subscribe((event: Event) => {
       count -= 1;
     })
   );
@@ -223,7 +223,7 @@ export const computed = (subx, f) => {
       const {result, stream$} = runAndMonitor(subx, f.bind(subx));
       cache = result;
       stale = false;
-      stream$.pipe(take(1)).subscribe(event => {
+      stream$.pipe(take(1)).subscribe((event: Event) => {
         stale = true;
         subx.__emitEvent__('stale$', {
           type: 'STALE',
