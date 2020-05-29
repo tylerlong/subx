@@ -69,7 +69,7 @@ const handler = {
                 R.filter(
                   k =>
                     !RESERVED_PROPERTIES.includes(k) &&
-                    'value' in Object.getOwnPropertyDescriptor(receiver, k) &&
+                    'value' in Object.getOwnPropertyDescriptor(receiver, k)! &&
                     typeof receiver[k] !== 'function'
                 ),
                 R.map(k => [k, receiver[k]]),
@@ -166,6 +166,7 @@ const handler = {
 };
 
 class SubX {
+  static create: (obj: Obj) => Obj;
   constructor(modelObj = {}, recursive = true) {
     class Model {
       constructor(obj = {}, __recursive__ = recursive) {
