@@ -6600,11 +6600,6 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-timeout-as-promise@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/timeout-as-promise/-/timeout-as-promise-1.0.0.tgz#7367e811fc992acfcdcdaabf2e50dfaf8b21576f"
-  integrity sha1-c2foEfyZKs/Nzaq/LlDfr4shV28=
-
 timers-browserify@^2.0.4:
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.11.tgz#800b1f3eee272e5bc53ee465a04d0e804c31211f"
@@ -7010,6 +7005,11 @@ w3c-xmlserializer@^2.0.0:
   integrity sha512-4tzD0mF8iSiMiNs30BiLO3EpfGLZUT2MSX/G+o7ZywDzliWQ3OPtTZ0PTC3B3ca1UAf4cJMHB+2Bf56EriJuRA==
   dependencies:
     xml-name-validator "^3.0.0"
+
+wait-for-async@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/wait-for-async/-/wait-for-async-0.5.0.tgz#632b0262e8997e6fd4f0dea64a612f23a1380916"
+  integrity sha512-fyPjbUCgqNlOBZBV/VscFz3GlqOpFwnsp5mo61BbiXgUfPKUSw3U+hx1n5o65fu6GpfzrSB0KN6P8+O5KCFXtw==
 
 walker@^1.0.7, walker@~1.0.5:
   version "1.0.7"
