@@ -186,7 +186,7 @@ const handler = {
 };
 
 class SubX {
-  static create: (obj: ModelObj) => ProxyObj;
+  static create: (obj?: ModelObj) => ProxyObj;
   static runAndMonitor: (
     subx: ProxyObj,
     f: () => any
