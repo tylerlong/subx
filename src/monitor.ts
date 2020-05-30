@@ -9,13 +9,13 @@ import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
 import * as R from 'ramda';
 
 import uuid from './uuid';
-import {ProxyObj, Event} from './types';
+import {ProxyObj, TrapEvent} from './types';
 import {pipeFromArray} from 'rxjs/internal/util/pipe';
 
 const matchFilters = {
-  get: (subx: ProxyObj, get: Event) => {
+  get: (subx: ProxyObj, get: TrapEvent) => {
     const val = R.path(get.path, subx);
-    return (event: Event) => {
+    return (event: TrapEvent) => {
       if (event.type === 'STALE' && R.equals(event.path, get.path)) {
         return true;
       }
@@ -35,9 +35,9 @@ const matchFilters = {
       return false;
     };
   },
-  has: (subx: ProxyObj, has: Event) => {
+  has: (subx: ProxyObj, has: TrapEvent) => {
     const val = R.last(has.path)! in R.path<ProxyObj>(R.init(has.path), subx)!;
-    return (event: Event) => {
+    return (event: TrapEvent) => {
       if (
         event.type === 'DELETE' &&
         val === true &&
@@ -54,9 +54,9 @@ const matchFilters = {
       return false;
     };
   },
-  keys: (subx: ProxyObj, keys: Event) => {
+  keys: (subx: ProxyObj, keys: TrapEvent) => {
     const val = Object.keys(R.path<ProxyObj>(keys.path, subx)!);
-    return (event: Event) => {
+    return (event: TrapEvent) => {
       if (
         (event.type === 'DELETE' &&
           keys.path.length + 1 === event.path.length &&
@@ -76,9 +76,9 @@ const matchFilters = {
   },
 };
 
-const monitorGets = (subx: ProxyObj, gets: Event[]) => {
-  const uniqGets = R.uniqBy((event: Event) => event.path.join('.'), gets);
-  const streams: Observable<Event>[] = [];
+const monitorGets = (subx: ProxyObj, gets: TrapEvent[]) => {
+  const uniqGets = R.uniqBy((event: TrapEvent) => event.path.join('.'), gets);
+  const streams: Observable<TrapEvent>[] = [];
   R.forEach(get => {
     const getFilter = matchFilters.get(subx, get);
     streams.push(
@@ -100,9 +100,9 @@ const monitorGets = (subx: ProxyObj, gets: Event[]) => {
   return streams;
 };
 
-const monitorHass = (subx: ProxyObj, hass: Event[]) => {
-  const uniqHass = R.uniqBy((has: Event) => has.path.join('.'), hass);
-  const streams: Observable<Event>[] = [];
+const monitorHass = (subx: ProxyObj, hass: TrapEvent[]) => {
+  const uniqHass = R.uniqBy((has: TrapEvent) => has.path.join('.'), hass);
+  const streams: Observable<TrapEvent>[] = [];
   R.forEach(has => {
     const hasFilter = matchFilters.has(subx, has);
     streams.push(
@@ -122,9 +122,9 @@ const monitorHass = (subx: ProxyObj, hass: Event[]) => {
   return streams;
 };
 
-const monitorkeyss = (subx: ProxyObj, keyss: Event[]) => {
-  const uniqKeyss = R.uniqBy((keys: Event) => keys.path.join('.'), keyss);
-  const streams: Observable<Event>[] = [];
+const monitorkeyss = (subx: ProxyObj, keyss: TrapEvent[]) => {
+  const uniqKeyss = R.uniqBy((keys: TrapEvent) => keys.path.join('.'), keyss);
+  const streams: Observable<TrapEvent>[] = [];
   R.forEach(keys => {
     const keysFilter = matchFilters.keys(subx, keys);
     streams.push(
@@ -145,8 +145,8 @@ const monitorkeyss = (subx: ProxyObj, keyss: Event[]) => {
 };
 
 // a subx obj and one of its children attached to the same parent (props of React)
-export const removeDuplicateEvents = (events: Event[]) =>
-  R.reduce((result: Event[], event: Event) => {
+export const removeDuplicateEvents = (events: TrapEvent[]) =>
+  R.reduce((result: TrapEvent[], event: TrapEvent) => {
     if (result.length === 0) {
       return [event];
     }
@@ -176,7 +176,11 @@ export const removeDuplicateEvents = (events: Event[]) =>
 
 const monitor = (
   subx: ProxyObj,
-  {gets, hass, keyss}: {gets: Event[]; hass: Event[]; keyss: Event[]}
+  {
+    gets,
+    hass,
+    keyss,
+  }: {gets: TrapEvent[]; hass: TrapEvent[]; keyss: TrapEvent[]}
 ) => {
   return merge(
     ...monitorGets(subx, removeDuplicateEvents(gets)),
@@ -187,27 +191,27 @@ const monitor = (
 };
 
 export const runAndMonitor = (subx: ProxyObj, f: () => any) => {
-  const gets: Event[] = [];
-  const hass: Event[] = [];
-  const keyss: Event[] = [];
+  const gets: TrapEvent[] = [];
+  const hass: TrapEvent[] = [];
+  const keyss: TrapEvent[] = [];
   let count = 0;
   const subscription = new Subscription();
   subscription.add(
-    subx.get$.subscribe((event: Event) => count === 1 && gets.push(event))
+    subx.get$.subscribe((event: TrapEvent) => count === 1 && gets.push(event))
   );
   subscription.add(
-    subx.has$.subscribe((event: Event) => count === 1 && hass.push(event))
+    subx.has$.subscribe((event: TrapEvent) => count === 1 && hass.push(event))
   );
   subscription.add(
-    subx.keys$.subscribe((event: Event) => count === 1 && keyss.push(event))
+    subx.keys$.subscribe((event: TrapEvent) => count === 1 && keyss.push(event))
   );
   subscription.add(
-    subx.compute_begin$.subscribe((event: Event) => {
+    subx.compute_begin$.subscribe((event: TrapEvent) => {
       count += 1;
     })
   );
   subscription.add(
-    subx.compute_finish$.subscribe((event: Event) => {
+    subx.compute_finish$.subscribe((event: TrapEvent) => {
       count -= 1;
     })
   );
@@ -233,7 +237,7 @@ export const computed = (subx: ProxyObj, f: () => any) => {
       const {result, stream$} = runAndMonitor(subx, f.bind(subx));
       cache = result;
       stale = false;
-      stream$.pipe(take(1)).subscribe((event: Event) => {
+      stream$.pipe(take(1)).subscribe((event: TrapEvent) => {
         stale = true;
         subx.__emitEvent__('stale$', {
           type: 'STALE',
@@ -256,7 +260,7 @@ export const computed = (subx: ProxyObj, f: () => any) => {
 export const autoRun = (
   subx: ProxyObj,
   f: () => any,
-  ...operators: MonoTypeOperatorFunction<Event>[]
+  ...operators: MonoTypeOperatorFunction<TrapEvent>[]
 ) => {
   let results$: BehaviorSubject<any> | undefined;
   let subscription: Subscription;
@@ -269,7 +273,7 @@ export const autoRun = (
     }
     subscription = stream$
       .pipe(pipeFromArray(operators), take(1))
-      .subscribe((event: Event) => run());
+      .subscribe((event: TrapEvent) => run());
   };
   run();
   results$!.subscribe(undefined, undefined, () => {

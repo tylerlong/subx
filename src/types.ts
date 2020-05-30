@@ -1,17 +1,17 @@
 import {Observable} from 'rxjs';
 
-export type Event = {
+export type TrapEvent = {
   type: string;
   path: string[];
   id: number;
 };
 
-export type TransactionEvent = Event & {
+export type TransactionEvent = TrapEvent & {
   name: string;
-  events: Event[];
+  events: TrapEvent[];
 };
 
-export type StaleEvent = Event & {
+export type StaleEvent = TrapEvent & {
   cache: any;
 };
 
@@ -20,14 +20,14 @@ export type ModelObj = {
 };
 
 export type ProxyObj = ModelObj & {
-  $: Observable<Event>;
-  set$: Observable<Event>;
-  delete$: Observable<Event>;
-  get$: Observable<Event>;
-  has$: Observable<Event>;
-  keys$: Observable<Event>;
-  compute_begin$: Observable<Event>;
-  compute_finish$: Observable<Event>;
+  $: Observable<TrapEvent>;
+  set$: Observable<TrapEvent>;
+  delete$: Observable<TrapEvent>;
+  get$: Observable<TrapEvent>;
+  has$: Observable<TrapEvent>;
+  keys$: Observable<TrapEvent>;
+  compute_begin$: Observable<TrapEvent>;
+  compute_finish$: Observable<TrapEvent>;
   stale$: Observable<StaleEvent>;
   transaction$: Observable<TransactionEvent>;
 };
