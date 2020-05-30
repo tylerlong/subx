@@ -2,15 +2,15 @@
 import { filter, timestamp, map } from 'rxjs/operators'
 // import { merge } from 'rxjs'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('demo', () => {
   test('props changed events', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: '',
       lastName: ''
     })
-    const person = new Person({
+    const person = Person.create({
       firstName: 'San',
       lastName: 'Zhang'
     })
@@ -27,11 +27,11 @@ describe('demo', () => {
   })
 
   test('Subscribe to all the props changed events', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: 'San',
       lastName: 'Zhang'
     })
-    const person = new Person()
+    const person = Person.create()
     person.$.subscribe(event => {
       // console.log('Prop changed', event)
     })
@@ -49,13 +49,13 @@ describe('demo', () => {
   })
 
   test('OOP Style', () => {
-    const Person = new SubX({ firstName: '' })
+    const Person = SubX.model({ firstName: '' })
 
-    const person1 = new Person()
+    const person1 = Person.create()
     // person1.$.subscribe(console.log)
     person1.firstName = 'Tyler'
 
-    const person2 = new Person({ firstName: 'Peter' })
+    const person2 = Person.create({ firstName: 'Peter' })
     // person2.$.subscribe(console.log)
     person2.firstName = 'David'
   })
@@ -134,7 +134,7 @@ describe('demo', () => {
   })
 
   test('computed property', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: 'San',
       lastName: 'Zhang',
       fullName () {
@@ -144,7 +144,7 @@ describe('demo', () => {
         return `${phrase} ${this.fullName()}`
       }
     })
-    const person = new Person()
+    const person = Person.create()
     expect(person.fullName()).toBe('San Zhang')
     expect(person.greeting('Hi')).toBe('Hi San Zhang')
   })

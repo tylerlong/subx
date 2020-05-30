@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('stale deep equal', () => {
   test('default', () => {

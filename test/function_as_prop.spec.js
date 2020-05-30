@@ -1,20 +1,20 @@
 /* eslint-env jest */
 import uuid from 'uuid/v1'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('function as prop', () => {
   test('uuid', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: '',
       lastName: ''
     })
-    const person1 = new Person({
+    const person1 = Person.create({
       id: uuid(),
       firstName: 'San',
       lastName: 'Zhang'
     })
-    const person2 = new Person({
+    const person2 = Person.create({
       id: uuid(),
       firstName: 'Si',
       lastName: 'Li'

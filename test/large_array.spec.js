@@ -2,7 +2,7 @@
 import * as R from 'ramda'
 import { merge } from 'rxjs'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 const allEvents = p => merge(p.set$, p.delete$, p.get$, p.has$, p.keys$,
   p.compute_begin$, p.compute_finish$, p.stale$, p.transaction$)

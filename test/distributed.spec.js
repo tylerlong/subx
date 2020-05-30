@@ -1,11 +1,11 @@
 /* eslint-env jest */
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('distributed', () => {
   test('default test', () => {
     // user.js
     let count1 = 0
-    const User = new SubX({
+    const User = SubX.model({
       firstName: 'San',
       lastName: 'Zhang',
       get name () {
@@ -16,7 +16,7 @@ describe('distributed', () => {
 
     // company.js
     let count2 = 0
-    const Company = new SubX({
+    const Company = SubX.model({
       email: 'test@example.com',
       phone: '13888888888',
       get contact () {
@@ -25,13 +25,13 @@ describe('distributed', () => {
       }
     })
     // store.js
-    const Store = new SubX({
-      user: new User(),
-      company: new Company()
+    const Store = SubX.model({
+      user: User.create(),
+      company: Company.create()
     })
 
     // index.js
-    const store = new Store()
+    const store = Store.create()
     expect(store.user.name).toBe('San Zhang')
     expect(store.company.contact).toBe('test@example.com 13888888888')
     expect(count1).toBe(1)

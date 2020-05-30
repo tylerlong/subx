@@ -3,7 +3,7 @@ import { combineLatest } from 'rxjs'
 import { filter, map, startWith } from 'rxjs/operators'
 import * as R from 'ramda'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('new design', () => {
   test('JSON.stringify', () => {
@@ -113,25 +113,24 @@ describe('new design', () => {
   })
 
   test('class', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: 'San',
       lastName: 'Zhang',
       fullName: function () { return `${this.firstName} ${this.lastName}` }
     })
-    const p = new Person({ firstName: 'Chuntao' })
+    const p = Person.create({ firstName: 'Chuntao' })
     expect(p.fullName()).toBe('Chuntao Zhang')
   })
 
   test('instanceof', () => {
-    const Person = new SubX({ name: 'Tyler Liu' })
-    const p = new Person()
+    const Person = SubX.model({ name: 'Tyler Liu' })
+    const p = Person.create()
     expect(p.name).toBe('Tyler Liu')
-    expect(p instanceof Person).toBe(false)
   })
 
   test('delete event', () => {
-    const Person = new SubX({ firstName: '', lastName: '' })
-    const p = new Person({ firstName: 'Chuntao', lastName: 'Liu' })
+    const Person = SubX.model({ firstName: '', lastName: '' })
+    const p = Person.create({ firstName: 'Chuntao', lastName: 'Liu' })
     const events = []
     p.delete$.subscribe(event => {
       events.push(event)

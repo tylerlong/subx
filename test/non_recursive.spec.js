@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('non recursive', () => {
   test('recursive', () => {
@@ -15,8 +15,8 @@ describe('non recursive', () => {
   })
 
   test('recursive 2', () => {
-    const Rectangle = new SubX({ position: { }, size: { } })
-    const rectangle = new Rectangle()
+    const Rectangle = SubX.model({ position: { }, size: { } })
+    const rectangle = Rectangle.create()
     let count = 0
     rectangle.$.subscribe(e => { count += 1 })
     rectangle.position.x = 0
@@ -40,8 +40,8 @@ describe('non recursive', () => {
   })
 
   test('non recursive 2', () => {
-    const Rectangle = new SubX({ position: { }, size: { } }, false)
-    const rectangle = new Rectangle()
+    const Rectangle = SubX.model({ position: { }, size: { } }, false)
+    const rectangle = Rectangle.create()
     let count = 0
     rectangle.$.subscribe(e => { count += 1 })
     rectangle.position.x = 0

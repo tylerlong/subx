@@ -2,7 +2,7 @@
 import { filter, map, publish, share } from 'rxjs/operators'
 import { Subject } from 'rxjs'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('lazy stream', () => {
   test('no subscriber', () => {

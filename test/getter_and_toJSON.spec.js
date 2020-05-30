@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import util from 'util'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('getter & toJSON', () => {
   test('default', () => {

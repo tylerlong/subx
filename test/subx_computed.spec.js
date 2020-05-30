@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SubX from '../src/index'
+import SubX from '../build/index'
 import { computed } from '../build/monitor'
 
 describe('SubX computed', () => {

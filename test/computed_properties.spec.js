@@ -2,18 +2,18 @@
 import { debounceTime, map } from 'rxjs/operators'
 import delay from 'timeout-as-promise'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('computed properties', () => {
   test('this + normal function', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: 'San',
       lastName: 'Zhang',
       fullName () {
         return `${this.firstName} ${this.lastName}`
       }
     })
-    const person = new Person()
+    const person = Person.create()
     expect(person.fullName()).toBe('San Zhang')
 
     person.firstName = 'Si'
@@ -27,7 +27,7 @@ describe('computed properties', () => {
 
   test('debounce expensive computation', async () => {
     let count = 0
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: 'San',
       lastName: 'Zhang',
       fullName () {
@@ -35,7 +35,7 @@ describe('computed properties', () => {
         return `${this.firstName} ${this.lastName}`
       }
     })
-    const person = new Person()
+    const person = Person.create()
 
     let fullName
     person.$.pipe(
@@ -58,7 +58,7 @@ describe('computed properties', () => {
   })
 
   test('computed property with arguments', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: 'San',
       lastName: 'Zhang',
       fullName () {
@@ -68,7 +68,7 @@ describe('computed properties', () => {
         return `${phrase} ${this.fullName()}`
       }
     })
-    const person = new Person()
+    const person = Person.create()
     expect(person.fullName()).toBe('San Zhang')
     expect(person.greeting('Hi')).toBe('Hi San Zhang')
 
@@ -84,14 +84,14 @@ describe('computed properties', () => {
   })
 
   test('computed property as getter', () => {
-    const Person = new SubX({
+    const Person = SubX.model({
       firstName: 'San',
       lastName: 'Zhang',
       get fullName () {
         return `${this.firstName} ${this.lastName}`
       }
     })
-    const person = new Person()
+    const person = Person.create()
     expect(person.fullName).toBe('San Zhang')
   })
 })

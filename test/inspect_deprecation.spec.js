@@ -2,7 +2,7 @@
 import util from 'util'
 import * as R from 'ramda'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('inspect deprecation', () => {
   test('default', () => {

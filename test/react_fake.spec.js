@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SubX from '../src'
+import SubX from '../build/index'
 
 const store = SubX.create({
   todos: [],

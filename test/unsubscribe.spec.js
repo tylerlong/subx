@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import { filter } from 'rxjs/operators'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('unsubscribe', () => {
   test('delete property', () => {

@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('Drake cases', () => {
   test('default', () => {
@@ -16,12 +16,12 @@ describe('Drake cases', () => {
 
   test('alternative', () => {
     const state = SubX.create({})
-    const SubState = new SubX({
+    const SubState = SubX.model({
       f: () => {
         return 2
       }
     })
-    state.subState = new SubState({ hello: 'world' })
+    state.subState = SubState.create({ hello: 'world' })
     expect(state.subState.f).toBeDefined()
     expect(state.subState.f()).toBe(2)
   })

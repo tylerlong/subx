@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('', () => {
   test('complex value console.log', () => {

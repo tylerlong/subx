@@ -69,17 +69,28 @@ const handler = {
         return () =>
           Array.isArray(target)
             ? receiver
-            : R.pipe(
-                R.keys,
-                R.filter(
-                  k =>
-                    !RESERVED_PROPERTIES.includes(k) &&
-                    'value' in Object.getOwnPropertyDescriptor(receiver, k)! &&
-                    typeof receiver[k] !== 'function'
-                ),
-                R.map(k => [k, receiver[k]]),
-                R.fromPairs
-              )(receiver);
+            : R.fromPairs(
+                Object.keys(receiver)
+                  .filter(
+                    k =>
+                      !RESERVED_PROPERTIES.includes(k) &&
+                      'value' in
+                        Object.getOwnPropertyDescriptor(receiver, k)! &&
+                      typeof receiver[k] !== 'function'
+                  )
+                  .map(k => [k, receiver[k]])
+              );
+      // : R.pipe(
+      //     R.keys,
+      //     R.filter(
+      //       k =>
+      //         !RESERVED_PROPERTIES.includes(k) &&
+      //         'value' in Object.getOwnPropertyDescriptor(receiver, k)! &&
+      //         typeof receiver[k] !== 'function'
+      //     ),
+      //     R.map(k => [k, receiver[k]]),
+      //     R.fromPairs
+      //   )(receiver);
       case 'toObject':
         return () => JSON.parse(JSON.stringify(receiver));
       case 'toString':
@@ -115,7 +126,7 @@ const handler = {
         if (Array.isArray(target)) {
           const f = (...args: any[]) => {
             receiver.startTransaction();
-            const r = target[prop].bind(receiver)(...args);
+            const r = (target[prop].bind(receiver) as any)(...args);
             receiver.endTransaction(prop);
             return r;
           };
@@ -185,9 +196,9 @@ class SubX {
     f: () => any,
     ...operators: MonoTypeOperatorFunction<Event>[]
   ) => BehaviorSubject<any>;
-  constructor(modelObj = {}, recursive = true) {
-    class Model {
-      constructor(obj = {}, __recursive__ = recursive) {
+  static model(modelObj: ModelObj = {}, recursive = true) {
+    const Model = {
+      create(obj: ModelObj = {}, __recursive__ = recursive): ProxyObj {
         const newObj: ModelObj = R.empty(obj);
         R.forEach(name => {
           newObj[name] = new Subject();
@@ -217,29 +228,50 @@ class SubX {
           });
         };
 
-        const proxy = new Proxy(newObj, handler);
-        R.pipe(
-          R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
-          R.forEach(([target, prop]: [ModelObj, string]) => {
-            const descriptor = Object.getOwnPropertyDescriptor(target, prop)!;
-            if ('value' in descriptor) {
-              proxy[prop] = target[prop];
-            } else if ('get' in descriptor) {
-              // getter function
-              descriptor.get = computed(proxy, descriptor.get);
-              Object.defineProperty(newObj, prop, descriptor);
-            }
-          })
-        )(R.map(key => [obj, key], R.keys(obj)));
+        const proxy = new Proxy(newObj, handler) as ProxyObj;
+
+        for (const {target, prop} of [
+          ...Object.keys(modelObj).map(key => ({target: modelObj, prop: key})),
+          ...Object.keys(obj).map(key => ({target: obj, prop: key})),
+        ]) {
+          // const prop = item.prop;
+          // const target = item.target;
+          const descriptor = Object.getOwnPropertyDescriptor(target, prop)!;
+          if ('value' in descriptor) {
+            proxy[prop] = target[prop];
+          } else if ('get' in descriptor) {
+            // getter function
+            descriptor.get = computed(proxy, descriptor.get!);
+            Object.defineProperty(newObj, prop, descriptor);
+          }
+        }
+        // R.pipe(
+        //   R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
+        // R.forEach(({target, prop}: {ModelObj, string}) => {
+        //   const descriptor = Object.getOwnPropertyDescriptor(target, prop)!;
+        //   if ('value' in descriptor) {
+        //     proxy[prop] = target[prop];
+        //   } else if ('get' in descriptor) {
+        //     // getter function
+        //     descriptor.get = computed(proxy, descriptor.get!);
+        //     Object.defineProperty(newObj, prop, descriptor);
+        //   }
+        // })([
+        //   ...Object.keys(obj).map(key => {target: obj, prop: key}),
+        //   ...Object.keys(modelObj).map(key => {target: modelObj, prop: key}),
+        // ]);
+        // )(R.map(key => [obj, key], R.keys(obj)));
+
         return proxy;
-      }
-    }
+      },
+    };
     return Model;
   }
 }
 
-const DefaultModel = new SubX({});
-SubX.create = (obj = {}, recursive = true) => new DefaultModel(obj, recursive);
+const DefaultModel = SubX.model({});
+SubX.create = (obj = {}, recursive = true) =>
+  DefaultModel.create(obj, recursive);
 SubX.runAndMonitor = runAndMonitor;
 SubX.autoRun = autoRun;
 

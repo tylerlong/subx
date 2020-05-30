@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import * as R from 'ramda'
 
-import SubX from '../src'
+import SubX from '../build/index'
 
 describe('delete stream', () => {
   test('delete$', () => {

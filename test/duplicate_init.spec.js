@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('duplicate init', () => {
   test('init once', () => {

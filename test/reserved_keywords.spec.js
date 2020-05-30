@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import { Observable } from 'rxjs'
 
-import SubX from '../src/index'
+import SubX from '../build/index'
 
 describe('Reserved keywords', () => {
   test('original data has keywords as prop', () => {

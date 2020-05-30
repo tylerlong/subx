@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import SubX from '../src'
+import SubX from '../build/index'
 
 describe('Misc', () => {
   test('autoRun & runAndMonitor', () => {

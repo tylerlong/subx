@@ -2,7 +2,7 @@
 import { filter } from 'rxjs/operators'
 import * as R from 'ramda'
 
-import SubX from '../src'
+import SubX from '../build/index'
 
 describe('has stream', () => {
   test('default', () => {
