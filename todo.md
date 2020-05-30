@@ -1,5 +1,6 @@
 ## Todo
 
+- Support Symbol as prop
 - Use generics in TS types
 - Review TS types
 - How to undo the changes according to events?
