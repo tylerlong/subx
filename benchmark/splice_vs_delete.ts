@@ -1,4 +1,4 @@
-import Benchmark, {Suite} from 'benchmark';
+import Benchmark, {Suite, Target} from 'benchmark';
 import * as R from 'ramda';
 
 type Parent = [{id: string}, string];
@@ -22,7 +22,7 @@ suite
   })
   .add('delete', () => {
     for (let i = 0; i < 10000; i++) {
-      const parents: {[key: string]: any} = {};
+      const parents: {[key: string]: Parent} = {};
       parents.aaa = [{id: 'aaa'}, 'child'];
       parents.bbb = [{id: 'bbb'}, 'child'];
       Object.keys(parents).forEach(k => parents[k]);
@@ -34,7 +34,9 @@ suite
     console.log(String(event.target));
   })
   .on('complete', function (this: Suite) {
-    console.log('Fastest is ' + this.filter('fastest').map((i: any) => i.name));
+    console.log(
+      'Fastest is ' + this.filter('fastest').map((i: Target) => i.name)
+    );
   })
   .run();
 

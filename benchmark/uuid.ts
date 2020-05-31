@@ -1,4 +1,4 @@
-import Benchmark, {Suite} from 'benchmark';
+import Benchmark, {Suite, Target} from 'benchmark';
 import hyperid from 'hyperid';
 
 const uuid = hyperid();
@@ -21,7 +21,9 @@ suite
     console.log(String(event.target));
   })
   .on('complete', function (this: Suite) {
-    console.log('Fastest is ' + this.filter('fastest').map((i: any) => i.name));
+    console.log(
+      'Fastest is ' + this.filter('fastest').map((i: Target) => i.name)
+    );
   })
   .run();
 

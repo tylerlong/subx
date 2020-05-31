@@ -1,4 +1,4 @@
-import Benchmark, {Suite} from 'benchmark';
+import Benchmark, {Suite, Target} from 'benchmark';
 import * as R from 'ramda';
 
 let id = 0;
@@ -53,7 +53,9 @@ suite
     console.log(String(event.target));
   })
   .on('complete', function (this: Suite) {
-    console.log('Fastest is ' + this.filter('fastest').map((i: any) => i.name));
+    console.log(
+      'Fastest is ' + this.filter('fastest').map((i: Target) => i.name)
+    );
   })
   .run();
 
