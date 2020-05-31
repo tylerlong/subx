@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "lib": ["DOM"],
     "esModuleInterop":true
   },
   "include": [

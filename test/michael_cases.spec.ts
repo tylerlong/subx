@@ -18,6 +18,6 @@ describe('Michael cases', () => {
   });
 
   test('toString.call', () => {
-    expect(toString.call(SubX.create([]))).toBe('[object Array]');
+    expect(global.toString.call(SubX.create([]))).toBe('[object Array]');
   });
 });
