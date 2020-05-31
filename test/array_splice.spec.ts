@@ -45,7 +45,7 @@ describe('array splice', () => {
     const store = SubX.create({
       todos: [1, 2, 3],
     });
-    const events: TransactionEvent[] = []; // todo: this Event is defined by @types/react
+    const events: TransactionEvent[] = [];
     store.transaction$.subscribe(event => events.push(event));
     store.todos.pop();
     expect(events.length).toBe(1);

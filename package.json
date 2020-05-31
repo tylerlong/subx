@@ -1,6 +1,6 @@
 {
   "name": "subx",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "SubX, Next generation state container",
   "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
@@ -17,7 +17,7 @@
     "bench": "node build/benchmark/find.js",
     "test": "jest -w 1",
     "prepublishOnly": "yarn test && yarn compile",
-    "compile": "rm -rf build/* && tsc && mv build/src/* build/ && rmdir build/src",
+    "compile": "rm -rf build/* && tsc && mv build/src/* build/ && rmdir build/src && rm -rf build/test",
     "pretest": "yarn run compile"
   },
   "dependencies": {
@@ -33,8 +33,6 @@
     "gts": "^2.0.2",
     "hyperid": "^2.0.5",
     "jest": "^26.0.1",
-    "react": "^16.13.1",
-    "react-test-renderer": "^16.13.1",
     "ts-jest": "^26.0.0",
     "typescript": "^3.9.3",
     "wait-for-async": "^0.5.0",
