@@ -14,7 +14,7 @@
     "State Container"
   ],
   "scripts": {
-    "bench": "node build/benchmark/find.js",
+    "bench": "ts-node benchmark/find.ts",
     "test": "jest -w 1",
     "prepublishOnly": "yarn test && yarn compile",
     "compile": "rm -rf build/* && tsc && mv build/src/* build/ && rmdir build/src && rm -rf build/test",
@@ -34,6 +34,7 @@
     "hyperid": "^2.0.5",
     "jest": "^26.0.1",
     "ts-jest": "^26.0.0",
+    "ts-node": "^8.10.2",
     "typescript": "^3.9.3",
     "wait-for-async": "^0.5.0",
     "yarn-upgrade-all": "^0.5.2"
