@@ -206,12 +206,12 @@ export const runAndMonitor = (subx: ProxyObj, f: () => any) => {
     subx.keys$.subscribe((event: TrapEvent) => count === 1 && keyss.push(event))
   );
   subscription.add(
-    subx.compute_begin$.subscribe((event: TrapEvent) => {
+    subx.compute_begin$.subscribe(() => {
       count += 1;
     })
   );
   subscription.add(
-    subx.compute_finish$.subscribe((event: TrapEvent) => {
+    subx.compute_finish$.subscribe(() => {
       count -= 1;
     })
   );
@@ -237,7 +237,7 @@ export const computed = (subx: ProxyObj, f: () => any) => {
       const {result, stream$} = runAndMonitor(subx, f.bind(subx));
       cache = result;
       stale = false;
-      stream$.pipe(take(1)).subscribe((event: TrapEvent) => {
+      stream$.pipe(take(1)).subscribe(() => {
         stale = true;
         subx.__emitEvent__('stale$', {
           type: 'STALE',
@@ -273,7 +273,7 @@ export const autoRun = (
     }
     subscription = stream$
       .pipe(pipeFromArray(operators), take(1))
-      .subscribe((event: TrapEvent) => run());
+      .subscribe(() => run());
   };
   run();
   results$!.subscribe(undefined, undefined, () => {

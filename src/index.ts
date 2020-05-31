@@ -34,7 +34,7 @@ const RESERVED_PROPERTIES = [
 ];
 
 const handler = {
-  set: (target: ModelObj, prop: string, val: any, receiver: ProxyObj) => {
+  set: (target: ModelObj, prop: string, val: any) => {
     if (RESERVED_PROPERTIES.includes(prop)) {
       prop = `_${prop}`; // prefix reserved keywords with underscore
     }
@@ -159,17 +159,13 @@ const handler = {
     target.__emitEvent__('keys$', {type: 'KEYS', path: [], id: uuid()});
     return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target));
   },
-  setPrototypeOf: (target: ModelObj, prototype: ModelObj) => {
+  setPrototypeOf: () => {
     return false; // disallow setPrototypeOf
   },
-  defineProperty: (
-    target: ModelObj,
-    property: string,
-    descriptor: ModelObj
-  ) => {
+  defineProperty: () => {
     return false; // disallow defineProperty
   },
-  preventExtensions: (target: ModelObj) => {
+  preventExtensions: () => {
     return false; // disallow preventExtensions
   },
 };
