@@ -80,17 +80,6 @@ const handler = {
                   )
                   .map(k => [k, receiver[k]])
               );
-      // : R.pipe(
-      //     R.keys,
-      //     R.filter(
-      //       k =>
-      //         !RESERVED_PROPERTIES.includes(k) &&
-      //         'value' in Object.getOwnPropertyDescriptor(receiver, k)! &&
-      //         typeof receiver[k] !== 'function'
-      //     ),
-      //     R.map(k => [k, receiver[k]]),
-      //     R.fromPairs
-      //   )(receiver);
       case 'toObject':
         return () => JSON.parse(JSON.stringify(receiver));
       case 'toString':
@@ -186,7 +175,7 @@ const handler = {
 };
 
 class SubX {
-  static create: (obj?: ModelObj) => ProxyObj;
+  static create: (obj?: ModelObj, recursive?: boolean) => ProxyObj;
   static runAndMonitor: (
     subx: ProxyObj,
     f: () => any
@@ -234,8 +223,6 @@ class SubX {
           ...Object.keys(modelObj).map(key => ({target: modelObj, prop: key})),
           ...Object.keys(obj).map(key => ({target: obj, prop: key})),
         ]) {
-          // const prop = item.prop;
-          // const target = item.target;
           const descriptor = Object.getOwnPropertyDescriptor(target, prop)!;
           if ('value' in descriptor) {
             proxy[prop] = target[prop];
@@ -245,23 +232,6 @@ class SubX {
             Object.defineProperty(newObj, prop, descriptor);
           }
         }
-        // R.pipe(
-        //   R.concat(R.map(key => [modelObj, key], R.keys(modelObj))),
-        // R.forEach(({target, prop}: {ModelObj, string}) => {
-        //   const descriptor = Object.getOwnPropertyDescriptor(target, prop)!;
-        //   if ('value' in descriptor) {
-        //     proxy[prop] = target[prop];
-        //   } else if ('get' in descriptor) {
-        //     // getter function
-        //     descriptor.get = computed(proxy, descriptor.get!);
-        //     Object.defineProperty(newObj, prop, descriptor);
-        //   }
-        // })([
-        //   ...Object.keys(obj).map(key => {target: obj, prop: key}),
-        //   ...Object.keys(modelObj).map(key => {target: modelObj, prop: key}),
-        // ]);
-        // )(R.map(key => [obj, key], R.keys(obj)));
-
         return proxy;
       },
     };
