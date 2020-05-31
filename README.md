@@ -190,7 +190,7 @@ Method signature explained:
 1. We can `stream$.complete()` to stop the whole monitor & autoRun process described above.
 
 
-#### [Sample code using `autoRun`](./test/autoRun.spec.js)
+#### [Sample code using `autoRun`](./test/autoRun.spec.ts)
 
 
 ## `runAndMonitor`
@@ -222,10 +222,10 @@ Method signature explained:
 
 #### Sample code using `runAndMonitor`
 
-- [test/react_fake.spec.js](test/react_fake.spec.js)
-- [test/monitor_delete.spec.js](test/monitor_delete.spec.js)
-- [test/react.spec.js](test/react.spec.js)
-- [test/runAndMonitor_path.spec.js](test/runAndMonitor_path.spec.js)
+- [test/react_fake.spec.ts](test/react_fake.spec.ts)
+- [test/monitor_delete.spec.ts](test/monitor_delete.spec.ts)
+- [test/react.spec.ts](test/react.spec.ts)
+- [test/runAndMonitor_path.spec.ts](test/runAndMonitor_path.spec.ts)
 
 
 ## Recursive

@@ -3,7 +3,7 @@ import SubX from '../src/index';
 
 describe('distributed', () => {
   test('default test', () => {
-    // user.js
+    // user.ts
     let count1 = 0;
     const User = SubX.model({
       firstName: 'San',
@@ -14,7 +14,7 @@ describe('distributed', () => {
       },
     });
 
-    // company.js
+    // company.ts
     let count2 = 0;
     const Company = SubX.model({
       email: 'test@example.com',
@@ -24,13 +24,13 @@ describe('distributed', () => {
         return `${this.email} ${this.phone}`;
       },
     });
-    // store.js
+    // store.ts
     const Store = SubX.model({
       user: User.create(),
       company: Company.create(),
     });
 
-    // index.js
+    // index.ts
     const store = Store.create();
     expect(store.user.name).toBe('San Zhang');
     expect(store.company.contact).toBe('test@example.com 13888888888');
