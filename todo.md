@@ -1,6 +1,5 @@
 ## Todo
 
-- benchmark should use `node` instead of `ts-node`
 - get rid of ramda
 - Support Symbol as prop
 - Use generics in TS types

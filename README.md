@@ -144,14 +144,14 @@ We use "convention over configuration" here: getter functions are computed prope
 So in SubX, "computed properties" and "getters" are synonyms. We use them interchangeably.
 
 ```js
-const Person = new SubX({
+const Person = SubX.model({
     firstName: 'San',
     lastName: 'Zhang',
     get fullName () {
         return `${this.firstName} ${this.lastName}`
     }
 })
-const person = new Person()
+const person = Person.create()
 expect(person.fullName).toBe('San Zhang')
 ```
 
@@ -243,8 +243,8 @@ You can disable the recursive behavior:
 
 ```js
 const p1 = SubX.create({ a: {}, b: {} }, false)
-const P = new SubX({ a: {}, b: {} }, false)
-const p2 = new P()
+const P = SubX.model({ a: {}, b: {} }, false)
+const p2 = P.create()
 ```
 
 `p1` and `p2` are SubX objects while none of `p1.a`, `p1.b`, `p2.a`, `p2.b` are SubX objects.
