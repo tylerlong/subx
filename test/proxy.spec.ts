@@ -6,12 +6,7 @@ describe('test', () => {
   test('proxy for object properties', () => {
     let count = 0;
     const handler = {
-      set: (
-        target: ModelObj,
-        property: string,
-        value: any,
-        receiver: ModelObj
-      ) => {
+      set: (target: ModelObj, property: string, value: any) => {
         count += 1;
         target[property] = value;
         // console.log('prop changed')
@@ -35,12 +30,7 @@ describe('test', () => {
         // console.log('Deleted %s', property)
         return true;
       },
-      set: function (
-        target: ModelObj,
-        property: string,
-        value: any,
-        receiver: ModelObj
-      ) {
+      set: function (target: ModelObj, property: string, value: any) {
         target[property] = value;
         // console.log('Set %s to %o', property, value)
         return true;
@@ -63,12 +53,7 @@ describe('test', () => {
         delete target[property];
         return true;
       },
-      set: function (
-        target: ModelObj,
-        property: string,
-        value: any,
-        receiver: ModelObj
-      ) {
+      set: function (target: ModelObj, property: string, value: any) {
         target[property] = value;
         // console.log('Set %s to %o', property, value)
         return true;
@@ -85,12 +70,7 @@ describe('test', () => {
         delete target[property];
         return true;
       },
-      set: function (
-        target: ModelObj,
-        property: string,
-        value: any,
-        receiver: ModelObj
-      ) {
+      set: function (target: ModelObj, property: string, value: any) {
         target[property] = value;
         // console.log('Set %s to %o', property, value)
         return true;
@@ -107,7 +87,7 @@ describe('test', () => {
     let count1 = 0;
     let count2 = 0;
     const handler = {
-      get: (target: ModelObj, prop: string, receiver: ModelObj) => {
+      get: (target: ModelObj, prop: string) => {
         count1 += 1;
         return target[prop];
       },

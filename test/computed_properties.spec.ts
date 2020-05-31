@@ -40,7 +40,7 @@ describe('computed properties', () => {
     let fullName;
     person.$.pipe(
       debounceTime(1),
-      map(event => person.fullName())
+      map(() => person.fullName())
     ).subscribe(val => {
       fullName = val;
     });

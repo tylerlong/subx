@@ -10,7 +10,7 @@ describe('array splice', () => {
       todos: [1, 2, 3],
     });
     let notified = false;
-    store.transaction$.subscribe(event => {
+    store.transaction$.subscribe(() => {
       notified = true;
     });
     store.todos.push(4);

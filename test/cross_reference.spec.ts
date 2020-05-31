@@ -6,7 +6,7 @@ describe('cross reference', () => {
   test('default', () => {
     const o = {};
     const handler = {
-      set: (target: ModelObj, prop: string, val: any, receiver: ModelObj) => {
+      set: (target: ModelObj, prop: string, val: any) => {
         target[prop] = val;
         return true;
       },

@@ -15,7 +15,7 @@ describe('performance', () => {
         }),
         take(1)
       )
-      .subscribe(i => {
+      .subscribe(() => {
         count2 += 1;
       });
     expect(count1).toBe(1);
@@ -32,7 +32,7 @@ describe('performance', () => {
         }),
         debounceTime(1)
       )
-      .subscribe(i => {
+      .subscribe(() => {
         count2 += 1;
       });
     await waitFor({interval: 5});

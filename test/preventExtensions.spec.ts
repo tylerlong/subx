@@ -14,11 +14,11 @@ describe('preventExtensions', () => {
   test('disallow preventExtensions', () => {
     const a = {};
     const handler = {
-      preventExtensions: (target: ModelObj) => {
+      preventExtensions: () => {
         return false;
       },
     };
-    const p = new Proxy(a, handler);
+    const p = new Proxy(a, handler) as {a: number};
     const f = () => Object.preventExtensions(p);
     expect(f).toThrow(TypeError);
     Reflect.preventExtensions(p);

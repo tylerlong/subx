@@ -2,7 +2,6 @@
 import {filter} from 'rxjs/operators';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
 
 describe('unsubscribe', () => {
   test('delete property', () => {
@@ -10,13 +9,13 @@ describe('unsubscribe', () => {
     delete p.firstName;
     expect(p.firstName).toBeUndefined();
     let count1 = 0;
-    p.$.pipe(filter(event => event.type === 'SET')).subscribe(event => {
+    p.$.pipe(filter(event => event.type === 'SET')).subscribe(() => {
       count1 += 1;
     });
     const test = p.test;
     delete p.test;
     let count2 = 0;
-    test.$.subscribe((event: TrapEvent) => {
+    test.$.subscribe(() => {
       count2 += 1;
     });
     test.a = {};
@@ -28,7 +27,7 @@ describe('unsubscribe', () => {
   test('override property', () => {
     const p = SubX.create({a: {b: {}}});
     let count = 0;
-    p.$.subscribe(event => {
+    p.$.subscribe(() => {
       count += 1;
     });
     const b = p.a.b;
@@ -37,7 +36,7 @@ describe('unsubscribe', () => {
     p.a.b = {};
     expect(count).toBe(3);
     let count2 = 0;
-    b.$.subscribe((event: TrapEvent) => {
+    b.$.subscribe(() => {
       count2 += 1;
     });
     b.c = {};

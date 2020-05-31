@@ -8,12 +8,12 @@ describe('monitor subscribers', () => {
   test('default', () => {
     const s = new Subject();
     expect(s.observers.length).toBe(0);
-    s.subscribe(e => {});
+    s.subscribe(() => {});
     expect(s.observers.length).toBe(1);
-    s.pipe(map(e => e)).subscribe(e => {});
+    s.pipe(map(e => e)).subscribe(() => {});
     expect(s.observers.length).toBe(2);
     const temp$ = s.pipe(map(e => e));
-    temp$.subscribe(e => {});
+    temp$.subscribe(() => {});
     expect(s.observers.length).toBe(3);
   });
 
@@ -22,7 +22,7 @@ describe('monitor subscribers', () => {
     expect(s.observers).toEqual([]);
     const observers: Observer<unknown>[] = [];
     s.observers = observers;
-    s.subscribe(e => {});
+    s.subscribe(() => {});
     expect(s.observers.length).toBe(1);
     expect(observers.length).toBe(1);
   });
@@ -43,7 +43,7 @@ describe('monitor subscribers', () => {
     let add = 0;
     let remove = 0;
     s.observers = new Proxy([], {
-      set: (target: ModelObj, prop: string, val: any, receiver: ModelObj) => {
+      set: (target: ModelObj, prop: string, val: any) => {
         if (prop === 'length') {
           if (val === target[prop]) {
             add += 1;
@@ -58,10 +58,10 @@ describe('monitor subscribers', () => {
     const subscription = new Subscription();
     expect(add).toBe(0);
     expect(remove).toBe(0);
-    subscription.add(s.subscribe(e => {}));
+    subscription.add(s.subscribe(() => {}));
     expect(add).toBe(1);
     expect(remove).toBe(0);
-    subscription.add(s.subscribe(e => {}));
+    subscription.add(s.subscribe(() => {}));
     expect(add).toBe(2);
     expect(remove).toBe(0);
     subscription.unsubscribe();
@@ -72,13 +72,13 @@ describe('monitor subscribers', () => {
   test('observers stream', () => {
     const s = new Subject();
     s.observers = new Proxy([], {
-      get: (target: ModelObj, prop: string, receiver) => {
+      get: (target: ModelObj, prop: string) => {
         if (prop === '$' && !target.$) {
           target.$ = new Subject();
         }
         return target[prop];
       },
-      set: (target, prop: string, val, receiver) => {
+      set: (target, prop: string, val) => {
         if (target.$ && prop === 'length') {
           if (val === 0) {
             target.$.next(false); // no observers
@@ -94,7 +94,7 @@ describe('monitor subscribers', () => {
     const events: boolean[] = [];
     (s.observers as any).$.subscribe((e: boolean) => events.push(e));
     expect(events).toEqual([]);
-    const subscription = s.subscribe(e => {});
+    const subscription = s.subscribe(() => {});
     expect(events).toEqual([true]);
     subscription.unsubscribe();
     expect(events).toEqual([true, false]);

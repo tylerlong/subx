@@ -20,11 +20,11 @@ describe('ES6 collections', () => {
     const gets: string[] = [];
     const sets: string[] = [];
     const handler = {
-      get: (target: ModelObj, prop: string, receiver: ModelObj) => {
+      get: (target: ModelObj, prop: string) => {
         gets.push(prop);
         return target[prop];
       },
-      set: (target: ModelObj, prop: string, val: any, receiver: ModelObj) => {
+      set: (target: ModelObj, prop: string, val: any) => {
         sets.push(prop);
         target[prop] = val;
         return true;

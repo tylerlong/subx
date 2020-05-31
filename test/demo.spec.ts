@@ -15,12 +15,12 @@ describe('demo', () => {
       lastName: 'Zhang',
     });
     person.$.pipe(filter(event => event.path[0] === 'firstName')).subscribe(
-      event => {
+      () => {
         // console.log('First name changed', event)
       }
     );
     person.$.pipe(filter(event => event.path[0] === 'lastName')).subscribe(
-      event => {
+      () => {
         // console.log('Last name changed', event)
       }
     );
@@ -36,7 +36,7 @@ describe('demo', () => {
       lastName: 'Zhang',
     });
     const person = Person.create();
-    person.$.subscribe(event => {
+    person.$.subscribe(() => {
       // console.log('Prop changed', event)
     });
     person.firstName = 'Si';

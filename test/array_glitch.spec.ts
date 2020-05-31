@@ -5,7 +5,7 @@ describe('array glitch', () => {
   test('default', () => {
     const p = SubX.create([1, 2, 3]);
     let json;
-    const sub = p.$.subscribe(e => {
+    const sub = p.$.subscribe(() => {
       json = JSON.stringify(p);
       sub.unsubscribe();
     });
@@ -17,7 +17,7 @@ describe('array glitch', () => {
   test('transaction', () => {
     const p = SubX.create([1, 2, 3]);
     let json;
-    const sub = p.transaction$.subscribe(e => {
+    const sub = p.transaction$.subscribe(() => {
       json = JSON.stringify(p);
       sub.unsubscribe();
     });

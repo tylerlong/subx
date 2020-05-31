@@ -2,7 +2,7 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TransactionEvent, TrapEvent, ProxyObj} from '../src/types';
+import {TransactionEvent, TrapEvent} from '../src/types';
 
 describe('array', () => {
   test('foreach', () => {

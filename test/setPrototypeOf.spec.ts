@@ -12,7 +12,7 @@ describe('setPrototypeOf', () => {
   test('disallow', () => {
     const a = {};
     const handler = {
-      setPrototypeOf: (target: ModelObj, prototype: string) => {
+      setPrototypeOf: () => {
         return false;
       },
     };
@@ -23,13 +23,13 @@ describe('setPrototypeOf', () => {
   test('Reflect', () => {
     const a = {};
     const handler = {
-      setPrototypeOf: (target: ModelObj, prototype: string) => {
+      setPrototypeOf: () => {
         return false;
       },
     };
     const p = new Proxy(a, handler);
     Reflect.setPrototypeOf(p, {b: 1});
-    expect(p.b).toBeUndefined();
+    expect((p as any).b).toBeUndefined();
   });
   test('SubX', () => {
     const p = SubX.create({});
@@ -43,7 +43,7 @@ describe('setPrototypeOf', () => {
     let count = 0;
     const o = {};
     const handler = {
-      set: (target: ModelObj, prop: string, val: any, receiver: ModelObj) => {
+      set: (target: ModelObj, prop: string, val: any) => {
         target[prop] = val;
         count += 1;
         return true;

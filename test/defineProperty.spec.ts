@@ -7,7 +7,7 @@ describe('defineProperty', () => {
     const o = {};
     let count = 0;
     const handler = {
-      set: (target: ModelObj, prop: string, val: any, receiver: ModelObj) => {
+      set: (target: ModelObj, prop: string, val: any) => {
         count += 1;
         target[prop] = val;
         return true;
@@ -26,7 +26,7 @@ describe('defineProperty', () => {
     const o = {};
     let count = 0;
     const handler = {
-      set: (target: ModelObj, prop: string, val: any, receiver: ModelObj) => {
+      set: (target: ModelObj, prop: string, val: any) => {
         count += 1;
         target[prop] = val;
         return true;

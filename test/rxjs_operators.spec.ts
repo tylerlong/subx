@@ -24,7 +24,7 @@ describe('RxJS operators', () => {
         count += 1;
       })
     ) as Subject<number>;
-    temp.subscribe(e => {});
+    temp.subscribe(() => {});
     temp.complete();
     expect(count).toBe(1); // finalize does trigger with subscribers
   });

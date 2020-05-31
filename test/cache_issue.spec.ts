@@ -29,7 +29,7 @@ describe('autoRun', () => {
 
   test('proxy directly', () => {
     const handler = {
-      get: (target: ModelObj, prop: string, receiver: ModelObj) => {
+      get: (target: ModelObj, prop: string) => {
         return target[prop];
       },
     };

@@ -26,10 +26,10 @@ describe('todos', () => {
     });
     let notified = false;
     const todos = store.todos;
-    store.$.subscribe(event => {
+    store.$.subscribe(() => {
       notified = true;
     });
-    store.transaction$.subscribe(event => {
+    store.transaction$.subscribe(() => {
       notified = true;
     }); // array push is transaction
     expect(notified).toBeFalsy();

@@ -14,7 +14,7 @@ const computed = (o: ModelObj, f: (a: number) => number) => {
       )(dependencies)
     ) {
       const proxy = new Proxy(o, {
-        get: (target: ModelObj, prop: string, receiver) => {
+        get: (target: ModelObj, prop: string) => {
           dependencies[prop] = target[prop];
           return target[prop];
         },

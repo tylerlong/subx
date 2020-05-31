@@ -33,44 +33,52 @@ describe('Symbol', () => {
   test('simple get', () => {
     const store = SubX.create({token: {access_token: 1}});
     let count = 0;
-    store.get$.subscribe(e => {
+    store.get$.subscribe(() => {
       count += 1;
     });
-    const i = store.token; // eslint-disable-line no-unused-vars
-    const j = store.token; // eslint-disable-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const i = store.token;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const j = store.token;
     expect(count).toBe(2);
   });
 
   test('simple get 2', () => {
     const store = SubX.create({token: 1});
     let count = 0;
-    store.get$.subscribe(e => {
+    store.get$.subscribe(() => {
       count += 1;
     });
-    const i = store.token; // eslint-disable-line no-unused-vars
-    const j = store.token; // eslint-disable-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const i = store.token;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const j = store.token;
     expect(count).toBe(2);
   });
 
   test('simple get 3', () => {
     const store = SubX.create({token: 1});
     let count = 0;
-    store.get$.subscribe(e => {
+    store.get$.subscribe(() => {
       count += 1;
     });
-    const i = {token: store.token}; // eslint-disable-line no-unused-vars
-    const j = {token: store.token}; // eslint-disable-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const i = {token: store.token};
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const j = {token: store.token};
     expect(count).toBe(2);
   });
 
   test('simple get 4', () => {
     const store = SubX.create({token: {access_token: 1}});
     let count = 0;
-    store.get$.subscribe(e => {
+    store.get$.subscribe(() => {
       count += 1;
     });
-    const i = {token: store.token}; // eslint-disable-line no-unused-vars
-    const j = {token: store.token}; // eslint-disable-line no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const i = {token: store.token};
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const j = {token: store.token};
     expect(count).toBe(2);
   });
 });

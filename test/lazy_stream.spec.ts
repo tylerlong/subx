@@ -9,7 +9,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -28,7 +28,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -40,7 +40,7 @@ describe('lazy stream', () => {
     expect(lazyStream).toBeDefined();
     p.firstName = 'Tyler';
     p.lastName = 'Liu';
-    lazyStream.subscribe(event => {});
+    lazyStream.subscribe(() => {});
     expect(count).toBe(0); // because subscriber too late
   });
 
@@ -48,7 +48,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -58,7 +58,7 @@ describe('lazy stream', () => {
       })
     );
     expect(lazyStream).toBeDefined();
-    lazyStream.subscribe(event => {});
+    lazyStream.subscribe(() => {});
     p.firstName = 'Tyler';
     p.lastName = 'Liu';
     expect(count).toBe(4);
@@ -68,7 +68,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -78,9 +78,9 @@ describe('lazy stream', () => {
       })
     );
     expect(lazyStream).toBeDefined();
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
     p.firstName = 'Tyler';
     p.lastName = 'Liu';
     expect(count).toBe(12); // this is bad!
@@ -90,7 +90,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -102,9 +102,9 @@ describe('lazy stream', () => {
       refCount()
     );
     expect(lazyStream).toBeDefined();
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
     p.firstName = 'Tyler';
     p.lastName = 'Liu';
     expect(count).toBe(4);
@@ -114,7 +114,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -135,7 +135,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -146,9 +146,9 @@ describe('lazy stream', () => {
       share()
     );
     expect(lazyStream).toBeDefined();
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
     p.firstName = 'Tyler';
     p.lastName = 'Liu';
     expect(count).toBe(4);
@@ -158,7 +158,7 @@ describe('lazy stream', () => {
     const p = SubX.create({});
     let count = 0;
     const lazyStream = p.$.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -178,7 +178,7 @@ describe('lazy stream', () => {
     const p = new Subject();
     let count = 0;
     const lazyStream = p.pipe(
-      filter(event => {
+      filter(() => {
         count += 1;
         return true;
       }),
@@ -190,9 +190,9 @@ describe('lazy stream', () => {
       refCount()
     );
     expect(lazyStream).toBeDefined();
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
-    lazyStream.subscribe(event => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
+    lazyStream.subscribe(() => {});
     p.next('Tyler');
     p.next('Liu');
     expect(count).toBe(4);

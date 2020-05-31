@@ -6,7 +6,7 @@ describe('duplicate init', () => {
   test('init once', () => {
     const rectangle = SubX.create({position: {}, size: {}});
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -20,7 +20,7 @@ describe('duplicate init', () => {
     let rectangle = SubX.create({position: {}, size: {}});
     rectangle = SubX.create(rectangle);
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -37,7 +37,7 @@ describe('duplicate init', () => {
     rectangle = SubX.create(rectangle);
     rectangle = SubX.create(rectangle);
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;

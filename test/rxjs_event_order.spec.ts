@@ -5,7 +5,7 @@ describe('RxJS event order', () => {
   test('default', () => {
     const s1 = new Subject();
     const s2 = new Subject();
-    s1.subscribe(v => {
+    s1.subscribe(() => {
       s2.next('STALE');
     });
     const s3 = merge(s1, s2);
@@ -23,7 +23,7 @@ describe('RxJS event order', () => {
     const s3 = merge(s1, s2);
     const events: (number | string)[] = [];
     s3.subscribe((event: any) => events.push(event));
-    s1.subscribe(v => {
+    s1.subscribe(() => {
       s2.next('STALE');
     });
     s1.next(1);

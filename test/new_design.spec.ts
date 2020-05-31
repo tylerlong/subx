@@ -25,12 +25,12 @@ describe('new design', () => {
     const n = SubX.create({a: {}});
 
     let count1 = 0;
-    n.$.subscribe(event => {
+    n.$.subscribe(() => {
       count1 += 1;
     });
 
     let count2 = 0;
-    n.a.$.subscribe((event: TrapEvent) => {
+    n.a.$.subscribe(() => {
       count2 += 1;
     });
 

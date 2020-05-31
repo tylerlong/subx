@@ -57,7 +57,7 @@ describe('autoRun', () => {
         count += 1;
         return p.number * 10;
       },
-      filter(e => p.number % 2 === 1)
+      filter(() => p.number % 2 === 1)
     );
     const data: number[] = [];
     stream$.subscribe(i => data.push(i));
@@ -78,7 +78,7 @@ describe('autoRun', () => {
         count += 1;
         return p.number * 10;
       },
-      filter(e => p.number % 2 === 0)
+      filter(() => p.number % 2 === 0)
     );
     const data: number[] = [];
     stream$.subscribe(i => data.push(i));
@@ -99,7 +99,7 @@ describe('autoRun', () => {
         count += 1;
         return p.number * 10;
       },
-      filter(e => p.number % 2 === 0)
+      filter(() => p.number % 2 === 0)
     );
     const data: number[] = [];
     stream$.pipe(skip(1)).subscribe(i => data.push(i));

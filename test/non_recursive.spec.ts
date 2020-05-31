@@ -6,7 +6,7 @@ describe('non recursive', () => {
   test('recursive', () => {
     const rectangle = SubX.create({position: {}, size: {}});
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -20,7 +20,7 @@ describe('non recursive', () => {
     const Rectangle = SubX.model({position: {}, size: {}});
     const rectangle = Rectangle.create();
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -33,7 +33,7 @@ describe('non recursive', () => {
   test('non recursive', () => {
     const rectangle = SubX.create({position: {}, size: {}}, false);
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -49,7 +49,7 @@ describe('non recursive', () => {
     const Rectangle = SubX.model({position: {}, size: {}}, false);
     const rectangle = Rectangle.create();
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -64,7 +64,7 @@ describe('non recursive', () => {
   test('change recursive to non-recursive', () => {
     let rectangle = SubX.create({position: {}, size: {}});
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -76,7 +76,7 @@ describe('non recursive', () => {
     // convert it
     rectangle = SubX.create(rectangle.toObject(), false);
     count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -89,7 +89,7 @@ describe('non recursive', () => {
   test('change non-recursive to recursive', () => {
     let rectangle = SubX.create({position: {}, size: {}}, false);
     let count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -101,7 +101,7 @@ describe('non recursive', () => {
     // convert it
     rectangle = SubX.create(rectangle);
     count = 0;
-    rectangle.$.subscribe(e => {
+    rectangle.$.subscribe(() => {
       count += 1;
     });
     rectangle.position.x = 0;
@@ -114,7 +114,7 @@ describe('non recursive', () => {
   test('change child to non recursive', () => {
     const p = SubX.create({a: {b: {c: 1}}});
     let count = 0;
-    p.$.subscribe(e => {
+    p.$.subscribe(() => {
       count += 1;
     });
     p.a.b.c = 2;
@@ -128,7 +128,7 @@ describe('non recursive', () => {
   test('change child to recursive', () => {
     const p = SubX.create({a: {b: {c: 1}}}, false);
     let count = 0;
-    p.$.subscribe(e => {
+    p.$.subscribe(() => {
       count += 1;
     });
     p.a.b.c = 2;
