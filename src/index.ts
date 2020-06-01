@@ -10,32 +10,9 @@ import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
 import {ProxyObj, TrapEvent, ModelObj} from './types';
 
-const EVENT_NAMES = [
-  'set$',
-  'delete$',
-  'get$',
-  'has$',
-  'keys$',
-  'compute_begin$',
-  'compute_finish$',
-  'stale$',
-  'transaction$',
-];
-const RESERVED_PROPERTIES = [
-  '$',
-  '__isSubX__',
-  '__id__',
-  '__recursive__',
-  '__emitEvent__',
-  '__parents__',
-  '__cache__',
-  '@@functional/placeholder',
-  ...EVENT_NAMES,
-];
-
 const handler = {
   set: (target: ModelObj, prop: string, val: any) => {
-    if (RESERVED_PROPERTIES.includes(prop)) {
+    if (SubX.RESERVED_PROPERTIES.includes(prop)) {
       prop = `_${prop}`; // prefix reserved keywords with underscore
     }
     const oldVal = target[prop];
@@ -73,7 +50,7 @@ const handler = {
                 Object.keys(receiver)
                   .filter(
                     k =>
-                      !RESERVED_PROPERTIES.includes(k) &&
+                      !SubX.RESERVED_PROPERTIES.includes(k) &&
                       'value' in
                         Object.getOwnPropertyDescriptor(receiver, k)! &&
                       typeof receiver[k] !== 'function'
@@ -126,7 +103,7 @@ const handler = {
         const val = target[prop];
         if (
           typeof val !== 'function' &&
-          !RESERVED_PROPERTIES.includes(prop) &&
+          !SubX.RESERVED_PROPERTIES.includes(prop) &&
           typeof prop !== 'symbol'
         ) {
           target.__emitEvent__('get$', {type: 'GET', path: [prop], id: uuid()});
@@ -136,7 +113,7 @@ const handler = {
     }
   },
   deleteProperty: (target: ModelObj, prop: string) => {
-    if (RESERVED_PROPERTIES.includes(prop)) {
+    if (SubX.RESERVED_PROPERTIES.includes(prop)) {
       return false; // disallow deletion of reserved keywords
     }
     const val = target[prop];
@@ -157,7 +134,10 @@ const handler = {
   },
   ownKeys: (target: ModelObj) => {
     target.__emitEvent__('keys$', {type: 'KEYS', path: [], id: uuid()});
-    return R.without(RESERVED_PROPERTIES, Object.getOwnPropertyNames(target));
+    return R.without(
+      SubX.RESERVED_PROPERTIES,
+      Object.getOwnPropertyNames(target)
+    );
   },
   setPrototypeOf: () => {
     return false; // disallow setPrototypeOf
@@ -171,8 +151,31 @@ const handler = {
 };
 
 class SubX {
+  static EVENT_NAMES = [
+    'set$',
+    'delete$',
+    'get$',
+    'has$',
+    'keys$',
+    'compute_begin$',
+    'compute_finish$',
+    'stale$',
+    'transaction$',
+  ];
+  static RESERVED_PROPERTIES = [
+    '$',
+    '__isSubX__',
+    '__id__',
+    '__recursive__',
+    '__emitEvent__',
+    '__parents__',
+    '__cache__',
+    '@@functional/placeholder',
+    ...SubX.EVENT_NAMES,
+  ];
+  static DefaultModel = SubX.model();
   static create(obj: ModelObj = {}, recursive = true): ProxyObj {
-    return DefaultModel.create(obj, recursive);
+    return SubX.DefaultModel.create(obj, recursive);
   }
   static runAndMonitor: (
     subx: ProxyObj,
@@ -189,7 +192,7 @@ class SubX {
         const newObj: ModelObj = R.empty(obj);
         R.forEach(name => {
           newObj[name] = new Subject();
-        }, EVENT_NAMES);
+        }, SubX.EVENT_NAMES);
         newObj.$ = newObj.set$;
 
         newObj.__id__ = uuid();
@@ -237,7 +240,6 @@ class SubX {
   }
 }
 
-const DefaultModel = SubX.model();
 SubX.runAndMonitor = runAndMonitor;
 SubX.autoRun = autoRun;
 
