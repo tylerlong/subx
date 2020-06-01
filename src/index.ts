@@ -171,7 +171,9 @@ const handler = {
 };
 
 class SubX {
-  static create: (obj?: ModelObj, recursive?: boolean) => ProxyObj;
+  static create(obj: ModelObj = {}, recursive = true): ProxyObj {
+    return DefaultModel.create(obj, recursive);
+  }
   static runAndMonitor: (
     subx: ProxyObj,
     f: () => any
@@ -235,9 +237,7 @@ class SubX {
   }
 }
 
-const DefaultModel = SubX.model({});
-SubX.create = (obj = {}, recursive = true) =>
-  DefaultModel.create(obj, recursive);
+const DefaultModel = SubX.model();
 SubX.runAndMonitor = runAndMonitor;
 SubX.autoRun = autoRun;
 
