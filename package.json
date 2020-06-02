@@ -1,6 +1,6 @@
 {
   "name": "subx",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "SubX, Next generation state container",
   "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
