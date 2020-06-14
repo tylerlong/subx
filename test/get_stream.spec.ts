@@ -3,12 +3,12 @@ import {filter} from 'rxjs/operators';
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('get stream', () => {
   test('default', () => {
     const p = SubX.create();
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     p.get$.subscribe(event => {
       events.push(event);
     });
@@ -23,11 +23,11 @@ describe('get stream', () => {
 
   test('nested', () => {
     const p = SubX.create({a: {b: {c: 'hello'}}});
-    const events1: TrapEvent[] = [];
+    const events1: HandlerEvent[] = [];
     p.get$.pipe(filter(event => event.path.length === 1)).subscribe(event => {
       events1.push(event);
     });
-    const events2: TrapEvent[] = [];
+    const events2: HandlerEvent[] = [];
     p.get$.subscribe(event => {
       events2.push(event);
     });

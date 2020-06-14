@@ -2,12 +2,12 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('sub streams', () => {
   test('set$', () => {
     const p = SubX.create();
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     p.set$.subscribe(event => {
       events.push(event);
     });
@@ -33,7 +33,7 @@ describe('sub streams', () => {
 
   test('delete$', () => {
     const p = SubX.create();
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     p.delete$.subscribe(event => {
       events.push(event);
     });
@@ -51,9 +51,9 @@ describe('sub streams', () => {
 
   test('$', () => {
     const p = SubX.create();
-    const events1: TrapEvent[] = [];
-    const events2: TrapEvent[] = [];
-    const events3: TrapEvent[] = [];
+    const events1: HandlerEvent[] = [];
+    const events2: HandlerEvent[] = [];
+    const events3: HandlerEvent[] = [];
     p.set$.subscribe(event => {
       events1.push(event);
     });

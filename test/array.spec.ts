@@ -2,7 +2,7 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TransactionEvent, TrapEvent} from '../src/types';
+import {TransactionEvent, HandlerEvent} from '../src/types';
 
 describe('array', () => {
   test('foreach', () => {
@@ -64,7 +64,7 @@ describe('array', () => {
   });
   test('assign', () => {
     const a = SubX.create([1, 2, 3]);
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     a.$.subscribe(event => {
       events.push(event);
     });
@@ -79,7 +79,7 @@ describe('array', () => {
   });
   test('unshift', () => {
     const a = SubX.create([1, 2, 3]);
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     a.$.subscribe(event => events.push(event));
     const events2: TransactionEvent[] = [];
     a.transaction$.subscribe(e => events2.push(e));
@@ -134,7 +134,7 @@ describe('array', () => {
     expect(o.b.a).toEqual([1, 2, 3]);
     expect(R.equals(o.b.a, [1, 2, 3])).toBeTruthy();
 
-    let events: TrapEvent[] = [];
+    let events: HandlerEvent[] = [];
     o.$.subscribe(event => events.push(event));
 
     // push
@@ -175,7 +175,7 @@ describe('array', () => {
     expect(o.b.a).toEqual([0, 1, 2, 3]);
     expect(R.map(R.dissoc('id'), events)).toEqual([]);
     expect(events2.length).toBe(1);
-    events2[0].events = R.map<TrapEvent, TrapEvent>(
+    events2[0].events = R.map<HandlerEvent, HandlerEvent>(
       R.dissoc('id'),
       events2[0].events
     );

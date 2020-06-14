@@ -2,7 +2,7 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent, TransactionEvent} from '../src/types';
+import {HandlerEvent, TransactionEvent} from '../src/types';
 
 describe('array splice', () => {
   test('default', () => {
@@ -78,7 +78,7 @@ describe('array splice', () => {
     const store = SubX.create({
       todos: [1, 2, 3],
     });
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     store.get$.subscribe(event => events.push(event));
     expect(store.todos.map((todo: number[]) => todo)).toBeDefined();
     expect(

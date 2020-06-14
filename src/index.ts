@@ -8,7 +8,7 @@ import * as R from 'ramda';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
-import {ProxyObj, TrapEvent, ModelObj} from './types';
+import {ProxyObj, HandlerEvent, ModelObj} from './types';
 
 const handler = {
   set: (target: ModelObj, prop: string, val: any) => {
@@ -180,11 +180,11 @@ class SubX {
   static runAndMonitor: (
     subx: ProxyObj,
     f: () => any
-  ) => {result: any; stream$: Observable<TrapEvent>};
+  ) => {result: any; stream$: Observable<HandlerEvent>};
   static autoRun: (
     subx: ProxyObj,
     f: () => any,
-    ...operators: MonoTypeOperatorFunction<TrapEvent>[]
+    ...operators: MonoTypeOperatorFunction<HandlerEvent>[]
   ) => BehaviorSubject<any>;
   static model(modelObj: ModelObj = {}, recursive = true) {
     const Model = {
@@ -198,7 +198,7 @@ class SubX {
         newObj.__id__ = uuid();
         newObj.__recursive__ = __recursive__;
         newObj.__parents__ = {};
-        newObj.__emitEvent__ = (name: string, event: TrapEvent) => {
+        newObj.__emitEvent__ = (name: string, event: HandlerEvent) => {
           if (newObj.__cache__) {
             if (event.type === 'SET' || event.type === 'DELETE') {
               // may need to include 'STALE' events for user-defined transactions in the future

@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('monitor delete', () => {
   test('default', () => {
@@ -33,7 +33,7 @@ describe('monitor delete', () => {
       render(props)
     );
     expect(result).toBeUndefined();
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     stream$.subscribe(e => events.push(e));
     store.todos.splice(2, 1);
     expect(events).toEqual([]); // delete parent path won't trigger stale

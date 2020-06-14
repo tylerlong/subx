@@ -2,7 +2,7 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent, StaleEvent} from '../src/types';
+import {HandlerEvent, StaleEvent} from '../src/types';
 
 describe('computed events', () => {
   test('default', () => {
@@ -13,10 +13,10 @@ describe('computed events', () => {
         return `${this.firstName} ${this.lastName}`;
       },
     });
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     const stale: StaleEvent[] = [];
-    const computeBegin: TrapEvent[] = [];
-    const computeFinish: TrapEvent[] = [];
+    const computeBegin: HandlerEvent[] = [];
+    const computeFinish: HandlerEvent[] = [];
     p.$.subscribe(event => events.push(event));
     p.stale$.subscribe(event => stale.push(event));
     p.compute_begin$.subscribe(event => computeBegin.push(event));
@@ -76,10 +76,10 @@ describe('computed events', () => {
         return `${this.fullName}`;
       },
     });
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     const stale: StaleEvent[] = [];
-    const computeBegin: TrapEvent[] = [];
-    const computeFinish: TrapEvent[] = [];
+    const computeBegin: HandlerEvent[] = [];
+    const computeFinish: HandlerEvent[] = [];
     p.$.subscribe(event => events.push(event));
     p.stale$.subscribe(event => stale.push(event));
     p.compute_begin$.subscribe(event => computeBegin.push(event));

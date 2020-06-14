@@ -2,14 +2,14 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('Symbol', () => {
   test('default', () => {
     const p = SubX.create();
     const a = Symbol('a');
     p[a as any] = 'hello';
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     p.$.subscribe(e => events.push(e));
     p[a as any] = 'world';
     expect(R.map(R.dissoc('id'))(events)).toEqual([{type: 'SET', path: [a]}]);

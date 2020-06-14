@@ -2,12 +2,12 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('double dollar', () => {
   test('default', () => {
     const rectangle = SubX.create({position: {}, size: {}});
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     rectangle.$.subscribe(event => {
       events.push(event);
     });
@@ -38,12 +38,12 @@ describe('double dollar', () => {
 
   test('relative', () => {
     const rectangle = SubX.create({position: {}, size: {}});
-    const events1: TrapEvent[] = [];
-    rectangle.position.$.subscribe((event: TrapEvent) => {
+    const events1: HandlerEvent[] = [];
+    rectangle.position.$.subscribe((event: HandlerEvent) => {
       events1.push(event);
     });
-    const events2: TrapEvent[] = [];
-    rectangle.size.$.subscribe((event: TrapEvent) => {
+    const events2: HandlerEvent[] = [];
+    rectangle.size.$.subscribe((event: HandlerEvent) => {
       events2.push(event);
     });
     rectangle.position.x = 0;

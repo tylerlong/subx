@@ -4,7 +4,7 @@ import {filter, map, startWith} from 'rxjs/operators';
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('new design', () => {
   test('JSON.stringify', () => {
@@ -41,14 +41,14 @@ describe('new design', () => {
 
   test('$', () => {
     const n = SubX.create({a: {}});
-    const events1: TrapEvent[] = [];
+    const events1: HandlerEvent[] = [];
     n.$.subscribe(event => {
       events1.push(event);
     });
     n.a.b = {};
     n.a.b.c = {};
-    const events2: TrapEvent[] = [];
-    n.a.b.c.$.subscribe((event: TrapEvent) => {
+    const events2: HandlerEvent[] = [];
+    n.a.b.c.$.subscribe((event: HandlerEvent) => {
       events2.push(event);
     });
     n.a.b.c.d = {};
@@ -134,7 +134,7 @@ describe('new design', () => {
   test('delete event', () => {
     const Person = SubX.model({firstName: '', lastName: ''});
     const p = Person.create({firstName: 'Chuntao', lastName: 'Liu'});
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     p.delete$.subscribe(event => {
       events.push(event);
     });

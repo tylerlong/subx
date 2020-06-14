@@ -2,13 +2,13 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('null value', () => {
   test('should allow null assign', () => {
     const person = SubX.create({});
 
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     person.$.subscribe(event => {
       events.push(event);
     });

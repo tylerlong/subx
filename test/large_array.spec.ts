@@ -3,10 +3,10 @@ import * as R from 'ramda';
 import {merge} from 'rxjs';
 
 import SubX from '../src/index';
-import {TrapEvent, ProxyObj, TransactionEvent} from '../src/types';
+import {HandlerEvent, ProxyObj, TransactionEvent} from '../src/types';
 
 const allEvents = (p: ProxyObj) =>
-  merge<TrapEvent>(
+  merge<HandlerEvent>(
     p.set$,
     p.delete$,
     p.get$,
@@ -24,7 +24,7 @@ describe('large array', () => {
       todos: R.range(0, 10),
     });
     const all$ = allEvents(p);
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     const sub = all$.subscribe(e => events.push(e));
     p.todos.push(1);
     sub.unsubscribe();
@@ -44,13 +44,13 @@ describe('large array', () => {
       todos: R.range(0, 10),
     });
     const all$ = allEvents(p);
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     const sub = all$.subscribe(e => events.push(e));
     p.todos.unshift(1);
     sub.unsubscribe();
     expect(events.length).toBe(2);
     expect(R.dissoc('id', events[0])).toEqual({path: ['todos'], type: 'GET'});
-    (events[1] as TransactionEvent).events = R.map<TrapEvent, TrapEvent>(
+    (events[1] as TransactionEvent).events = R.map<HandlerEvent, HandlerEvent>(
       R.dissoc('id'),
       (events[1] as TransactionEvent).events
     );
@@ -79,7 +79,7 @@ describe('large array', () => {
       todos: R.range(0, 3),
     });
     const all$ = allEvents(p);
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     const sub = all$.subscribe(e => events.push(e));
     p.todos.splice(1, 0);
     sub.unsubscribe();
@@ -96,7 +96,7 @@ describe('large array', () => {
       todos: R.range(0, 3),
     });
     const all$ = allEvents(p);
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     const sub = all$.subscribe(e => events.push(e));
     p.todos.splice(1, 1);
     sub.unsubscribe();
@@ -121,7 +121,7 @@ describe('large array', () => {
       todos: R.range(0, 3),
     });
     const all$ = allEvents(p);
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     const sub = all$.subscribe(e => events.push(e));
     p.todos = R.remove(1, 1, p.todos);
     sub.unsubscribe();

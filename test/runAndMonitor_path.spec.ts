@@ -2,7 +2,7 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('runAndMonitor path', () => {
   test('root is subx', () => {
@@ -10,7 +10,7 @@ describe('runAndMonitor path', () => {
       number: 1,
     });
     const stream$ = SubX.runAndMonitor(p, () => p.number).stream$;
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     stream$.subscribe(e => events.push(e));
     p.number = 2;
     expect(R.map(R.dissoc('id'), events)).toEqual([
@@ -25,7 +25,7 @@ describe('runAndMonitor path', () => {
     });
     const stream$ = SubX.runAndMonitor(SubX.create({child: p}), () => p.number)
       .stream$;
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     stream$.subscribe(e => events.push(e));
     p.number = 2;
     expect(R.map(R.dissoc('id'), events)).toEqual([
@@ -45,7 +45,7 @@ describe('runAndMonitor path', () => {
     });
     const stream$ = SubX.runAndMonitor(store, () => JSON.stringify(store.todos))
       .stream$;
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     stream$.subscribe(e => events.push(e));
     store.todos.push({title: '222', completed: false});
     expect(events.length).toBe(1);

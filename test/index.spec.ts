@@ -2,7 +2,7 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('index', () => {
   test('props', () => {
@@ -15,7 +15,7 @@ describe('index', () => {
     expect(model.b).toBe('world');
 
     let count = 0;
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     model.$.subscribe(val => {
       count += 1;
       events.push(val);
@@ -34,7 +34,7 @@ describe('index', () => {
       a: 'hello',
     });
     const model = Model.create();
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     model.$.subscribe(val => {
       events.push(val);
     });
@@ -47,7 +47,7 @@ describe('index', () => {
       a: '111',
     });
     const model = Model.create();
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     model.$.subscribe(val => {
       events.push(val);
     });

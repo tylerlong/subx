@@ -2,12 +2,12 @@
 import * as R from 'ramda';
 
 import SubX from '../src/index';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('delete stream', () => {
   test('delete$', () => {
     const p = SubX.create({a: {}, b: {}});
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     p.delete$.subscribe(event => {
       events.push(event);
     });
@@ -26,7 +26,7 @@ describe('delete stream', () => {
   });
   test('delete$', () => {
     const p = SubX.create({a: {}, b: {}});
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     p.delete$.subscribe(event => {
       events.push(event);
     });

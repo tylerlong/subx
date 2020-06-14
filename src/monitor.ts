@@ -9,13 +9,13 @@ import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
 import * as R from 'ramda';
 
 import uuid from './uuid';
-import {ProxyObj, TrapEvent} from './types';
+import {ProxyObj, HandlerEvent} from './types';
 import {pipeFromArray} from 'rxjs/internal/util/pipe';
 
 const matchFilters = {
-  get: (subx: ProxyObj, get: TrapEvent) => {
+  get: (subx: ProxyObj, get: HandlerEvent) => {
     const val = R.path(get.path, subx);
-    return (event: TrapEvent) => {
+    return (event: HandlerEvent) => {
       if (event.type === 'STALE' && R.equals(event.path, get.path)) {
         return true;
       }
@@ -35,9 +35,9 @@ const matchFilters = {
       return false;
     };
   },
-  has: (subx: ProxyObj, has: TrapEvent) => {
+  has: (subx: ProxyObj, has: HandlerEvent) => {
     const val = R.last(has.path)! in R.path<ProxyObj>(R.init(has.path), subx)!;
-    return (event: TrapEvent) => {
+    return (event: HandlerEvent) => {
       if (
         event.type === 'DELETE' &&
         val === true &&
@@ -54,9 +54,9 @@ const matchFilters = {
       return false;
     };
   },
-  keys: (subx: ProxyObj, keys: TrapEvent) => {
+  keys: (subx: ProxyObj, keys: HandlerEvent) => {
     const val = Object.keys(R.path<ProxyObj>(keys.path, subx)!);
-    return (event: TrapEvent) => {
+    return (event: HandlerEvent) => {
       if (
         (event.type === 'DELETE' &&
           keys.path.length + 1 === event.path.length &&
@@ -76,9 +76,12 @@ const matchFilters = {
   },
 };
 
-const monitorGets = (subx: ProxyObj, gets: TrapEvent[]) => {
-  const uniqGets = R.uniqBy((event: TrapEvent) => event.path.join('.'), gets);
-  const streams: Observable<TrapEvent>[] = [];
+const monitorGets = (subx: ProxyObj, gets: HandlerEvent[]) => {
+  const uniqGets = R.uniqBy(
+    (event: HandlerEvent) => event.path.join('.'),
+    gets
+  );
+  const streams: Observable<HandlerEvent>[] = [];
   R.forEach(get => {
     const getFilter = matchFilters.get(subx, get);
     streams.push(
@@ -100,9 +103,9 @@ const monitorGets = (subx: ProxyObj, gets: TrapEvent[]) => {
   return streams;
 };
 
-const monitorHass = (subx: ProxyObj, hass: TrapEvent[]) => {
-  const uniqHass = R.uniqBy((has: TrapEvent) => has.path.join('.'), hass);
-  const streams: Observable<TrapEvent>[] = [];
+const monitorHass = (subx: ProxyObj, hass: HandlerEvent[]) => {
+  const uniqHass = R.uniqBy((has: HandlerEvent) => has.path.join('.'), hass);
+  const streams: Observable<HandlerEvent>[] = [];
   R.forEach(has => {
     const hasFilter = matchFilters.has(subx, has);
     streams.push(
@@ -122,9 +125,12 @@ const monitorHass = (subx: ProxyObj, hass: TrapEvent[]) => {
   return streams;
 };
 
-const monitorkeyss = (subx: ProxyObj, keyss: TrapEvent[]) => {
-  const uniqKeyss = R.uniqBy((keys: TrapEvent) => keys.path.join('.'), keyss);
-  const streams: Observable<TrapEvent>[] = [];
+const monitorkeyss = (subx: ProxyObj, keyss: HandlerEvent[]) => {
+  const uniqKeyss = R.uniqBy(
+    (keys: HandlerEvent) => keys.path.join('.'),
+    keyss
+  );
+  const streams: Observable<HandlerEvent>[] = [];
   R.forEach(keys => {
     const keysFilter = matchFilters.keys(subx, keys);
     streams.push(
@@ -145,8 +151,8 @@ const monitorkeyss = (subx: ProxyObj, keyss: TrapEvent[]) => {
 };
 
 // a subx obj and one of its children attached to the same parent (props of React)
-export const removeDuplicateEvents = (events: TrapEvent[]) =>
-  R.reduce((result: TrapEvent[], event: TrapEvent) => {
+export const removeDuplicateEvents = (events: HandlerEvent[]) =>
+  R.reduce((result: HandlerEvent[], event: HandlerEvent) => {
     if (result.length === 0) {
       return [event];
     }
@@ -180,7 +186,7 @@ const monitor = (
     gets,
     hass,
     keyss,
-  }: {gets: TrapEvent[]; hass: TrapEvent[]; keyss: TrapEvent[]}
+  }: {gets: HandlerEvent[]; hass: HandlerEvent[]; keyss: HandlerEvent[]}
 ) => {
   return merge(
     ...monitorGets(subx, removeDuplicateEvents(gets)),
@@ -191,19 +197,25 @@ const monitor = (
 };
 
 export const runAndMonitor = (subx: ProxyObj, f: () => any) => {
-  const gets: TrapEvent[] = [];
-  const hass: TrapEvent[] = [];
-  const keyss: TrapEvent[] = [];
+  const gets: HandlerEvent[] = [];
+  const hass: HandlerEvent[] = [];
+  const keyss: HandlerEvent[] = [];
   let count = 0;
   const subscription = new Subscription();
   subscription.add(
-    subx.get$.subscribe((event: TrapEvent) => count === 1 && gets.push(event))
+    subx.get$.subscribe(
+      (event: HandlerEvent) => count === 1 && gets.push(event)
+    )
   );
   subscription.add(
-    subx.has$.subscribe((event: TrapEvent) => count === 1 && hass.push(event))
+    subx.has$.subscribe(
+      (event: HandlerEvent) => count === 1 && hass.push(event)
+    )
   );
   subscription.add(
-    subx.keys$.subscribe((event: TrapEvent) => count === 1 && keyss.push(event))
+    subx.keys$.subscribe(
+      (event: HandlerEvent) => count === 1 && keyss.push(event)
+    )
   );
   subscription.add(
     subx.compute_begin$.subscribe(() => {
@@ -260,7 +272,7 @@ export const computed = (subx: ProxyObj, f: () => any) => {
 export const autoRun = (
   subx: ProxyObj,
   f: () => any,
-  ...operators: MonoTypeOperatorFunction<TrapEvent>[]
+  ...operators: MonoTypeOperatorFunction<HandlerEvent>[]
 ) => {
   let results$: BehaviorSubject<any> | undefined;
   let subscription: Subscription;

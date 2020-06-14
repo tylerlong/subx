@@ -3,7 +3,7 @@ import * as R from 'ramda';
 
 import SubX from '../src/index';
 import {removeDuplicateEvents} from '../src/monitor';
-import {TrapEvent} from '../src/types';
+import {HandlerEvent} from '../src/types';
 
 describe('duplicate events', () => {
   test('get$', () => {
@@ -26,7 +26,7 @@ describe('duplicate events', () => {
     const todo = store.todos[1];
     const props = SubX.create({store, todo});
 
-    let events: TrapEvent[] = [];
+    let events: HandlerEvent[] = [];
     props.get$.subscribe(e => events.push(e));
     expect(todo.title).toBe('222');
     expect(R.map(R.dissoc('id'), events)).toEqual([
@@ -94,7 +94,7 @@ describe('duplicate events', () => {
     });
     const todo = store.todos[1];
     const props = SubX.create({store, todo});
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     props.get$.subscribe(e => events.push(e));
     todo.a = {b: {c: {d: 'hello'}}};
     expect(todo.a.b.c.d).toBe('hello');
@@ -137,7 +137,7 @@ describe('duplicate events', () => {
     });
     const todo = store.todos[1];
     const props = SubX.create({store, todo});
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     props.get$.subscribe(e => events.push(e));
     todo.a = {b: {c: {d: 'hello'}}};
     expect(store.todos[1].a.b.c.d).toBe('hello');
@@ -190,7 +190,7 @@ describe('duplicate events', () => {
     const props = SubX.create({store, todo});
     todo.a = {b: {c: {d: 'world'}}};
 
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     props.delete$.subscribe(e => events.push(e));
     delete todo.a.b.c;
     expect(R.map(R.dissoc('id'), events)).toEqual([
@@ -220,7 +220,7 @@ describe('duplicate events', () => {
     const todo = store.todos[1];
     const props = SubX.create({todo, zzz: store});
 
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     props.get$.subscribe(e => events.push(e));
     expect(store.todos[1].title).toBe('222');
     expect(store.todos[1].completed).toBe(false);
@@ -255,7 +255,7 @@ describe('duplicate events', () => {
     const todo = store.todos[1];
     const props = SubX.create({zzz: store, todo});
 
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     props.get$.subscribe(e => events.push(e));
     const todo2 = store.todos[1];
     expect(todo2.title).toBe('222');
@@ -291,7 +291,7 @@ describe('duplicate events', () => {
     const todo = store.todos[1];
     const props = SubX.create({todo, zzz: store});
 
-    const events: TrapEvent[] = [];
+    const events: HandlerEvent[] = [];
     props.get$.subscribe(e => events.push(e));
     expect(todo.title).toBe('222');
     expect(todo.completed).toBe(false);
