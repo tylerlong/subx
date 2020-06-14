@@ -1,4 +1,4 @@
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 /* eslint-env jest */
 describe('setter', () => {
@@ -32,11 +32,11 @@ describe('setter', () => {
     const gets: string[] = [];
     const sets: string[] = [];
     const handler = {
-      get: (target: ModelObj, prop: string) => {
+      get: (target: JsonObj, prop: string) => {
         gets.push(`get ${prop}`);
         return target[prop];
       },
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         sets.push(`${prop} = ${val}`);
         target[prop] = val;
         return true;
@@ -56,11 +56,11 @@ describe('setter', () => {
     const gets: string[] = [];
     const sets: string[] = [];
     const handler = {
-      get: (target: ModelObj, prop: string) => {
+      get: (target: JsonObj, prop: string) => {
         gets.push(`get ${prop}`);
         return target[prop];
       },
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         sets.push(`${prop} = ${val}`);
         target[prop] = val;
         return true;
@@ -90,20 +90,20 @@ describe('setter', () => {
     const gets: string[] = [];
     const sets: string[] = [];
     const handler = {
-      get: (target: ModelObj, prop: string) => {
+      get: (target: JsonObj, prop: string) => {
         gets.push(`get ${prop}`);
         return target[prop];
       },
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         sets.push(`${prop} = ${val}`);
         target[prop] = val;
         return true;
       },
       defineProperty: (
-        target: ModelObj,
+        target: JsonObj,
         prop: string,
         descriptor: any,
-        receiver: ModelObj
+        receiver: JsonObj
       ) => {
         expect(receiver).toBeUndefined();
         return Reflect.defineProperty(target, prop, descriptor);

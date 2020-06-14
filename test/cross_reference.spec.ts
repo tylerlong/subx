@@ -1,12 +1,12 @@
 /* eslint-env jest */
 import SubX from '../src/index';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('cross reference', () => {
   test('default', () => {
     const o = {};
     const handler = {
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         target[prop] = val;
         return true;
       },

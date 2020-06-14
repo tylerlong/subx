@@ -1,8 +1,8 @@
 /* eslint-env jest */
 import * as R from 'ramda';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
-const computed = (o: ModelObj, f: (a: number) => number) => {
+const computed = (o: JsonObj, f: (a: number) => number) => {
   const cache: {[key: string]: any} = {};
   const dependencies: {[key: string]: any} = {};
   const temp = function (b: number) {
@@ -14,7 +14,7 @@ const computed = (o: ModelObj, f: (a: number) => number) => {
       )(dependencies)
     ) {
       const proxy = new Proxy(o, {
-        get: (target: ModelObj, prop: string) => {
+        get: (target: JsonObj, prop: string) => {
           dependencies[prop] = target[prop];
           return target[prop];
         },

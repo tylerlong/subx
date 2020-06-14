@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('setPrototypeOf', () => {
   test('default', () => {
@@ -43,7 +43,7 @@ describe('setPrototypeOf', () => {
     let count = 0;
     const o = {};
     const handler = {
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         target[prop] = val;
         count += 1;
         return true;

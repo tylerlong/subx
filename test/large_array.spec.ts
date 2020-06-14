@@ -3,9 +3,9 @@ import * as R from 'ramda';
 import {merge} from 'rxjs';
 
 import SubX from '../src/index';
-import {HandlerEvent, ProxyObj, TransactionEvent} from '../src/types';
+import {HandlerEvent, SubxObj, TransactionEvent} from '../src/types';
 
-const allEvents = (p: ProxyObj) =>
+const allEvents = (p: SubxObj) =>
   merge<HandlerEvent>(
     p.set$,
     p.delete$,

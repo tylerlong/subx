@@ -1,4 +1,4 @@
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 /* eslint-env jest */
 describe('override array method', () => {
@@ -11,7 +11,7 @@ describe('override array method', () => {
   test('override unshift', () => {
     const a = [1, 2, 3];
     const handler = {
-      get: (target: ModelObj, prop: string, receiver: ModelObj) => {
+      get: (target: JsonObj, prop: string, receiver: JsonObj) => {
         if (prop === 'unshift') {
           const f = (...args: any[]) => {
             const r = target[prop].bind(receiver)(...args);

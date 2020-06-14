@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('preventExtensions', () => {
   test('default', () => {
@@ -48,18 +48,18 @@ describe('preventExtensions', () => {
       getOwnPropertyDescriptor: 0,
     };
     const handler = {
-      preventExtensions: (target: ModelObj) => {
+      preventExtensions: (target: JsonObj) => {
         counts.preventExtensions += 1;
         Object.preventExtensions(target);
         return true;
       },
-      isExtensible: (target: ModelObj) => {
+      isExtensible: (target: JsonObj) => {
         counts.isExtensible += 1;
         const result = Object.isExtensible(target);
         return result;
       },
       defineProperty: (
-        target: ModelObj,
+        target: JsonObj,
         property: string,
         descriptor: PropertyDescriptor
       ) => {
@@ -67,7 +67,7 @@ describe('preventExtensions', () => {
         Reflect.defineProperty(target, property, descriptor);
         return true;
       },
-      getOwnPropertyDescriptor: (target: ModelObj, prop: string) => {
+      getOwnPropertyDescriptor: (target: JsonObj, prop: string) => {
         counts.getOwnPropertyDescriptor += 1;
         const result = Object.getOwnPropertyDescriptor(target, prop);
         return result;
@@ -95,18 +95,18 @@ describe('preventExtensions', () => {
       getOwnPropertyDescriptor: 0,
     };
     const handler = {
-      preventExtensions: (target: ModelObj) => {
+      preventExtensions: (target: JsonObj) => {
         counts.preventExtensions += 1;
         Object.preventExtensions(target);
         return true;
       },
-      isExtensible: (target: ModelObj) => {
+      isExtensible: (target: JsonObj) => {
         counts.isExtensible += 1;
         const result = Object.isExtensible(target);
         return result;
       },
       defineProperty: (
-        target: ModelObj,
+        target: JsonObj,
         property: string,
         descriptor: PropertyDescriptor
       ) => {
@@ -114,7 +114,7 @@ describe('preventExtensions', () => {
         Reflect.defineProperty(target, property, descriptor);
         return true;
       },
-      getOwnPropertyDescriptor: (target: ModelObj, prop: string) => {
+      getOwnPropertyDescriptor: (target: JsonObj, prop: string) => {
         counts.getOwnPropertyDescriptor += 1;
         const result = Object.getOwnPropertyDescriptor(target, prop);
         return result;
@@ -146,18 +146,18 @@ describe('preventExtensions', () => {
       getOwnPropertyDescriptor: 0,
     };
     const handler = {
-      preventExtensions: (target: ModelObj) => {
+      preventExtensions: (target: JsonObj) => {
         counts.preventExtensions += 1;
         Object.preventExtensions(target);
         return true;
       },
-      isExtensible: (target: ModelObj) => {
+      isExtensible: (target: JsonObj) => {
         counts.isExtensible += 1;
         const result = Object.isExtensible(target);
         return result;
       },
       defineProperty: (
-        target: ModelObj,
+        target: JsonObj,
         property: string,
         descriptor: PropertyDescriptor
       ) => {
@@ -165,7 +165,7 @@ describe('preventExtensions', () => {
         Reflect.defineProperty(target, property, descriptor);
         return true;
       },
-      getOwnPropertyDescriptor: (target: ModelObj, prop: string) => {
+      getOwnPropertyDescriptor: (target: JsonObj, prop: string) => {
         counts.getOwnPropertyDescriptor += 1;
         const result = Object.getOwnPropertyDescriptor(target, prop);
         return result;

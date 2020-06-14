@@ -2,7 +2,7 @@
 import {Subject, from, fromEvent, Subscription, Observer} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {EventEmitter} from 'events';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('monitor subscribers', () => {
   test('default', () => {
@@ -43,7 +43,7 @@ describe('monitor subscribers', () => {
     let add = 0;
     let remove = 0;
     s.observers = new Proxy([], {
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         if (prop === 'length') {
           if (val === target[prop]) {
             add += 1;
@@ -72,7 +72,7 @@ describe('monitor subscribers', () => {
   test('observers stream', () => {
     const s = new Subject();
     s.observers = new Proxy([], {
-      get: (target: ModelObj, prop: string) => {
+      get: (target: JsonObj, prop: string) => {
         if (prop === '$' && !target.$) {
           target.$ = new Subject();
         }

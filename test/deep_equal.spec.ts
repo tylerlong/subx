@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import SubX from '../src/index';
 import * as R from 'ramda';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('deep equal', () => {
   test('default', () => {
@@ -10,7 +10,7 @@ describe('deep equal', () => {
       c: {d: 'world'},
     });
     expect(
-      R.equals(p as ModelObj, {
+      R.equals(p as JsonObj, {
         a: {b: 'hello'},
         c: {d: 'world'},
       })

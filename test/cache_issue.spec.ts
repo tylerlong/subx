@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('autoRun', () => {
   test('default', () => {
@@ -29,7 +29,7 @@ describe('autoRun', () => {
 
   test('proxy directly', () => {
     const handler = {
-      get: (target: ModelObj, prop: string) => {
+      get: (target: JsonObj, prop: string) => {
         return target[prop];
       },
     };

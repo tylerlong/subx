@@ -17,11 +17,11 @@ export type StaleEvent = HandlerEvent & {
   cache: any;
 };
 
-export type ModelObj = {
+export type JsonObj = {
   [key: string]: any;
 };
 
-export type ProxyObj<T = ModelObj> = T & {
+export type SubxObj<T = JsonObj> = T & {
   $: Observable<HandlerEvent>;
   set$: Observable<HandlerEvent>;
   delete$: Observable<HandlerEvent>;

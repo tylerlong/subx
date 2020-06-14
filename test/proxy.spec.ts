@@ -1,12 +1,12 @@
 /* eslint-env jest */
 import * as R from 'ramda';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('test', () => {
   test('proxy for object properties', () => {
     let count = 0;
     const handler = {
-      set: (target: ModelObj, property: string, value: any) => {
+      set: (target: JsonObj, property: string, value: any) => {
         count += 1;
         target[property] = value;
         // console.log('prop changed')
@@ -25,12 +25,12 @@ describe('test', () => {
   });
   test('proxy for array', () => {
     const handler = {
-      deleteProperty: function (target: ModelObj, property: string) {
+      deleteProperty: function (target: JsonObj, property: string) {
         delete target[property];
         // console.log('Deleted %s', property)
         return true;
       },
-      set: function (target: ModelObj, property: string, value: any) {
+      set: function (target: JsonObj, property: string, value: any) {
         target[property] = value;
         // console.log('Set %s to %o', property, value)
         return true;
@@ -47,13 +47,13 @@ describe('test', () => {
   });
   test('delete obj property', () => {
     const handler = {
-      deleteProperty: function (target: ModelObj, property: string) {
+      deleteProperty: function (target: JsonObj, property: string) {
         expect(R.keys(target).length).toBe(3); // deletion hasn't performed
         // console.log('Deleted %s', property)
         delete target[property];
         return true;
       },
-      set: function (target: ModelObj, property: string, value: any) {
+      set: function (target: JsonObj, property: string, value: any) {
         target[property] = value;
         // console.log('Set %s to %o', property, value)
         return true;
@@ -65,12 +65,12 @@ describe('test', () => {
   });
   test('delete array elements', () => {
     const handler = {
-      deleteProperty: function (target: ModelObj, property: string) {
+      deleteProperty: function (target: JsonObj, property: string) {
         // console.log('Deleted %s', property)
         delete target[property];
         return true;
       },
-      set: function (target: ModelObj, property: string, value: any) {
+      set: function (target: JsonObj, property: string, value: any) {
         target[property] = value;
         // console.log('Set %s to %o', property, value)
         return true;
@@ -87,11 +87,11 @@ describe('test', () => {
     let count1 = 0;
     let count2 = 0;
     const handler = {
-      get: (target: ModelObj, prop: string) => {
+      get: (target: JsonObj, prop: string) => {
         count1 += 1;
         return target[prop];
       },
-      has: (target: ModelObj, prop: string) => {
+      has: (target: JsonObj, prop: string) => {
         count2 += 1;
         return prop in target;
       },

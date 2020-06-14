@@ -1,4 +1,4 @@
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 /* eslint-env jest */
 describe('ES6 collections', () => {
@@ -20,11 +20,11 @@ describe('ES6 collections', () => {
     const gets: string[] = [];
     const sets: string[] = [];
     const handler = {
-      get: (target: ModelObj, prop: string) => {
+      get: (target: JsonObj, prop: string) => {
         gets.push(prop);
         return target[prop];
       },
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         sets.push(prop);
         target[prop] = val;
         return true;

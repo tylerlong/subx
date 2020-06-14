@@ -8,10 +8,10 @@ import * as R from 'ramda';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
-import {ProxyObj, HandlerEvent, ModelObj} from './types';
+import {SubxObj, HandlerEvent, JsonObj} from './types';
 
 const handler = {
-  set: (target: ModelObj, prop: string, val: any) => {
+  set: (target: JsonObj, prop: string, val: any) => {
     if (SubX.RESERVED_PROPERTIES.includes(prop)) {
       prop = `_${prop}`; // prefix reserved keywords with underscore
     }
@@ -38,7 +38,7 @@ const handler = {
     target.__emitEvent__('set$', {type: 'SET', path: [prop], id: uuid()});
     return true;
   },
-  get: (target: ModelObj, prop: string, receiver: ProxyObj) => {
+  get: (target: JsonObj, prop: string, receiver: SubxObj) => {
     switch (prop) {
       case '__isSubX__':
         return true;
@@ -112,7 +112,7 @@ const handler = {
       }
     }
   },
-  deleteProperty: (target: ModelObj, prop: string) => {
+  deleteProperty: (target: JsonObj, prop: string) => {
     if (SubX.RESERVED_PROPERTIES.includes(prop)) {
       return false; // disallow deletion of reserved keywords
     }
@@ -126,13 +126,13 @@ const handler = {
     target.__emitEvent__('delete$', {type: 'DELETE', path: [prop], id: uuid()});
     return true;
   },
-  has: (target: ModelObj, prop: string) => {
+  has: (target: JsonObj, prop: string) => {
     if (typeof prop !== 'symbol') {
       target.__emitEvent__('has$', {type: 'HAS', path: [prop], id: uuid()});
     }
     return prop in target;
   },
-  ownKeys: (target: ModelObj) => {
+  ownKeys: (target: JsonObj) => {
     target.__emitEvent__('keys$', {type: 'KEYS', path: [], id: uuid()});
     return R.without(
       SubX.RESERVED_PROPERTIES,
@@ -174,22 +174,22 @@ class SubX {
     ...SubX.EVENT_NAMES,
   ];
   static DefaultModel = SubX.model();
-  static create(obj: ModelObj = {}, recursive = true): ProxyObj {
+  static create(obj: JsonObj = {}, recursive = true): SubxObj {
     return SubX.DefaultModel.create(obj, recursive);
   }
   static runAndMonitor: (
-    subx: ProxyObj,
+    subx: SubxObj,
     f: () => any
   ) => {result: any; stream$: Observable<HandlerEvent>};
   static autoRun: (
-    subx: ProxyObj,
+    subx: SubxObj,
     f: () => any,
     ...operators: MonoTypeOperatorFunction<HandlerEvent>[]
   ) => BehaviorSubject<any>;
-  static model(modelObj: ModelObj = {}, recursive = true) {
+  static model(modelObj: JsonObj = {}, recursive = true) {
     const Model = {
-      create(obj: ModelObj = {}, __recursive__ = recursive): ProxyObj {
-        const newObj: ModelObj = R.empty(obj);
+      create(obj: JsonObj = {}, __recursive__ = recursive): SubxObj {
+        const newObj: JsonObj = R.empty(obj);
         R.forEach(name => {
           newObj[name] = new Subject();
         }, SubX.EVENT_NAMES);
@@ -218,7 +218,7 @@ class SubX {
           });
         };
 
-        const proxy = new Proxy(newObj, handler) as ProxyObj;
+        const proxy = new Proxy(newObj, handler) as SubxObj;
 
         for (const {target, prop} of [
           ...Object.keys(modelObj).map(key => ({target: modelObj, prop: key})),

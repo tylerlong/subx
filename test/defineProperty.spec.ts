@@ -1,13 +1,13 @@
 /* eslint-env jest */
 import SubX from '../src/index';
-import {ModelObj} from '../src/types';
+import {JsonObj} from '../src/types';
 
 describe('defineProperty', () => {
   test('default', () => {
     const o = {};
     let count = 0;
     const handler = {
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         count += 1;
         target[prop] = val;
         return true;
@@ -26,7 +26,7 @@ describe('defineProperty', () => {
     const o = {};
     let count = 0;
     const handler = {
-      set: (target: ModelObj, prop: string, val: any) => {
+      set: (target: JsonObj, prop: string, val: any) => {
         count += 1;
         target[prop] = val;
         return true;
