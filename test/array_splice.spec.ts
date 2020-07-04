@@ -64,7 +64,7 @@ describe('array splice', () => {
     });
     const events: TransactionEvent[] = [];
     store.transaction$.subscribe(event => events.push(event));
-    store.todos.shift(0);
+    store.todos.shift();
     const lastTransactionEvent = R.last(events[0].events);
     expect(R.dissoc('id', lastTransactionEvent)).toEqual({
       type: 'SET',
@@ -80,7 +80,7 @@ describe('array splice', () => {
     });
     const events: HandlerEvent[] = [];
     store.get$.subscribe(event => events.push(event));
-    expect(store.todos.map((todo: number[]) => todo)).toBeDefined();
+    expect(store.todos.map(todo => todo)).toBeDefined();
     expect(
       events.some(event =>
         R.equals(R.dissoc('id', event), {
