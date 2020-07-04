@@ -1,12 +1,12 @@
 {
   "name": "subx",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "SubX, Next generation state container",
   "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
   "license": "MIT",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "keywords": [
     "SubX",
     "Sub X",
@@ -16,9 +16,7 @@
   "scripts": {
     "bench": "ts-node benchmark/find.ts",
     "test": "jest -w 1",
-    "prepublishOnly": "yarn test && yarn compile",
-    "compile": "rm -rf build/* && tsc && mv build/src/* build/ && rmdir build/src && rm -rf build/test",
-    "pretest": "yarn run compile"
+    "prepublishOnly": "yarn test && rm -rf build && tsc"
   },
   "dependencies": {
     "ramda": "^0.27.0",
