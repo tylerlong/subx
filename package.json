@@ -1,6 +1,6 @@
 {
   "name": "subx",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "description": "SubX, Next generation state container",
   "repository": "git@github.com:tylerlong/subx.git",
   "author": "Tyler Long <tyler4long@gmail.com>",
@@ -19,6 +19,7 @@
     "prepublishOnly": "yarn test && rm -rf build && tsc"
   },
   "dependencies": {
+    "@types/ramda": "^0.27.7",
     "ramda": "^0.27.0",
     "rxjs": "^6.6.0"
   },
@@ -26,7 +27,6 @@
     "@types/benchmark": "^1.0.33",
     "@types/jest": "^26.0.3",
     "@types/node": "^14.0.14",
-    "@types/ramda": "^0.27.7",
     "benchmark": "^2.1.4",
     "gts": "^2.0.2",
     "hyperid": "^2.0.5",
