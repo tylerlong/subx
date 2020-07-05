@@ -1,5 +1,5 @@
 import Benchmark, {Suite, Target} from 'benchmark';
-import R from 'ramda';
+import * as R from 'ramda';
 
 type Parent = [{id: string}, string];
 

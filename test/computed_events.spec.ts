@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import R from 'ramda';
+import * as R from 'ramda';
 
 import SubX from '../src/index';
 import {HandlerEvent, StaleEvent} from '../src/types';

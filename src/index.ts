@@ -4,7 +4,7 @@ import {
   MonoTypeOperatorFunction,
   BehaviorSubject,
 } from 'rxjs';
-import R from 'ramda';
+import * as R from 'ramda';
 import util from 'util';
 
 import {computed, runAndMonitor, autoRun} from './monitor';

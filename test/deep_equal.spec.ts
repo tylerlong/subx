@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import SubX from '../src/index';
-import R from 'ramda';
+import * as R from 'ramda';
 import {JsonObj} from '../src/types';
 
 describe('deep equal', () => {
