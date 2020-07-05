@@ -6,7 +6,7 @@ import {
   MonoTypeOperatorFunction,
 } from 'rxjs';
 import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
-import * as R from 'ramda';
+import R from 'ramda';
 
 import uuid from './uuid';
 import {SubxObj, HandlerEvent} from './types';

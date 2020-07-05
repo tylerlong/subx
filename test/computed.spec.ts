@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import * as R from 'ramda';
+import R from 'ramda';
 import {JsonObj} from '../src/types';
 
 const computed = (o: JsonObj, f: (a: number) => number) => {

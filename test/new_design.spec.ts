@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import {combineLatest} from 'rxjs';
 import {filter, map, startWith} from 'rxjs/operators';
-import * as R from 'ramda';
+import R from 'ramda';
 
 import SubX from '../src/index';
 import {HandlerEvent} from '../src/types';

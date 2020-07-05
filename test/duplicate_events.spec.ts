@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import * as R from 'ramda';
+import R from 'ramda';
 
 import SubX from '../src/index';
 import {removeDuplicateEvents} from '../src/monitor';

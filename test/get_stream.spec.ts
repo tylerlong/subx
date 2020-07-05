@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import {filter} from 'rxjs/operators';
-import * as R from 'ramda';
+import R from 'ramda';
 
 import SubX from '../src/index';
 import {HandlerEvent} from '../src/types';

@@ -1,6 +1,6 @@
 /* eslint-env jest */
-import * as util from 'util';
-import * as R from 'ramda';
+import util from 'util';
+import R from 'ramda';
 
 import SubX from '../src/index';
 

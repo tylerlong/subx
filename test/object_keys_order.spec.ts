@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import * as R from 'ramda';
+import R from 'ramda';
 
 describe('Object.keys order', () => {
   test('default', () => {

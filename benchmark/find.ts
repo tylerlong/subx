@@ -1,5 +1,5 @@
 import Benchmark, {Suite, Target} from 'benchmark';
-import * as R from 'ramda';
+import R from 'ramda';
 
 let id = 0;
 const uuid = () => (++id).toString();

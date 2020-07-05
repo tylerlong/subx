@@ -1,5 +1,5 @@
 import Benchmark, {Suite, Target} from 'benchmark';
-import * as R from 'ramda';
+import R from 'ramda';
 
 type Event = {
   path: string[];
