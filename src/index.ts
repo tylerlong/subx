@@ -5,7 +5,6 @@ import {
   BehaviorSubject,
 } from 'rxjs';
 import * as R from 'ramda';
-import util from 'util';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
@@ -223,7 +222,8 @@ class SubX {
         };
 
         const proxy = new Proxy(newObj, handler) as SubxObj;
-        (newObj as any)[util.inspect.custom] = () => proxy.toJSON();
+        (newObj as any)[Symbol.for('nodejs.util.inspect.custom')] = () =>
+          proxy.toJSON();
 
         for (const {target, prop} of [
           ...Object.keys(modelObj).map(key => ({target: modelObj, prop: key})),
