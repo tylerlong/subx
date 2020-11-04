@@ -23,3 +23,5 @@
 - Support built-in objects like `Map`
   - Ref: https://itnext.io/the-ideas-behind-react-easy-state-901d70e4d03e
   - Low priority. JSON compatible data support is sufficient
+- Cannot monitor getter & setter?
+    - https://github.com/tylerlong/subx/issues/9
