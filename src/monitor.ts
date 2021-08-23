@@ -7,7 +7,6 @@ import {
 } from 'rxjs';
 import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
 import _ from 'lodash';
-import {pipeFromArray} from 'rxjs/internal/util/pipe';
 
 import uuid from './uuid';
 import {SubxObj, HandlerEvent} from './types';
@@ -289,9 +288,11 @@ export const autoRun = (
     } else {
       results$.next(result);
     }
-    subscription = stream$
-      .pipe(pipeFromArray(operators), take(1))
-      .subscribe(() => run());
+    let temp = stream$;
+    for (const op of operators) {
+      temp = temp.pipe(op);
+    }
+    subscription = temp.pipe(take(1)).subscribe(() => run());
   };
   run();
   results$!.subscribe(undefined, undefined, () => {
