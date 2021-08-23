@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
 } from 'rxjs';
 import * as R from 'ramda';
+import _ from 'lodash';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
@@ -46,7 +47,7 @@ const handler = {
         return () =>
           Array.isArray(target)
             ? receiver
-            : R.fromPairs(
+            : _.fromPairs(
                 Object.keys(receiver)
                   .filter(
                     k =>
@@ -178,7 +179,7 @@ class SubX {
     return SubX.DefaultModel.create(obj, recursive);
   }
   static proxy<T extends JsonObj>(obj: T, recursive = true): T {
-    return SubX.create(obj, recursive) as unknown as T;
+    return (SubX.create(obj, recursive) as unknown) as T;
   }
   static runAndMonitor: (
     subx: SubxObj,
