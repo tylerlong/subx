@@ -1,8 +1,9 @@
 /* eslint-env jest */
 import * as R from 'ramda';
+import _ from 'lodash';
 
 import SubX from '../src/index';
-import {HandlerEvent} from '../src/types';
+import {HandlerEvent, TransactionEvent} from '../src/types';
 
 describe('runAndMonitor path', () => {
   test('root is subx', () => {
@@ -52,13 +53,10 @@ describe('runAndMonitor path', () => {
     stream$.subscribe(e => events.push(e));
     store.todos.push({title: '222', completed: false});
     expect(events.length).toBe(1);
-    expect(
-      R.pipe(
-        R.dissoc('id'),
-        R.dissocPath(['events', 0, 'id']),
-        R.dissocPath(['events', 1, 'id'])
-      )(events[0])
-    ).toEqual({
+    let event = events[0] as TransactionEvent;
+    event = _.omit(event, 'id') as TransactionEvent;
+    event.events = _.map(event.events, e => _.omit(e, 'id') as HandlerEvent);
+    expect(event).toEqual({
       events: [
         {path: ['1'], type: 'SET'},
         {path: ['length'], type: 'SET'},

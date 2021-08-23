@@ -1,4 +1,5 @@
 /* eslint-env jest */
+import _ from 'lodash';
 import * as R from 'ramda';
 
 import SubX from '../src/index';
@@ -175,9 +176,9 @@ describe('array', () => {
     expect(o.b.a).toEqual([0, 1, 2, 3]);
     expect(R.map(R.dissoc('id'), events)).toEqual([]);
     expect(events2.length).toBe(1);
-    events2[0].events = R.map<HandlerEvent, HandlerEvent>(
-      R.dissoc('id'),
-      events2[0].events
+    events2[0].events = _.map(
+      events2[0].events,
+      e => _.omit(e, 'id') as HandlerEvent
     );
     expect(R.dissoc('id', events2[0])).toEqual({
       type: 'TRANSACTION',

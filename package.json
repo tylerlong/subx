@@ -24,18 +24,18 @@
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
-    "@types/benchmark": "^2.1.0",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^14.14.6",
+    "@types/benchmark": "^2.1.1",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.1",
     "@types/ramda": "^0.27.44",
     "benchmark": "^2.1.4",
-    "gts": "^3.0.2",
-    "hyperid": "^2.0.5",
-    "jest": "^26.6.2",
+    "gts": "^3.1.0",
+    "hyperid": "^2.3.1",
+    "jest": "^27.0.6",
     "ramda": "^0.27.1",
-    "ts-jest": "^26.4.3",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.5",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.3.5",
     "wait-for-async": "^0.5.0",
     "yarn-upgrade-all": "^0.5.4"
   },
@@ -43,5 +43,10 @@
     "build/*",
     "src/*",
     "yarn.lock"
-  ]
+  ],
+  "yarn-upgrade-all": {
+    "ignore": [
+      "rxjs"
+    ]
+  }
 }

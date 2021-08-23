@@ -1,6 +1,7 @@
 /* eslint-env jest */
 import * as R from 'ramda';
 import {merge} from 'rxjs';
+import _ from 'lodash';
 
 import SubX from '../src/index';
 import {HandlerEvent, SubxObj, TransactionEvent} from '../src/types';
@@ -50,9 +51,9 @@ describe('large array', () => {
     sub.unsubscribe();
     expect(events.length).toBe(2);
     expect(R.dissoc('id', events[0])).toEqual({path: ['todos'], type: 'GET'});
-    (events[1] as TransactionEvent).events = R.map<HandlerEvent, HandlerEvent>(
-      R.dissoc('id'),
-      (events[1] as TransactionEvent).events
+    (events[1] as TransactionEvent).events = _.map(
+      (events[1] as TransactionEvent).events,
+      e => _.omit(e, 'id') as HandlerEvent
     );
     expect(R.dissoc('id', events[1])).toEqual({
       name: 'unshift',

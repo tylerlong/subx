@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import * as R from 'ramda';
+import _ from 'lodash';
 
 import SubX from '../src/index';
 import {HandlerEvent, TransactionEvent} from '../src/types';
@@ -66,7 +67,7 @@ describe('array splice', () => {
     store.transaction$.subscribe(event => events.push(event));
     store.todos.shift();
     const lastTransactionEvent = R.last(events[0].events);
-    expect(R.dissoc('id', lastTransactionEvent)).toEqual({
+    expect(_.omit(lastTransactionEvent, 'id')).toEqual({
       type: 'SET',
       path: ['length'],
     });
