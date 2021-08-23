@@ -7,7 +7,7 @@ import SubX from '../src/index';
 import {HandlerEvent, SubxObj, TransactionEvent} from '../src/types';
 
 const allEvents = (p: SubxObj) =>
-  merge<HandlerEvent>(
+  merge(
     p.set$,
     p.delete$,
     p.get$,
