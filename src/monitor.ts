@@ -79,12 +79,11 @@ const matchFilters = {
 };
 
 const monitorGets = (subx: SubxObj, gets: HandlerEvent[]) => {
-  const uniqGets = R.uniqBy(
-    (event: HandlerEvent) => event.path.join('.'),
-    gets
+  const uniqGets = _.uniqBy(gets, (event: HandlerEvent) =>
+    event.path.join('.')
   );
   const streams: Observable<HandlerEvent>[] = [];
-  R.forEach(get => {
+  _.forEach(uniqGets, get => {
     const getFilter = matchFilters.get(subx, get);
     streams.push(
       merge(subx.stale$, subx.delete$, subx.set$).pipe(
@@ -94,21 +93,22 @@ const monitorGets = (subx: SubxObj, gets: HandlerEvent[]) => {
     streams.push(
       subx.transaction$.pipe(
         filter(e => {
-          const events = e.events.map(ev =>
-            R.assoc('path', [...e.path, ...ev.path], ev)
-          );
+          const events = e.events.map(ev => ({
+            ...ev,
+            path: [...e.path, ...ev.path],
+          }));
           return events.some(event => getFilter(event));
         })
       )
     );
-  }, uniqGets);
+  });
   return streams;
 };
 
 const monitorHass = (subx: SubxObj, hass: HandlerEvent[]) => {
-  const uniqHass = R.uniqBy((has: HandlerEvent) => has.path.join('.'), hass);
+  const uniqHass = _.uniqBy(hass, (has: HandlerEvent) => has.path.join('.'));
   const streams: Observable<HandlerEvent>[] = [];
-  R.forEach(has => {
+  _.forEach(uniqHass, has => {
     const hasFilter = matchFilters.has(subx, has);
     streams.push(
       merge(subx.delete$, subx.set$).pipe(filter(event => hasFilter(event)))
@@ -123,17 +123,16 @@ const monitorHass = (subx: SubxObj, hass: HandlerEvent[]) => {
         })
       )
     );
-  }, uniqHass);
+  });
   return streams;
 };
 
 const monitorkeyss = (subx: SubxObj, keyss: HandlerEvent[]) => {
-  const uniqKeyss = R.uniqBy(
-    (keys: HandlerEvent) => keys.path.join('.'),
-    keyss
+  const uniqKeyss = _.uniqBy(keyss, (keys: HandlerEvent) =>
+    keys.path.join('.')
   );
   const streams: Observable<HandlerEvent>[] = [];
-  R.forEach(keys => {
+  _.forEach(uniqKeyss, keys => {
     const keysFilter = matchFilters.keys(subx, keys);
     streams.push(
       merge(subx.delete$, subx.set$).pipe(filter(event => keysFilter(event)))
@@ -148,7 +147,7 @@ const monitorkeyss = (subx: SubxObj, keyss: HandlerEvent[]) => {
         })
       )
     );
-  }, uniqKeyss);
+  });
   return streams;
 };
 
@@ -179,7 +178,7 @@ export const removeDuplicateEvents = (events: HandlerEvent[]) =>
       }
       return result;
     }
-    return R.append(event, result);
+    return [...result, event];
   })([], events);
 
 const monitor = (
