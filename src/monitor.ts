@@ -8,10 +8,11 @@ import {
 import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
 import * as R from 'ramda';
 import _ from 'lodash';
+import {pipeFromArray} from 'rxjs/internal/util/pipe';
 
 import uuid from './uuid';
 import {SubxObj, HandlerEvent} from './types';
-import {pipeFromArray} from 'rxjs/internal/util/pipe';
+import {startsWith} from './utils';
 
 const matchFilters = {
   get: (subx: SubxObj, get: HandlerEvent) => {
@@ -27,7 +28,7 @@ const matchFilters = {
       ) {
         return true;
       }
-      if (event.type === 'SET' && R.startsWith(event.path, get.path)) {
+      if (event.type === 'SET' && startsWith(event.path, get.path)) {
         const parentVal = R.path<SubxObj>(_.initial(get.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
           return val !== parentVal[_.last(get.path)!];
@@ -47,7 +48,7 @@ const matchFilters = {
       ) {
         return true;
       }
-      if (event.type === 'SET' && R.startsWith(event.path, has.path)) {
+      if (event.type === 'SET' && startsWith(event.path, has.path)) {
         const parentVal = R.path(_.initial(has.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
           return _.last(has.path)! in parentVal !== val;
@@ -62,11 +63,11 @@ const matchFilters = {
       if (
         (event.type === 'DELETE' &&
           keys.path.length + 1 === event.path.length &&
-          R.startsWith(keys.path, event.path)) ||
+          startsWith(keys.path, event.path)) ||
         (event.type === 'SET' &&
-          (R.startsWith(event.path, keys.path) ||
+          (startsWith(event.path, keys.path) ||
             (keys.path.length + 1 === event.path.length &&
-              R.startsWith(keys.path, event.path))))
+              startsWith(keys.path, event.path))))
       ) {
         const parentVal = R.path(keys.path, subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
@@ -172,9 +173,7 @@ export const removeDuplicateEvents = (events: HandlerEvent[]) =>
       }
       const lastLast =
         result.length > 1 ? _.last(_.initial(result))! : {path: [undefined]};
-      const correct = R.startsWith(lastLast.path, longer.path)
-        ? longer
-        : shorter;
+      const correct = startsWith(lastLast.path, longer.path) ? longer : shorter;
       if (correct !== last) {
         return [..._.initial(result), correct];
       }
