@@ -1,7 +1,8 @@
 ## Todo
 
-- get rid of Ramda
 - Review TS types
+- get rid of gts warnings
+- get rid of deprecated features
 - How to undo the changes according to events?
 - As Michael found, `seal`, `freeze` & `preventExtensions`  all trigger `preventExtensions` and `defineProperty`.
     - should support defineProperty?
