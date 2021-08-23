@@ -6,7 +6,6 @@ import {
   MonoTypeOperatorFunction,
 } from 'rxjs';
 import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
-import * as R from 'ramda';
 import _ from 'lodash';
 import {pipeFromArray} from 'rxjs/internal/util/pipe';
 
@@ -155,31 +154,37 @@ const monitorkeyss = (subx: SubxObj, keyss: HandlerEvent[]) => {
 
 // a subx obj and one of its children attached to the same parent (props of React)
 export const removeDuplicateEvents = (events: HandlerEvent[]) =>
-  R.reduce((result: HandlerEvent[], event: HandlerEvent) => {
-    if (result.length === 0) {
-      return [event];
-    }
-    const last = _.last(result)!;
-    if (event.id === last.id) {
-      let longer;
-      let shorter;
-      if (event.path.length > last.path.length) {
-        longer = event;
-        shorter = last;
-      } else {
-        longer = last;
-        shorter = event;
+  _.reduce(
+    events,
+    (result: HandlerEvent[], event: HandlerEvent) => {
+      if (result.length === 0) {
+        return [event];
       }
-      const lastLast =
-        result.length > 1 ? _.last(_.initial(result))! : {path: [undefined]};
-      const correct = startsWith(lastLast.path, longer.path) ? longer : shorter;
-      if (correct !== last) {
-        return [..._.initial(result), correct];
+      const last = _.last(result)!;
+      if (event.id === last.id) {
+        let longer;
+        let shorter;
+        if (event.path.length > last.path.length) {
+          longer = event;
+          shorter = last;
+        } else {
+          longer = last;
+          shorter = event;
+        }
+        const lastLast =
+          result.length > 1 ? _.last(_.initial(result))! : {path: [undefined]};
+        const correct = startsWith(lastLast.path, longer.path)
+          ? longer
+          : shorter;
+        if (correct !== last) {
+          return [..._.initial(result), correct];
+        }
+        return result;
       }
-      return result;
-    }
-    return [...result, event];
-  })([], events);
+      return [...result, event];
+    },
+    []
+  );
 
 const monitor = (
   subx: SubxObj,
