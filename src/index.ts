@@ -9,7 +9,6 @@ import _ from 'lodash';
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
 import {SubxObj, HandlerEvent, JsonObj} from './types';
-import {empty} from './utils';
 
 const handler = {
   set: (target: JsonObj, prop: string, val: any) => {
@@ -193,7 +192,7 @@ class SubX {
   static model(modelObj: JsonObj = {}, recursive = true) {
     const Model = {
       create(obj: JsonObj = {}, __recursive__ = recursive): SubxObj {
-        const newObj: JsonObj = empty(obj);
+        const newObj: JsonObj = Array.isArray(obj) ? [] : {};
         for (const name of SubX.EVENT_NAMES) {
           newObj[name] = new Subject();
         }
