@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "bench": "ts-node benchmark/find.ts",
-    "test": "jest -w 1",
+    "test": "jest -w 1 --forceExit",
     "prepublishOnly": "yarn test && rm -rf build && tsc"
   },
   "dependencies": {
