@@ -29,7 +29,7 @@ const matchFilters = {
         return true;
       }
       if (event.type === 'SET' && startsWith(event.path, get.path)) {
-        const parentVal = R.path<SubxObj>(_.initial(get.path), subx);
+        const parentVal = path(_.initial(get.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
           return val !== parentVal[_.last(get.path)!];
         }
@@ -38,8 +38,7 @@ const matchFilters = {
     };
   },
   has: (subx: SubxObj, has: HandlerEvent) => {
-    const val =
-      _.last(has.path)! in R.path<SubxObj>(_.initial(has.path), subx)!;
+    const val = _.last(has.path)! in path(_.initial(has.path), subx)!;
     return (event: HandlerEvent) => {
       if (
         event.type === 'DELETE' &&
@@ -58,7 +57,7 @@ const matchFilters = {
     };
   },
   keys: (subx: SubxObj, keys: HandlerEvent) => {
-    const val = Object.keys(R.path<SubxObj>(keys.path, subx)!);
+    const val = Object.keys(path(keys.path, subx)!);
     return (event: HandlerEvent) => {
       if (
         (event.type === 'DELETE' &&
