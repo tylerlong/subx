@@ -7,6 +7,7 @@ import {
 } from 'rxjs';
 import {filter, publish, distinct, take, refCount} from 'rxjs/operators';
 import * as R from 'ramda';
+import _ from 'lodash';
 
 import uuid from './uuid';
 import {SubxObj, HandlerEvent} from './types';
@@ -16,39 +17,40 @@ const matchFilters = {
   get: (subx: SubxObj, get: HandlerEvent) => {
     const val = R.path(get.path, subx);
     return (event: HandlerEvent) => {
-      if (event.type === 'STALE' && R.equals(event.path, get.path)) {
+      if (event.type === 'STALE' && _.isEqual(event.path, get.path)) {
         return true;
       }
       if (
         event.type === 'DELETE' &&
         val !== undefined &&
-        R.equals(event.path, get.path)
+        _.isEqual(event.path, get.path)
       ) {
         return true;
       }
       if (event.type === 'SET' && R.startsWith(event.path, get.path)) {
-        const parentVal = R.path<SubxObj>(R.init(get.path), subx);
+        const parentVal = R.path<SubxObj>(_.initial(get.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return val !== parentVal[R.last(get.path)!];
+          return val !== parentVal[_.last(get.path)!];
         }
       }
       return false;
     };
   },
   has: (subx: SubxObj, has: HandlerEvent) => {
-    const val = R.last(has.path)! in R.path<SubxObj>(R.init(has.path), subx)!;
+    const val =
+      _.last(has.path)! in R.path<SubxObj>(_.initial(has.path), subx)!;
     return (event: HandlerEvent) => {
       if (
         event.type === 'DELETE' &&
         val === true &&
-        R.equals(event.path, has.path)
+        _.isEqual(event.path, has.path)
       ) {
         return true;
       }
       if (event.type === 'SET' && R.startsWith(event.path, has.path)) {
-        const parentVal = R.path(R.init(has.path), subx);
+        const parentVal = R.path(_.initial(has.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return R.last(has.path)! in parentVal !== val;
+          return _.last(has.path)! in parentVal !== val;
         }
       }
       return false;
@@ -68,7 +70,7 @@ const matchFilters = {
       ) {
         const parentVal = R.path(keys.path, subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
-          return !R.equals(Object.keys(parentVal), val);
+          return !_.isEqual(Object.keys(parentVal), val);
         }
       }
       return false;
@@ -156,7 +158,7 @@ export const removeDuplicateEvents = (events: HandlerEvent[]) =>
     if (result.length === 0) {
       return [event];
     }
-    const last = R.last(result)!;
+    const last = _.last(result)!;
     if (event.id === last.id) {
       let longer;
       let shorter;
@@ -168,12 +170,12 @@ export const removeDuplicateEvents = (events: HandlerEvent[]) =>
         shorter = event;
       }
       const lastLast =
-        result.length > 1 ? R.last(R.init(result))! : {path: [undefined]};
+        result.length > 1 ? _.last(_.initial(result))! : {path: [undefined]};
       const correct = R.startsWith(lastLast.path, longer.path)
         ? longer
         : shorter;
       if (correct !== last) {
-        return [...R.init(result), correct];
+        return [..._.initial(result), correct];
       }
       return result;
     }
@@ -236,7 +238,7 @@ export const runAndMonitor = (subx: SubxObj, f: () => any) => {
 };
 
 export const computed = (subx: SubxObj, f: () => any) => {
-  const functionName = R.last(f.name.split(' ')); // `get f` => `f`
+  const functionName = _.last(f.name.split(' ')); // `get f` => `f`
   let cache: any;
   let stale = true;
   const wrapped = () => {
