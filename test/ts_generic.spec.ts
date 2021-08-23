@@ -27,10 +27,10 @@ describe('TS generic', () => {
     });
     let notified = false;
     const todos = store.todos;
-    ((store as unknown) as SubxObj).$.subscribe(() => {
+    (store as unknown as SubxObj).$.subscribe(() => {
       notified = true;
     });
-    ((store as unknown) as SubxObj).transaction$.subscribe(() => {
+    (store as unknown as SubxObj).transaction$.subscribe(() => {
       notified = true;
     }); // array push is transaction
     expect(notified).toBeFalsy();

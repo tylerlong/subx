@@ -23,8 +23,10 @@ describe('runAndMonitor path', () => {
     const p = SubX.create({
       number: 1,
     });
-    const stream$ = SubX.runAndMonitor(SubX.create({child: p}), () => p.number)
-      .stream$;
+    const stream$ = SubX.runAndMonitor(
+      SubX.create({child: p}),
+      () => p.number
+    ).stream$;
     const events: HandlerEvent[] = [];
     stream$.subscribe(e => events.push(e));
     p.number = 2;
@@ -43,8 +45,9 @@ describe('runAndMonitor path', () => {
       ],
       visibility: 'all',
     });
-    const stream$ = SubX.runAndMonitor(store, () => JSON.stringify(store.todos))
-      .stream$;
+    const stream$ = SubX.runAndMonitor(store, () =>
+      JSON.stringify(store.todos)
+    ).stream$;
     const events: HandlerEvent[] = [];
     stream$.subscribe(e => events.push(e));
     store.todos.push({title: '222', completed: false});
