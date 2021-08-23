@@ -12,11 +12,11 @@ import {pipeFromArray} from 'rxjs/internal/util/pipe';
 
 import uuid from './uuid';
 import {SubxObj, HandlerEvent} from './types';
-import {startsWith} from './utils';
+import {startsWith, path} from './utils';
 
 const matchFilters = {
   get: (subx: SubxObj, get: HandlerEvent) => {
-    const val = R.path(get.path, subx);
+    const val = path(get.path, subx);
     return (event: HandlerEvent) => {
       if (event.type === 'STALE' && _.isEqual(event.path, get.path)) {
         return true;
@@ -49,7 +49,7 @@ const matchFilters = {
         return true;
       }
       if (event.type === 'SET' && startsWith(event.path, has.path)) {
-        const parentVal = R.path(_.initial(has.path), subx);
+        const parentVal = path(_.initial(has.path), subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
           return _.last(has.path)! in parentVal !== val;
         }
@@ -69,7 +69,7 @@ const matchFilters = {
             (keys.path.length + 1 === event.path.length &&
               startsWith(keys.path, event.path))))
       ) {
-        const parentVal = R.path(keys.path, subx);
+        const parentVal = path(keys.path, subx);
         if (typeof parentVal === 'object' && parentVal !== null) {
           return !_.isEqual(Object.keys(parentVal), val);
         }
