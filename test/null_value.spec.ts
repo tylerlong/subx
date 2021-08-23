@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import * as R from 'ramda';
+import _ from 'lodash';
 
 import SubX from '../src/index';
 import {HandlerEvent} from '../src/types';
@@ -16,7 +16,7 @@ describe('null value', () => {
     person.name = 'hello';
     person.name = null;
 
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(_.map(events, e => _.omit(e, 'id'))).toEqual([
       {
         type: 'SET',
         path: ['name'],

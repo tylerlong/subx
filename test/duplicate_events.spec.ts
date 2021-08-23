@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import * as R from 'ramda';
+import _ from 'lodash';
 
 import SubX from '../src/index';
 import {removeDuplicateEvents} from '../src/monitor';
@@ -29,7 +29,7 @@ describe('duplicate events', () => {
     let events: HandlerEvent[] = [];
     props.get$.subscribe(e => events.push(e));
     expect(todo.title).toBe('222');
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(_.map(events, e => _.omit(e, 'id'))).toEqual([
       {
         type: 'GET',
         path: ['store', 'todos', '1', 'title'],
@@ -44,7 +44,7 @@ describe('duplicate events', () => {
     events = [];
     todo.a = {b: {c: {d: 'hello'}}};
     expect(todo.a.b.c.d).toBe('hello');
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(_.map(events, e => _.omit(e, 'id'))).toEqual([
       {path: ['store', 'todos', '1', 'a'], type: 'GET'},
       {path: ['todo', 'a'], type: 'GET'},
       {path: ['store', 'todos', '1', 'a', 'b'], type: 'GET'},
@@ -61,7 +61,7 @@ describe('duplicate events', () => {
 
     events = [];
     expect(store.todos[1].a.b.c.d).toBe('hello');
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(_.map(events, e => _.omit(e, 'id'))).toEqual([
       {path: ['store', 'todos'], type: 'GET'},
       {path: ['store', 'todos', '1'], type: 'GET'},
       {path: ['store', 'todos', '1', 'a'], type: 'GET'},
@@ -98,7 +98,7 @@ describe('duplicate events', () => {
     props.get$.subscribe(e => events.push(e));
     todo.a = {b: {c: {d: 'hello'}}};
     expect(todo.a.b.c.d).toBe('hello');
-    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+    expect(_.map(removeDuplicateEvents(events), e => _.omit(e, 'id'))).toEqual([
       {
         type: 'GET',
         path: ['todo', 'a'],
@@ -141,7 +141,7 @@ describe('duplicate events', () => {
     props.get$.subscribe(e => events.push(e));
     todo.a = {b: {c: {d: 'hello'}}};
     expect(store.todos[1].a.b.c.d).toBe('hello');
-    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+    expect(_.map(removeDuplicateEvents(events), e => _.omit(e, 'id'))).toEqual([
       {
         type: 'GET',
         path: ['store', 'todos'],
@@ -193,7 +193,7 @@ describe('duplicate events', () => {
     const events: HandlerEvent[] = [];
     props.delete$.subscribe(e => events.push(e));
     delete todo.a.b.c;
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(_.map(events, e => _.omit(e, 'id'))).toEqual([
       {path: ['store', 'todos', '1', 'a', 'b', 'c'], type: 'DELETE'},
       {path: ['todo', 'a', 'b', 'c'], type: 'DELETE'},
     ]);
@@ -225,7 +225,7 @@ describe('duplicate events', () => {
     expect(store.todos[1].title).toBe('222');
     expect(store.todos[1].completed).toBe(false);
 
-    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+    expect(_.map(removeDuplicateEvents(events), e => _.omit(e, 'id'))).toEqual([
       {path: ['zzz', 'todos'], type: 'GET'},
       {path: ['zzz', 'todos', '1'], type: 'GET'},
       {path: ['zzz', 'todos', '1', 'title'], type: 'GET'},
@@ -262,7 +262,7 @@ describe('duplicate events', () => {
     expect(todo2.completed).toBe(false);
     expect(todo2.title).toBe('222');
 
-    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+    expect(_.map(removeDuplicateEvents(events), e => _.omit(e, 'id'))).toEqual([
       {path: ['zzz', 'todos'], type: 'GET'},
       {path: ['zzz', 'todos', '1'], type: 'GET'},
       {path: ['zzz', 'todos', '1', 'title'], type: 'GET'},
@@ -297,7 +297,7 @@ describe('duplicate events', () => {
     expect(todo.completed).toBe(false);
     expect(todo.title).toBe('222');
 
-    expect(R.map(R.dissoc('id'), removeDuplicateEvents(events))).toEqual([
+    expect(_.map(removeDuplicateEvents(events), e => _.omit(e, 'id'))).toEqual([
       {path: ['todo', 'title'], type: 'GET'},
       {path: ['todo', 'completed'], type: 'GET'},
       {path: ['todo', 'title'], type: 'GET'},

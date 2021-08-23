@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import {combineLatest} from 'rxjs';
 import {filter, map, startWith} from 'rxjs/operators';
-import * as R from 'ramda';
+import _ from 'lodash';
 
 import SubX from '../src/index';
 import {HandlerEvent} from '../src/types';
@@ -54,7 +54,7 @@ describe('new design', () => {
     n.a.b.c.d = {};
     n.a.b.c.d.e = {};
 
-    expect(R.map(R.dissoc('id'), events1)).toEqual([
+    expect(_.map(events1, e => _.omit(e, 'id'))).toEqual([
       {
         type: 'SET',
         path: ['a', 'b'],
@@ -73,7 +73,7 @@ describe('new design', () => {
       },
     ]);
 
-    expect(R.map(R.dissoc('id'), events2)).toEqual([
+    expect(_.map(events2, e => _.omit(e, 'id'))).toEqual([
       {
         type: 'SET',
         path: ['d'],
@@ -91,12 +91,12 @@ describe('new design', () => {
     p.lastName = 'Liu';
     const firstName$ = p.$.pipe(
       filter(event => event.path[0] === 'firstName'),
-      map(event => R.path(event.path, p)),
+      map(event => _.get(p, event.path)),
       startWith(p.firstName)
     );
     const lastName$ = p.$.pipe(
       filter(event => event.path[0] === 'lastName'),
-      map(event => R.path(event.path, p)),
+      map(event => _.get(p, event.path)),
       startWith(p.lastName)
     );
     const data: string[][] = [];
@@ -141,7 +141,7 @@ describe('new design', () => {
     delete p.firstName;
     delete p.lastName;
     expect(events.length).toBe(2);
-    expect(R.map(R.dissoc('id'), events)).toEqual([
+    expect(_.map(events, e => _.omit(e, 'id'))).toEqual([
       {
         type: 'DELETE',
         path: ['firstName'],
