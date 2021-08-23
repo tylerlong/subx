@@ -116,9 +116,10 @@ const monitorHass = (subx: SubxObj, hass: HandlerEvent[]) => {
     streams.push(
       subx.transaction$.pipe(
         filter(e => {
-          const events = e.events.map(ev =>
-            R.assoc('path', [...e.path, ...ev.path], ev)
-          );
+          const events = e.events.map(ev => ({
+            ...ev,
+            path: [...e.path, ...ev.path],
+          }));
           return events.some(event => hasFilter(event));
         })
       )
@@ -140,9 +141,10 @@ const monitorkeyss = (subx: SubxObj, keyss: HandlerEvent[]) => {
     streams.push(
       subx.transaction$.pipe(
         filter(e => {
-          const events = e.events.map(ev =>
-            R.assoc('path', [...e.path, ...ev.path], ev)
-          );
+          const events = e.events.map(ev => ({
+            ...ev,
+            path: [...e.path, ...ev.path],
+          }));
           return events.some(event => keysFilter(event));
         })
       )
