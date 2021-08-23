@@ -178,7 +178,7 @@ class SubX {
     return SubX.DefaultModel.create(obj, recursive);
   }
   static proxy<T extends JsonObj>(obj: T, recursive = true): T {
-    return (SubX.create(obj, recursive) as unknown) as T;
+    return SubX.create(obj, recursive) as unknown as T;
   }
   static runAndMonitor: (
     subx: SubxObj,
