@@ -4,12 +4,12 @@ import {
   MonoTypeOperatorFunction,
   BehaviorSubject,
 } from 'rxjs';
-import * as R from 'ramda';
 import _ from 'lodash';
 
 import {computed, runAndMonitor, autoRun} from './monitor';
 import uuid from './uuid';
 import {SubxObj, HandlerEvent, JsonObj} from './types';
+import {empty} from './utils';
 
 const handler = {
   set: (target: JsonObj, prop: string, val: any) => {
@@ -135,9 +135,9 @@ const handler = {
   },
   ownKeys: (target: JsonObj) => {
     target.__emitEvent__('keys$', {type: 'KEYS', path: [], id: uuid()});
-    return R.without(
-      SubX.RESERVED_PROPERTIES,
-      Object.getOwnPropertyNames(target)
+    return _.without(
+      Object.getOwnPropertyNames(target),
+      ...SubX.RESERVED_PROPERTIES
     );
   },
   setPrototypeOf: () => {
@@ -193,10 +193,10 @@ class SubX {
   static model(modelObj: JsonObj = {}, recursive = true) {
     const Model = {
       create(obj: JsonObj = {}, __recursive__ = recursive): SubxObj {
-        const newObj: JsonObj = R.empty(obj);
-        R.forEach(name => {
+        const newObj: JsonObj = empty(obj);
+        for (const name of SubX.EVENT_NAMES) {
           newObj[name] = new Subject();
-        }, SubX.EVENT_NAMES);
+        }
         newObj.$ = newObj.set$;
 
         newObj.__id__ = uuid();
@@ -215,10 +215,10 @@ class SubX {
           }
           Object.keys(newObj.__parents__).forEach(k => {
             const [parent, prop] = newObj.__parents__[k];
-            parent.__emitEvent__(
-              name,
-              R.assoc('path', [prop, ...event.path], event)
-            );
+            parent.__emitEvent__(name, {
+              ...event,
+              path: [prop, ...event.path],
+            });
           });
         };
 
