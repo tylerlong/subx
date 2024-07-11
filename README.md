@@ -1,3 +1,7 @@
+# Discontinued
+
+This project has been replaced by [manate](https://github.com/tylerlong/manate).
+
 # SubX
 
 [![Build Status](https://travis-ci.org/tylerlong/subx.svg?branch=master)](https://travis-ci.org/tylerlong/subx)
